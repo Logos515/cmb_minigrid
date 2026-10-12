@@ -1,0 +1,9 @@
+experiment_name: cmb_minigrid_rssm_b
+seed: 43
+device: auto
+output_dir: runs
+deterministic: true
+rssm:
+  deter: 256
+  stoch_groups: 16
+  stoch_classes: 16

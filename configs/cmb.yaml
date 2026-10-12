@@ -1,0 +1,9 @@
+experiment_name: cmb_minigrid_bridge
+seed: 42
+device: auto
+output_dir: runs
+deterministic: true
+cmb:
+  tokens: 4
+  token_classes: 16
+  encoder_dim: 64
