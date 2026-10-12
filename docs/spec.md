@@ -13,9 +13,10 @@ seeds. The six required baselines are Reset-B, Replay-N (N=4/8/16 as
 configured), Linear Bridge, capacity-matched MLP Bridge, CMB, and Full-history
 Oracle-B.
 
-Step 0 created the contracts and runtime tooling. Step 1 adds only the official
-MiniGrid-Memory environment adapter and rollout utilities; no model, bridge,
-training, or performance result is implemented or claimed.
+Step 0 created the contracts and runtime tooling. Step 1 adds the official
+MiniGrid-Memory environment adapter and Step 2 adds a strict HiddenHistoryNav
+counterfactual generator. No model, bridge, training, or performance result is
+implemented or claimed.
 
 ## Time and state indexing
 
@@ -39,6 +40,17 @@ direction, and a public fixed task identifier. It must not contain a global
 map, `env_state`, hidden-world label, expert action, future observation, or
 history tag. Privileged state may be retained separately for data generation
 and evaluation, never as a deployed B/CMB input.
+
+The Step 2 `HiddenHistoryNav-v0` adapter uses task ID `hidden_history_nav`,
+mission text `reach the open branch indicated by the earlier channel clue`, and
+map family `hidden_history_nav_v1`. It places an early red/blue channel clue,
+then a shared horizontal corridor ending at handoff `t=12`, followed by a
+vertical branch. In the `left_blocked` world the lower goal is open and in the
+`right_blocked` world the upper goal is open. Paired worlds have equal public
+observations, mission, and actions through the handoff window, but different
+hidden labels, early clue observations, correct branch, and expert branch
+action. Snapshots store seed, hidden label, pose, direction, step count, and
+terminal flags; the deterministic map is regenerated from seed and label.
 
 The Step 1 `MiniGrid-MemoryS13-v0` adapter uses fixed task ID
 `minigrid_memory_s13`; its observation image is `uint8[7,7,3]`. Its public

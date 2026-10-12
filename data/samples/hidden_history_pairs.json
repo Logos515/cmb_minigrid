@@ -1,0 +1,42 @@
+{
+  "env_id": "HiddenHistoryNav-v0",
+  "count": 100,
+  "seed": 42,
+  "handoff_t": 12,
+  "k": 8,
+  "validated_pairs": 100,
+  "reachable_pairs": 100,
+  "random_no_history_correct": 52,
+  "random_no_history_accuracy": 0.52,
+  "first_pair": {
+    "seed": 42,
+    "left_hidden_label": "left_blocked",
+    "right_hidden_label": "right_blocked",
+    "left_correct_branch": "right",
+    "right_correct_branch": "left",
+    "left_handoff_snapshot": {
+      "seed": 42,
+      "hidden_label": "left_blocked",
+      "agent_pos": [
+        13,
+        7
+      ],
+      "agent_dir": 0,
+      "step_count": 12,
+      "terminated": false,
+      "truncated": false
+    },
+    "right_handoff_snapshot": {
+      "seed": 42,
+      "hidden_label": "right_blocked",
+      "agent_pos": [
+        13,
+        7
+      ],
+      "agent_dir": 0,
+      "step_count": 12,
+      "terminated": false,
+      "truncated": false
+    }
+  }
+}

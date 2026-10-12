@@ -21,14 +21,20 @@ _ACTION_MAP = (Actions.left, Actions.right, Actions.forward)
 class AgentObsSpace(spaces.Space[AgentObs]):
     """Gymnasium space for the structured, public AgentObs value."""
 
-    def __init__(self, image_shape: tuple[int, int, int] = (7, 7, 3), seed=None):
+    def __init__(
+        self,
+        image_shape: tuple[int, int, int] = (7, 7, 3),
+        task_id: str = TASK_ID,
+        seed=None,
+    ):
         self.image_shape = image_shape
+        self.task_id = task_id
         super().__init__(shape=None, dtype=None, seed=seed)
 
     def sample(self, mask=None, probability=None) -> AgentObs:
         del mask, probability
         image = self.np_random.integers(0, 256, size=self.image_shape, dtype=np.uint8)
-        return AgentObs(image=image, direction=int(self.np_random.integers(0, 4)), task_id=TASK_ID)
+        return AgentObs(image=image, direction=int(self.np_random.integers(0, 4)), task_id=self.task_id)
 
     def contains(self, value: Any) -> bool:
         return (
@@ -36,7 +42,7 @@ class AgentObsSpace(spaces.Space[AgentObs]):
             and value.image.shape == self.image_shape
             and value.image.dtype == np.uint8
             and 0 <= value.direction < 4
-            and value.task_id == TASK_ID
+            and value.task_id == self.task_id
         )
 
 

@@ -104,3 +104,48 @@ Use `AgentObs` and the 3-action map as fixed. The official Memory task is only a
 smoke environment; implement the strict paired-history and leakage checks in
 `HiddenHistoryNav` without adding hidden labels or privileged simulator fields
 to deployment observations.
+
+## Step 2 — HiddenHistoryNav and counterfactual pairs
+
+### Implemented
+
+- Added `HiddenHistoryNavEnv` (`HiddenHistoryNav-v0`) with a deterministic
+  MiniGrid map: an early red/blue clue, shared corridor, handoff at `t=12`, and
+  hidden upper/lower branch goals whose open side differs by hidden label.
+- Preserved the public `AgentObs` shape/dtype/action contract and suppressed
+  hidden label, map, goal side, and expert action from observations and `info`.
+- Added deterministic expert routes, `EnvSnapshot` JSON serialization,
+  restore-and-replay, `generate_counterfactual_pair(seed)`, and
+  `validate_pair(pair,k=8)`.
+- Added `smoke_hidden_history` CLI and committed a 100-pair report/sample at
+  `data/samples/hidden_history_pairs.json`.
+
+### Verified
+
+- `/data2/xuyihao/envs/cmb_minigrid/bin/python -m
+  cmb_minigrid.scripts.smoke_hidden_history --count 100 --seed 42` — exit code
+  0; `pairs=100 validated=100 reachable=100`, `handoff_t=12 recent_k=8`, and
+  random no-history accuracy `0.520 n=100`.
+- `/data2/xuyihao/envs/cmb_minigrid/bin/python -m pytest -q` — **17 passed**.
+- `/data2/xuyihao/envs/cmb_minigrid/bin/ruff check cmb_minigrid tests` —
+  `All checks passed!`.
+- Gymnasium `check_env(HiddenHistoryNavEnv(...), skip_render_check=True)` —
+  passed.
+- Tests cover exact current/recent observation and action equality, different
+  early clue and branch action, both reachable goals, deployment-field
+  allowlist, snapshot JSON round-trip, restored future replay, and CLI batch
+  reporting.
+
+### Not run / remaining
+
+- Human-window rendering was not run in the headless session.
+- The random baseline is a diagnostic sample statistic only; no confidence
+  interval or trained model result is claimed.
+- No trajectory dataset, RSSM, policy, bridge, or training code was added.
+
+### Step 3 dependency
+
+Keep pair grouping by `map_family_id` and `pair_id`; store privileged snapshots
+and expert actions separately from deployment observations. Dataset collection
+must preserve `obs[0:T+1]` / `action[0:T]`, handoff snapshots, and the strict
+counterfactual split rules without frame-level leakage.

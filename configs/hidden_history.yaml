@@ -1,0 +1,14 @@
+env_id: HiddenHistoryNav-v0
+task_id: hidden_history_nav
+map_family_id: hidden_history_nav_v1
+seed: 42
+handoff_t: 12
+recent_history_k: 8
+pair_count: 100
+observation:
+  image_shape: [7, 7, 3]
+  image_dtype: uint8
+actions:
+  left: 0
+  right: 1
+  forward: 2

@@ -27,11 +27,13 @@ pytest -q
 python -m cmb_minigrid.cli --help
 python -m cmb_minigrid.cli --config configs/default.yaml --seed 42 --device cpu
 python -m cmb_minigrid.scripts.smoke_env --seed 42
+python -m cmb_minigrid.scripts.smoke_hidden_history --count 100 --seed 42
 ```
 
 The first command resolves a reproducible experiment ID and creates its log
 directory. The second runs a 20-transition seeded MiniGrid-Memory smoke test
-and writes `data/samples/minigrid_memory_seed42.json`.
+and writes `data/samples/minigrid_memory_seed42.json`. The third generates and
+validates 100 strict HiddenHistoryNav counterfactual pairs.
 
 ## Layout
 
