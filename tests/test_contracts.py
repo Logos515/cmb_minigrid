@@ -23,6 +23,11 @@ def test_agent_obs_rejects_non_local_or_non_integer_image():
         AgentObs(np.zeros((7, 7, 3), dtype=np.float32), 0, "memory")
 
 
+def test_agent_obs_value_equality_compares_image_contents():
+    assert obs() == obs()
+    assert obs() != obs(1)
+
+
 def test_rssm_state_shape_contract():
     state = RSSMState(np.zeros((2, 128)), np.zeros((2, 16, 16)))
     assert state.deter.shape == (2, 128)

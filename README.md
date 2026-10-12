@@ -4,10 +4,10 @@ This repository is the research scaffold for testing whether a compact Common
 Memory Bridge (CMB) can transfer history-dependent control information from a
 DreamerV3-style RSSM-A to an independently trained RSSM-B.
 
-The current implementation is **Step 0 only**. It defines the package layout,
-configuration/runtime helpers, and immutable data contracts. Environment
-generation, RSSM networks, bridge training, and experiment execution are
-intentionally not implemented yet.
+The current implementation covers **Steps 0-1**: package/runtime contracts and
+an official MiniGrid-Memory environment adapter. HiddenHistoryNav, RSSM
+networks, bridge training, and experiment execution are intentionally not
+implemented yet.
 
 ## Requirements
 
@@ -26,10 +26,12 @@ python -m pip install -e '.[dev]'
 pytest -q
 python -m cmb_minigrid.cli --help
 python -m cmb_minigrid.cli --config configs/default.yaml --seed 42 --device cpu
+python -m cmb_minigrid.scripts.smoke_env --seed 42
 ```
 
-The last command resolves a reproducible experiment ID and creates its log
-directory. It does not train a model or run an environment.
+The first command resolves a reproducible experiment ID and creates its log
+directory. The second runs a 20-transition seeded MiniGrid-Memory smoke test
+and writes `data/samples/minigrid_memory_seed42.json`.
 
 ## Layout
 

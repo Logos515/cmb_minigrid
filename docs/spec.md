@@ -13,8 +13,9 @@ seeds. The six required baselines are Reset-B, Replay-N (N=4/8/16 as
 configured), Linear Bridge, capacity-matched MLP Bridge, CMB, and Full-history
 Oracle-B.
 
-Step 0 creates only contracts and runtime tooling. It does not claim any
-environment, model, bridge, or performance result.
+Step 0 created the contracts and runtime tooling. Step 1 adds only the official
+MiniGrid-Memory environment adapter and rollout utilities; no model, bridge,
+training, or performance result is implemented or claimed.
 
 ## Time and state indexing
 
@@ -38,6 +39,14 @@ direction, and a public fixed task identifier. It must not contain a global
 map, `env_state`, hidden-world label, expert action, future observation, or
 history tag. Privileged state may be retained separately for data generation
 and evaluation, never as a deployed B/CMB input.
+
+The Step 1 `MiniGrid-MemoryS13-v0` adapter uses fixed task ID
+`minigrid_memory_s13`; its observation image is `uint8[7,7,3]`. Its public
+action IDs are `0=left`, `1=right`, and `2=forward`, mapped to the corresponding
+MiniGrid actions. The native task has additional pickup/drop/toggle/done
+actions, but its success and failure conditions are reached by navigating onto
+the corresponding target squares; no interaction action is needed to execute
+the task. Raw MiniGrid `info` is not forwarded through the adapter.
 
 ## Counterfactual and split rules
 

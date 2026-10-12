@@ -13,7 +13,7 @@ class ContractError(ValueError):
     """Raised when a shared experiment contract is violated."""
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class AgentObs:
     """Non-privileged observation available to a deployed agent."""
 
@@ -37,6 +37,15 @@ class AgentObs:
         image.setflags(write=False)
         object.__setattr__(self, "image", image)
         object.__setattr__(self, "direction", int(self.direction))
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, AgentObs):
+            return NotImplemented
+        return (
+            self.direction == other.direction
+            and self.task_id == other.task_id
+            and bool(np.array_equal(self.image, other.image))
+        )
 
 
 @dataclass(frozen=True)

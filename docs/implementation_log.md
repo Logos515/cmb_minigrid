@@ -45,11 +45,62 @@
 - No training, environment rollout, or data generation commands were run,
   because those belong to later steps.
 
-### Step 1 dependencies
+## Step 1 — official MiniGrid-Memory adapter
 
-The named `cmb_minigrid` environment now has the package and Step 1 dependencies
-installed. Start Step 1 by implementing the MiniGrid-Memory factory and
-observation/action adapter only. Preserve the contracts in `docs/spec.md`; in
-particular, do not add hidden labels or global maps to `AgentObs`, and keep the
-no-double-fusion handoff convention. Confirm MiniGrid 3.1.0 action semantics
-before restricting the public interface to left/right/forward.
+### Implemented
+
+- Added `MiniGridMemoryEnv` and `make_memory_env()` around
+  `MiniGrid-MemoryS13-v0`, with public actions `left/right/forward` only.
+- Converted the local symbolic `image` to copied `uint8[7,7,3]`, retained
+  `direction`, and added fixed public task ID `minigrid_memory_s13` in the
+  existing `AgentObs` contract.
+- Suppressed raw MiniGrid `info`; neither global map, internal environment
+  state, matching target, hidden label, nor expert action is part of `AgentObs`
+  or the wrapper's returned info.
+- Added seeded random and scripted rollouts, stable per-observation SHA-256
+  hashes, optional `human`/`rgb_array` rendering, and JSON rollout export.
+- Added `cmb_minigrid.scripts.smoke_env` and committed a 20-transition seed-42
+  sample at `data/samples/minigrid_memory_seed42.json`.
+- Added Gymnasium-compatible value equality to `AgentObs` so deterministic
+  environment checking can compare observations containing NumPy arrays.
+
+### Action-set decision
+
+The installed MiniGrid 3.1.0 native action enum has seven values. Inspection of
+`MemoryEnv.step()` shows success/failure is determined by moving onto the
+matching/non-matching target cells; pickup, drop, toggle, and done are not
+needed for navigation or task completion. Therefore the requested 3-action
+public interface preserves the task without adding actions.
+
+### Verified
+
+- Environment: `cmb_minigrid`, Python 3.11.17, Gymnasium 1.4.0, MiniGrid 3.1.0.
+- `/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.smoke_env
+  --seed 42` — exit code 0; `transitions=20`, observation shown as
+  `image:(7, 7, 3):uint8,direction:int,task_id:str`; sample JSON written to
+  `data/samples/minigrid_memory_seed42.json`.
+- Scripted rollout command with seed 43 and 20 steps — exit code 0; wrote
+  `/tmp/cmb_minigrid_scripted.json`.
+- `gymnasium.utils.env_checker.check_env(..., skip_render_check=True)` —
+  passed after adding array-aware `AgentObs` equality.
+- `/data2/xuyihao/envs/cmb_minigrid/bin/python -m pytest -q` — **12 passed**.
+- `/data2/xuyihao/envs/cmb_minigrid/bin/ruff check cmb_minigrid tests` —
+  `All checks passed!`.
+- Tests cover 3-action exposure, observation shape/dtype and field allowlist,
+  empty info, exact seed/action replay hashes, `rgb_array` output, and 20-step
+  sample serialization without privileged fields.
+
+### Not run / remaining
+
+- Human-window rendering was not run in the headless session; `rgb_array`
+  rendering is covered by a test.
+- No expert path or completion-rate claim was produced; this step only verifies
+  the official environment interface and reproducible rollout mechanics.
+- No HiddenHistoryNav, RSSM, policy, bridge, or training code was implemented.
+
+### Step 2 dependency
+
+Use `AgentObs` and the 3-action map as fixed. The official Memory task is only a
+smoke environment; implement the strict paired-history and leakage checks in
+`HiddenHistoryNav` without adding hidden labels or privileged simulator fields
+to deployment observations.
