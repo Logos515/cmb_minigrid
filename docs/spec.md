@@ -17,7 +17,9 @@ Step 0 created the contracts and runtime tooling. Step 1 adds the official
 MiniGrid-Memory environment adapter and Step 2 adds a strict HiddenHistoryNav
 counterfactual generator. Step 3 adds grouped trajectory data and Step 4 adds
 a lightweight PyTorch categorical RSSM and bounded CPU acceptance diagnostics.
-No formal model/bridge training or control-performance result is claimed.
+Step 5 adds independent A/B sequence training and frozen cue diagnostics on the
+unchanged Step 3 splits. No policy/bridge training or control-performance result
+is claimed.
 
 ## Time and state indexing
 
@@ -88,6 +90,45 @@ plus reward plus continue plus `0.5*dynamics_kl + 0.1*representation_kl`.
 Low KL can therefore yield zero prior gradient and a total KL floor of 0.6;
 this is intentional. The diagnostic uses bounded single-batch updates only;
 optimizer schedules, checkpoints and validation belong to Step 5.
+
+## Step 5 training and checkpoint interface
+
+`cmb_minigrid.scripts.train_rssm` trains one A/B preset per invocation with its
+own seed, initialization, Adam optimizer and run directory. Shared settings are
+in `configs/train_rssm.yaml`. Entire happened episodes are filtered from obs[0]
+on each minibatch; no shuffled frame or zero-initialized cropped suffix replaces
+the full history. Only the existing public observations, actions, rewards,
+terminal flags and masks enter `RSSM.loss`; Step 4 targets/KL remain unchanged.
+
+Validation uses deterministic categorical modes on the whole grouped val split.
+Each loss component is weighted by valid observation or transition count across
+batches, then the total is recomputed with the model's loss scales. Formal
+training stops after configured patience intervals without an improvement larger
+than min_delta. Smoke executes 100 sampled updates by default with stopping
+disabled. Both modes report failure if valid train loss and validation selection
+do not improve, or losses/gradients become non-finite. A zero prior gradient at
+the free-nats floor remains legitimate and is logged separately.
+
+Each checkpoint stores schema/config, model and optimizer state, step, best
+validation/counters, shuffled episode order/cursor, and RNG states. `best.pt`
+is validation-selected; `last.pt` is the latest safe resume point. Checkpoint
+writes use temporary-file replacement. Dataset/manifest SHA-256 fingerprints
+and the resolved configuration are checked on resume; only max_steps/device may
+change. `load_rssm(path, device)` loads either model independently into eval mode
+with no peer checkpoint or external YAML required. `state[t]` indexing and the
+full-history filtering interface are exactly those of Step 4.
+
+`cmb_minigrid.scripts.probe_rssm` freezes both loaded RSSMs, validates strict
+counterfactual pairs and fits detached linear hidden-cue probes using only train
+expert endpoints and train-fitted normalization. Evaluation uses val expert
+endpoints; test remains untouched. Feature extraction stops at handoff_t with
+obs[0:t+1]/action[0:t], excluding the future branch. Controls include current
+categorical observations, reset-current states and reset recent-k=8 states;
+early states/observations check cue visibility. Paired feature distances and
+both-endpoint prediction accuracy accompany single-endpoint accuracy. Hidden
+labels are offline probe targets only; fitted weights are separate artifacts
+with no connection to main-model forward/loss. Neither cue decoding nor a
+world-model loss decrease is a sufficient memory/control acceptance criterion.
 
 ## Observation contract
 
