@@ -7,3 +7,11 @@ rssm:
   deter: 256
   stoch_groups: 16
   stoch_classes: 16
+  embed_dim: 64
+  hidden_dim: 128
+  unimix: 0.01
+  free_nats: 1.0
+  dynamics_scale: 0.5
+  representation_scale: 0.1
+  reward_scale: 1.0
+  continue_scale: 1.0

@@ -15,8 +15,9 @@ Oracle-B.
 
 Step 0 created the contracts and runtime tooling. Step 1 adds the official
 MiniGrid-Memory environment adapter and Step 2 adds a strict HiddenHistoryNav
-counterfactual generator. No model, bridge, training, or performance result is
-implemented or claimed.
+counterfactual generator. Step 3 adds grouped trajectory data and Step 4 adds
+a lightweight PyTorch categorical RSSM and bounded CPU acceptance diagnostics.
+No formal model/bridge training or control-performance result is claimed.
 
 ## Time and state indexing
 
@@ -32,6 +33,61 @@ The `Trajectory` contract enforces `len(observations) = len(actions) + 1`.
 The `RSSMState` contract uses batch-first shapes `deter=[B,D]` and
 `stoch=[B,G,C]`, where the first round is `G=16`, `C=16`, `D_A=128`, and
 `D_B=256`.
+
+## Step 4 PyTorch model interface
+
+`RSSM(RSSMConfig(...))` is an `nn.Module`. The symbolic encoder separately
+embeds object/color/state IDs with vocabularies `(11,6,3)`, then uses an MLP
+to produce a 64-dimensional visual encoding. Direction is appended as four
+one-hot values in the posterior input. The fixed public task identifier is
+retained in the input dictionary but is not language-encoded. Ordinary
+`GRUCell`, prior/posterior MLPs, categorical image reconstruction, direction
+reconstruction, scalar reward and Bernoulli continue heads are used. This is
+a small DreamerV3-style prototype, not an official JAX reproduction.
+
+- `initial(batch)` returns a sentinel with zero deterministic state,
+  category-zero one-hot stochastic state and uniform logits on model
+  device/dtype. This sentinel has not consumed any observation.
+- `observe_step(prev_state, prev_action, obs, sample=None)` returns a posterior
+  `RSSMState`. `obs` is a dictionary containing exactly `image` (integer
+  `[B,7,7,3]`), `direction` (integer `[B]` in 0..3), and public `task_id`.
+  Filter `obs[0]` once with `prev_action=None` or a zero `[B,3]` vector.
+  Subsequent calls use `state[t]`, `action[t]`, `obs[t+1]`.
+- Actions accept integer IDs `[B]` (0=left, 1=right, 2=forward) or `[B,3]`
+  one-hot vectors. Zero vectors represent no previous action, not action 0.
+- `imagine_step(state, action, sample=None)` returns a prior `RSSMState` with
+  no observation/encoder access. `features(state)` concatenates deterministic
+  and flattened stochastic state to `[B,384]` for A or `[B,512]` for B.
+- `observe(obs, actions, observation_mask=None, sample=None)` consumes
+  `[B,T+1,7,7,3]` images, `[B,T+1]` directions and `[B,T]` actions. It returns
+  `RSSMSequence`: a tuple of batch-first posterior states, `features`
+  `[B,T+1,F]`, and prior/posterior logits `[B,T+1,16,16]`. Single-state
+  `RSSMState` shapes remain unchanged. Padding freezes the previous state.
+- `decode(features)` supports arbitrary leading axes; image logits are a
+  three-element tuple ending in `[7,7,11]`, `[7,7,6]`, `[7,7,3]`; direction
+  logits end in `[4]`, and reward/continue logits retain leading axes.
+
+Training mode uses categorical sampling with straight-through gradients;
+`eval()` uses deterministic argmax, while `sample=True/False` overrides the
+mode. Unimix defaults to 0.01. Stored logits are normalized log probabilities.
+
+`loss(batch, sample=None)` reads public observations, actions, reward,
+terminated/truncated and masks from the Step 3 batch. It excludes expert labels
+and metadata. Reconstruction covers all valid posterior states, including
+`obs[0]`; it averages pixel/channel cross-entropies and adds direction
+cross-entropy. Reward MSE and continue BCE for transition `t` use `state[t+1]`.
+The continue target is `~terminated`: time-limit truncation bootstraps rather
+than asserting an absorbing terminal state. Terminal transitions and final
+observations contribute, while padding does not. Masks must be contiguous
+prefixes and no valid transition may follow termination or truncation.
+
+Dynamics KL is `KL(sg(q)||p)` and representation KL is `KL(q||sg(p))`.
+Categories and groups are summed per batch/time sample before clamping at
+`free_nats=1`; valid samples are then averaged. The total is reconstruction
+plus reward plus continue plus `0.5*dynamics_kl + 0.1*representation_kl`.
+Low KL can therefore yield zero prior gradient and a total KL floor of 0.6;
+this is intentional. The diagnostic uses bounded single-batch updates only;
+optimizer schedules, checkpoints and validation belong to Step 5.
 
 ## Observation contract
 

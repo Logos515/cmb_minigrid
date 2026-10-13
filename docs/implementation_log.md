@@ -272,3 +272,131 @@ Implement and test independent RSSM-A/B interfaces in Step 4; the validated
 dataset provides CPU batches for later training in Step 5. Keep
 `privileged_state`, hidden labels, maps, and expert labels out of deployed
 B/CMB inputs; use expert actions only as offline supervision.
+
+## Step 4 — lightweight PyTorch categorical RSSM (2026-10-13)
+
+### Implementation and changed files
+
+- Added `cmb_minigrid/models/__init__.py` and `models/rssm.py`:
+  `RSSMConfig`, `SymbolicEncoder`, `RSSM`, `RSSMSequence`, and
+  `categorical_kl`. Separate object/color/state embeddings `(11,6,3)` feed a
+  small MLP producing 64 visual features; direction contributes four one-hot
+  values. Ordinary GRUCell, prior/posterior MLPs and `16x16` categorical
+  stochastic state are used. Heads reconstruct symbolic channels/direction
+  and predict scalar reward/Bernoulli continue. This is a small PyTorch
+  research implementation, not a line-for-line official JAX reproduction.
+- Added `tests/test_rssm.py` before writing the model implementation: 12 CPU
+  checks (including A/B parametrizations) cover dimensions, categorical
+  probabilities/one-hot states, finite losses/gradients, initial zero action,
+  step/sequence equivalence, observation-free imagination, prefix causality,
+  seeded sampling, deterministic evaluation, straight-through gradients,
+  unimix numerical stability, KL stop-gradients/free-nats, next-state targets,
+  truncation semantics, padding, contract failures and A/B toy batch overfit.
+- Added `cmb_minigrid/scripts/smoke_rssm.py`: train-split-only DataLoader
+  diagnostic with seed/device/config, sampled backward pass and bounded
+  deterministic single-batch updates. JSON reports are stored under `runs/`;
+  no model checkpoint, optimizer resume, validation loop or formal trainer
+  was added. It returns nonzero if losses/gradients are invalid or requested
+  overfit updates fail to reduce the total below 70% of its initial value.
+- Extended `configs/rssm_a.yaml` and `configs/rssm_b.yaml` with encoder/MLP,
+  unimix and loss settings; A remains deter=128/seed42, B deter=256/seed43,
+  both remain stoch=16x16 and visual embedding=64.
+- Updated `README.md`, `docs/spec.md` and this log with scope, interfaces,
+  reproduction and measured acceptance. No data, split, task, public
+  observation/action interface, state contract or experimental baseline changed.
+
+### Interfaces and alignment
+
+`initial(batch)` creates a model-device/dtype sentinel; consume `obs[0]` once
+using `observe_step(initial, None, obs0)` (or an all-zero previous action vector).
+Integer action 0 still means left. `observe_step(state[t], action[t], obs[t+1])`
+returns posterior state[t+1]. `imagine_step(state, action)` has no observation
+input and never calls the encoder; it returns a prior state. `features(state)`
+is `[B,384]` for A / `[B,512]` for B. Tensor observations contain exactly the
+three public fields; the constant task identifier has no language embedding.
+
+`observe` accepts `[B,T+1,7,7,3]` images and `[B,T]` actions and returns a
+dedicated sequence result with a tuple of batch-first `RSSMState`s and stacked
+features/prior/posterior logits. This preserves the frozen single-state
+contract. `decode` supports batch or batch/time features; `loss` reads only
+public observations, actions, reward, terminal flags and masks from Step 3.
+Expert labels and privileged state/metadata never enter the model.
+
+Reconstruction includes valid obs[0:T+1], averaging image cross-entropy over
+pixels/channels and adding direction cross-entropy. Reward MSE and continue
+BCE for action[t] are predicted from state[t+1]; continue is `~terminated`,
+not `~(terminated|truncated)`. Valid terminal/final-observation targets are
+included; padded states freeze and all padded targets are sanitized/excluded.
+Masks must be prefixes and valid transitions after terminal/truncated steps
+are rejected.
+
+Dynamics KL `KL(sg(q)||p)` and representation KL `KL(q||sg(p))` sum categories
+and groups before per-sample free-nats clamping, then average valid samples.
+Defaults: unimix=.01, free_nats=1, dynamics scale=.5, representation scale=.1,
+reward/continue scale=1. Categorical training uses straight-through samples;
+eval uses argmax, with an explicit sampling override. A KL below free-nats
+correctly yields zero prior gradient. The initial test run was exit 1 (2 failed,
+8 passed) because the connectivity test incorrectly required nonzero prior
+gradients below this floor. That test now disables the floor solely to check
+connectivity; a separate test asserts zero gradients below the default floor.
+Defaults were preserved.
+
+### Actual verification in cmb_minigrid (Python 3.11.17)
+
+Commands below were executed from the repository root. All final commands
+returned **exit code 0**:
+
+```bash
+/data2/xuyihao/envs/cmb_minigrid/bin/python -m pytest -q
+/data2/xuyihao/envs/cmb_minigrid/bin/ruff check cmb_minigrid tests
+/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.smoke_rssm --config configs/rssm_a.yaml --device cpu --batch-size 4 --sequence-length 64 --overfit-steps 40
+/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.smoke_rssm --config configs/rssm_b.yaml --device cpu --batch-size 4 --sequence-length 64 --overfit-steps 40
+```
+
+- Pytest: `56 passed in 12.07s` (44 existing + 12 new cases).
+- Ruff: `All checks passed!`.
+- Both CLIs read only the train split (120 episodes), use one fixed batch of
+  four records, and verify finite sampled losses and nonzero finite total
+  gradients. The full padded horizon is 64 transitions / 65 observations.
+- Both A and B also passed an earlier 8-transition/40-update diagnostic with
+  exit code 0; these shorter diagnostics do not assess long-history retention.
+
+| Full-horizon diagnostic | RSSM-A | RSSM-B |
+| --- | ---: | ---: |
+| Seed | 42 | 43 |
+| Parameters | 665322 | 1011306 |
+| Feature tensor | [4,65,384] | [4,65,512] |
+| Prior/posterior tensor | [4,65,16,16] | [4,65,16,16] |
+| Sampled total loss | 4.474426 | 4.456645 |
+| Sampled total gradient norm | 0.797845 | 0.781619 |
+| Initial deterministic total | 4.471661 | 4.418174 |
+| Final deterministic total (40 updates) | 0.996768 | 0.916985 |
+| Final / initial total | 0.222908 | 0.207548 |
+| Final reconstruction | 0.277419 | 0.249884 |
+| Final reward MSE | 0.017090 | 0.011376 |
+| Final continue BCE | 0.102258 | 0.055725 |
+| Final dynamics / representation KL | 1 / 1 | 1 / 1 |
+
+Reports (local, ignored runtime artifacts):
+`runs/cmb_minigrid_rssm_a-e0682b695c/smoke_rssm.json` and
+`runs/cmb_minigrid_rssm_b-a202e3d01f/smoke_rssm.json`. They record full config,
+device, seed, experiment ID, dimensions, sampled gradient/loss and each
+initial/final loss component. Toy repeated-symbol batches separately pass a
+40-update overfit assertion for both sizes (total <30% of initial,
+reconstruction <0.1 and reward MSE <0.02).
+
+### Limitations, unrun checks and next dependencies
+
+- No unresolved Step 4 acceptance failure remains. The total KL floor is
+  0.6; a nonzero final loss here is expected. Memorizing a batch does not prove
+  predictive generalization, retention of the hidden cue or closed-loop control.
+- GPU, mixed-precision, throughput and cross-device reproducibility checks
+  were not run: this step requires CPU smoke acceptance and uses float32.
+  Deterministic CPU sampling/model initialization are tested; cross-platform
+  bitwise equality is not claimed.
+- No formal A/B training, validation/early stopping, checkpoint resume,
+  multi-seed research experiment, hidden-history probe, policy, bridge or
+  closed-loop evaluation was run or implemented: those are subsequent steps.
+- Step 5 can consume the unchanged train/val/test dataset and this masked
+  loss/interface. It still needs its own sequence-training, logging,
+  optimizer/checkpoint lifecycle, validation and history-retention gates.
