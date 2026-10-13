@@ -52,6 +52,15 @@ hidden labels, early clue observations, correct branch, and expert branch
 action. Snapshots store seed, hidden label, pose, direction, step count, and
 terminal flags; the deterministic map is regenerated from seed and label.
 
+The authorized Step 3 expansion adds `hidden_history_nav_v2` through `v5`
+without changing v1's 19×15 map or its default call. The added families use a
+bent public corridor, a vertical corridor with a horizontal fork, and branches
+with one or two bends. All retain `handoff_t=12`, the same task/mission, the
+three public actions, and `uint8[7,7,3]` local observations. Each goal requires
+passing the handoff hub; both counterfactual endpoints have equal route length.
+Snapshots now include `map_family_id`; a missing field means legacy v1. A
+family ID is privileged metadata and is excluded from `AgentObs`.
+
 The Step 1 `MiniGrid-MemoryS13-v0` adapter uses fixed task ID
 `minigrid_memory_s13`; its observation image is `uint8[7,7,3]`. Its public
 action IDs are `0=left`, `1=right`, and `2=forward`, mapped to the corresponding
@@ -68,6 +77,14 @@ observation/action history, while differing in earlier hidden evidence and
 correct branch. Pixel similarity alone is insufficient. Pair endpoints belong
 to the same split; train/validation/test assignment is grouped by
 `map_family_id` and `pair_id`, never by random frame.
+
+With enough families, each split with a positive configured ratio receives at
+least one whole family; zero-ratio splits remain empty. With five families and
+ratios `(0.8,0.1,0.1)`, whole-family allocation is `(3,1,1)`, so the realized
+episode proportions are `(0.6,0.2,0.2)` when families have equal sizes. The
+ratios are approximate targets, not permission to split a family. The initial
+five-family dataset uses fixed topology templates and ten seeded pair
+collections per family; these repetitions are not fifty independent maps.
 
 Oracle-B filters the same happened trajectory with B and is not allowed to read
 the simulator's privileged map. Hidden labels, maps, expert actions, and

@@ -149,3 +149,126 @@ Keep pair grouping by `map_family_id` and `pair_id`; store privileged snapshots
 and expert actions separately from deployment observations. Dataset collection
 must preserve `obs[0:T+1]` / `action[0:T]`, handoff snapshots, and the strict
 counterfactual split rules without frame-level leakage.
+
+## Step 3 — trajectory collection, grouped dataset, and offline supervision
+
+### Implemented
+
+- Added `TrajectoryRecord` with aligned `agent_obs[0:T+1]`,
+  `actions/reward/terminated/truncated/expert_actions[0:T]`, map-family and
+  pair identifiers, `handoff_t`, serialized handoff `env_snapshot`, and a
+  separate per-time-step `privileged_state` sequence.
+- Added seeded expert and exploratory collection. Exploration begins at the
+  handoff, and the smoke collector includes a reproducible time-limit failure
+  while retaining expert labels planned from the actual privileged state.
+- Added JSONL persistence, strict record validation, grouped train/val/test
+  manifests, `TrajectoryDataset`, deployment-safe CPU collation, observation
+  and transition padding masks, and metadata without privileged fields.
+- Added full replay validation: every observation, reward, done flag, and
+  privileged snapshot is compared step by step; a fresh environment is restored
+  from `env_snapshot` at `handoff_t` and its suffix is replayed; expert labels
+  are independently recomputed from the privileged simulator state.
+- Added configurable `collect_data`, `validate_data`, and `stats_data` CLIs.
+  `configs/data.yaml` now supplies the smoke defaults and split ratios, while
+  explicit CLI arguments take precedence.
+
+### Initial single-family verification (superseded dataset)
+
+- `/data2/xuyihao/envs/cmb_minigrid/bin/python -m pytest -q` — **25 passed**.
+- `/data2/xuyihao/envs/cmb_minigrid/bin/ruff check cmb_minigrid tests` —
+  clean.
+- Configured smoke collection with one pair — exit code 0; generated
+  `records=4`, `successes=3`, `truncated=1`.
+- `validate_data` on that fresh output — exit code 0;
+  `records=4 replayed=4 labels=4 handoff_restore=validated split_errors=0`.
+- Existing eight-record sample validation — exit code 0;
+  `records=8 replayed=8 labels=8 handoff_restore=validated split_errors=0`.
+- Statistics report eight records, two pairs, four expert and four
+  exploration episodes, horizons 18–64, six terminated and two truncated.
+- CPU collation tests verify variable-length `T+1` observation masks,
+  `T` transition masks, `-1` action padding, and no `privileged_state` or
+  `env_snapshot` in the deployment batch.
+
+### Step 3 map-family expansion — implementation and interfaces
+
+Files changed for this expansion:
+
+- `cmb_minigrid/environments/hidden_history.py` and `environments/__init__.py`:
+  `MapLayout`, five real geometry templates, family-aware construction/reset,
+  `generate_counterfactual_pair(seed, map_family_id=...)`, shared privileged BFS
+  planning, and family-aware snapshots/restoration. Default v1 retains its
+  19×15 geometry, routes, three actions, observation fields, and task ID.
+- `cmb_minigrid/data/trajectory.py`, `dataset.py`, and `data/__init__.py`:
+  `collect_records(..., map_family_ids=...)` interprets `pair_count` per family;
+  pair IDs include family and seed. Old v1 snapshot JSON is normalized when
+  loaded. Added `validate_counterfactual_records()` for the saved endpoints,
+  family consistency checks, and allocation of whole families to non-empty
+  positive-ratio splits when enough families exist. Zero-ratio splits stay
+  empty; assignments are independent of record order.
+- `cmb_minigrid/scripts/collect_data.py`, `validate_data.py`, `stats_data.py`:
+  `--map-families`, `--pairs-per-family` (`--pairs` remains an alias), saved
+  pair validation, and per-family record/pair/split statistics.
+- `configs/data.yaml`, `tests/test_hidden_history.py`, `tests/test_data.py`:
+  five-family/ten-pair defaults and regression tests for physical layout
+  differences, absence of shortcuts around the hub, shortest expert routes,
+  family-aware JSON snapshot restoration, legacy compatibility, leakage,
+  seeded reproducibility, and real CPU DataLoader batches for all splits.
+- `data/samples/step3_trajectories.jsonl`, `step3_manifest.json`: regenerated
+  with seed 42. `README.md`, `docs/spec.md`, `docs/step3.md`, and this log
+  document the compatible expansion and its measured acceptance results.
+
+| Family | Geometry | Pairs | Records | Split |
+| --- | --- | ---: | ---: | --- |
+| hidden_history_nav_v1 | Original horizontal corridor / vertical fork | 10 | 40 | test |
+| hidden_history_nav_v2 | Bent corridor / vertical fork | 10 | 40 | val |
+| hidden_history_nav_v3 | Vertical corridor / horizontal fork | 10 | 40 | train |
+| hidden_history_nav_v4 | Horizontal corridor / branches with one bend | 10 | 40 | train |
+| hidden_history_nav_v5 | Horizontal corridor / branches with two bends | 10 | 40 | train |
+
+### Step 3 map-family expansion verification
+
+- `/data2/xuyihao/envs/cmb_minigrid/bin/python -m pytest -q` — exit code 0;
+  **44 passed in 17.05s**.
+- `/data2/xuyihao/envs/cmb_minigrid/bin/ruff check cmb_minigrid tests` — exit
+  code 0; `All checks passed!`.
+- `/data2/xuyihao/envs/cmb_minigrid/bin/python -m
+  cmb_minigrid.scripts.collect_data --config configs/data.yaml
+  --pairs-per-family 10 --output data/samples/step3_trajectories.jsonl
+  --manifest data/samples/step3_manifest.json --force` — exit code 0;
+  `records=200 pairs_per_family=10 families=5 pairs=50 successes=150
+  truncated=50`, split counts `train=120,val=40,test=40`.
+- `/data2/xuyihao/envs/cmb_minigrid/bin/python -m
+  cmb_minigrid.scripts.validate_data` — exit code 0;
+  `records=200 replayed=200 labels=200 pairs=50 handoff_restore=validated
+  split_errors=0 pair_errors=0`.
+- `/data2/xuyihao/envs/cmb_minigrid/bin/python -m
+  cmb_minigrid.scripts.stats_data` — exit code 0; five map families, 50
+  pairs, 100 expert and 100 exploration records, horizons 18–64, 150
+  terminated and 50 truncated.
+- An additional CPU DataLoader check on the final sample — exit code 0;
+  each split produced an image tensor `(4,65,7,7,3)` on CPU with correct
+  `T+1`/`T` masks and no privileged simulator fields in the batch. The same
+  check is automated as `test_each_split_loads_cpu_batch` for all splits.
+
+### Limitations and not run
+
+- Five fixed geometry templates are implemented. Ten seeded pair collections
+  per family provide repeated expert trajectories and differing exploratory
+  suffixes, not fifty independent maps. This is a pilot dataset, not evidence
+  of broad spatial generalization or model performance.
+- Configured ratios remain `(0.8,0.1,0.1)`; indivisible families and non-empty
+  splits yield 3/1/1 families (120/40/40 records, realized 60/20/20 percent).
+  Family and pair leakage checks both pass. More families are needed to
+  approximate the requested ratios closely and assess varied held-out maps.
+- Larger-scale collection was not run beyond the requested 10 pairs/family.
+  Human-window rendering was not run in this headless session. RSSM, policy,
+  bridge training and closed-loop evaluation remain outside Step 3.
+- No GPU-specific test was run because Step 3 acceptance requires CPU
+  execution and the data pipeline has no GPU-only code path.
+
+### Step 4 dependency
+
+Implement and test independent RSSM-A/B interfaces in Step 4; the validated
+dataset provides CPU batches for later training in Step 5. Keep
+`privileged_state`, hidden labels, maps, and expert labels out of deployed
+B/CMB inputs; use expert actions only as offline supervision.

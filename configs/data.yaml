@@ -1,0 +1,14 @@
+env_id: HiddenHistoryNav-v0
+map_families:
+  - hidden_history_nav_v1
+  - hidden_history_nav_v2
+  - hidden_history_nav_v3
+  - hidden_history_nav_v4
+  - hidden_history_nav_v5
+seed: 42
+pairs_per_family: 10
+exploration_rate: 0.15
+include_exploration: true
+split_ratios: [0.8, 0.1, 0.1]
+output: data/samples/step3_trajectories.jsonl
+manifest: data/samples/step3_manifest.json

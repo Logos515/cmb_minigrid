@@ -4,10 +4,10 @@ This repository is the research scaffold for testing whether a compact Common
 Memory Bridge (CMB) can transfer history-dependent control information from a
 DreamerV3-style RSSM-A to an independently trained RSSM-B.
 
-The current implementation covers **Steps 0-1**: package/runtime contracts and
-an official MiniGrid-Memory environment adapter. HiddenHistoryNav, RSSM
-networks, bridge training, and experiment execution are intentionally not
-implemented yet.
+The current implementation covers **Steps 0-3**: package/runtime contracts,
+the official MiniGrid-Memory adapter, strict HiddenHistoryNav counterfactual
+pairs, and a deployment-safe trajectory dataset pipeline. RSSM networks,
+bridge training, and experiment execution are intentionally not implemented.
 
 ## Requirements
 
@@ -28,22 +28,35 @@ python -m cmb_minigrid.cli --help
 python -m cmb_minigrid.cli --config configs/default.yaml --seed 42 --device cpu
 python -m cmb_minigrid.scripts.smoke_env --seed 42
 python -m cmb_minigrid.scripts.smoke_hidden_history --count 100 --seed 42
+python -m cmb_minigrid.scripts.collect_data --config configs/data.yaml --force
+python -m cmb_minigrid.scripts.validate_data
+python -m cmb_minigrid.scripts.stats_data
 ```
 
 The first command resolves a reproducible experiment ID and creates its log
-directory. The second runs a 20-transition seeded MiniGrid-Memory smoke test
-and writes `data/samples/minigrid_memory_seed42.json`. The third generates and
-validates 100 strict HiddenHistoryNav counterfactual pairs.
+directory. The environment and pair commands run seeded smoke checks. The
+Step 3 commands collect JSONL trajectories, write a grouped split manifest,
+validate every public transition and privileged snapshot, restore the handoff
+snapshot in a fresh environment, and print dataset statistics.
+
+The default data configuration collects five real map families, ten pairs per
+family, and both expert and exploration episodes (200 records total). Override
+the scale with `--pairs-per-family 20` or choose a subset with
+`--map-families hidden_history_nav_v1 hidden_history_nav_v2`. The legacy
+`--pairs` flag remains an alias for the per-family count. With five families,
+whole-family train/val/test allocation is 3/1/1; snapshots record the family
+for exact restoration. These are five fixed geometry templates with seeded
+exploration, not fifty independently randomized layouts.
 
 ## Layout
 
 ```text
-cmb_minigrid/       Runtime utilities and shared contracts
+cmb_minigrid/       Runtime, environments, and Step 3 data utilities
 configs/            YAML configuration presets
 environments/       Reserved for MiniGrid environment adapters (Step 1+)
 models/             Reserved for RSSM and policy code (Step 4+)
 bridge/             Reserved for CMB and baseline bridges (Step 7+)
-data/               Reserved for trajectory and handoff datasets (Step 3+)
+data/               Trajectory JSONL, split manifests, and smoke samples
 trainers/           Reserved for model/bridge training (Step 5+)
 evaluation/         Reserved for closed-loop evaluation (Step 6+)
 scripts/            Reserved for later experiment CLIs
