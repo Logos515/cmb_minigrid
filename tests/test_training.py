@@ -11,7 +11,12 @@ from cmb_minigrid.data.dataset import read_manifest, split_records, write_manife
 from cmb_minigrid.data.trajectory import collect_records, write_jsonl
 from cmb_minigrid.models import RSSM, RSSMConfig
 from cmb_minigrid.scripts.train_rssm import main
-from cmb_minigrid.training.probe import extract_pair_features, fit_linear_probe, probe_metrics
+from cmb_minigrid.training.probe import (
+    extract_pair_features,
+    fit_linear_probe,
+    probe_metrics,
+    run_probes,
+)
 from cmb_minigrid.training.rssm import (
     TrainingConfig,
     evaluate,
@@ -65,10 +70,14 @@ def assert_nested_equal(first, second):
         assert first == second
 
 
-def test_sampled_resume_matches_uninterrupted_optimizer_rng_and_states(data, tmp_path):
-    full = train_rssm(config(data), tmp_path / "full")
-    partial = train_rssm(config(data, steps=2), tmp_path / "partial")
-    resumed = train_rssm(config(data), tmp_path / "unused", resume=partial["last_checkpoint"])
+@pytest.mark.parametrize("recall_scale", [0.0, 5.0])
+def test_sampled_resume_matches_uninterrupted_optimizer_rng_and_states(data, tmp_path, recall_scale):
+    cfg = config(data)
+    cfg["rssm"]["recall_scale"] = recall_scale
+    full = train_rssm(cfg, tmp_path / "full")
+    short = cfg | {"training": cfg["training"] | {"max_steps": 2}}
+    partial = train_rssm(short, tmp_path / "partial")
+    resumed = train_rssm(cfg, tmp_path / "unused", resume=partial["last_checkpoint"])
     first_model, first = load_rssm(full["last_checkpoint"])
     second_model, second = load_rssm(resumed["last_checkpoint"])
     for field in ("model", "optimizer", "rng", "sampler", "best_val", "best_step",
@@ -86,9 +95,13 @@ def test_sampled_resume_matches_uninterrupted_optimizer_rng_and_states(data, tmp
                if event["event"] == "train")
 
 
-def test_independent_checkpoints_filter_full_history_and_steps(data, tmp_path):
-    a = train_rssm(config(data, steps=2), tmp_path / "A")
-    b = train_rssm(config(data, seed=43, deter=256, steps=2), tmp_path / "B")
+@pytest.mark.parametrize("recall_scale", [0.0, 5.0])
+def test_independent_checkpoints_filter_full_history_and_steps(data, tmp_path, recall_scale):
+    cfg_a = config(data, steps=2)
+    cfg_b = config(data, seed=43, deter=256, steps=2)
+    cfg_a["rssm"]["recall_scale"] = cfg_b["rssm"]["recall_scale"] = recall_scale
+    a = train_rssm(cfg_a, tmp_path / "A")
+    b = train_rssm(cfg_b, tmp_path / "B")
     model_a, ca = load_rssm(a["best_checkpoint"])
     model_b, cb = load_rssm(b["best_checkpoint"])
     assert ca["config"]["seed"] != cb["config"]["seed"]
@@ -108,6 +121,15 @@ def test_independent_checkpoints_filter_full_history_and_steps(data, tmp_path):
                 state = model.observe_step(state, None if t == 0 else batch["actions"][:, t - 1], obs)
                 torch.testing.assert_close(model.features(state), sequence.features[:, t])
         assert sequence.features.shape == (1, record.horizon + 1, dimension)
+    if recall_scale:
+        report = run_probes(a["best_checkpoint"], b["best_checkpoint"], *data[:2],
+                            tmp_path / "probes", iterations=10)
+        for result in report["models"].values():
+            assert result["handoff_times"] == [12]
+            assert "cue_retention_status" in result
+            assert result["recall_head"]["val"]["full_history"]["n"] == 2
+            for control in ("current_state", "recent_state"):
+                assert result["recall_head"]["val"][control]["accuracy"] == 0.5
 
 
 def test_validation_weighted_by_valid_targets_not_batch_count(data):

@@ -1,5 +1,5 @@
 experiment_name: cmb_minigrid_rssm_b
-seed: 43
+seed: 45
 device: auto
 output_dir: runs
 deterministic: true

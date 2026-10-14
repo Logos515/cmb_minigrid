@@ -14,6 +14,7 @@ from cmb_minigrid.data.dataset import (
     validate_split_manifest,
 )
 from cmb_minigrid.data.trajectory import read_jsonl, validate_counterfactual_records
+from cmb_minigrid.models.rssm import early_key_color
 from cmb_minigrid.reproducibility import set_seed
 from cmb_minigrid.training.rssm import fingerprint, load_rssm, model_batch
 
@@ -161,6 +162,60 @@ def run_probes(checkpoint_a, checkpoint_b, input_path, manifest_path, output_dir
                         "checkpoint_sha256": fingerprint(checkpoint_a if name == "A" else checkpoint_b),
                         "seed": checkpoints[name]["config"]["seed"],
                         "train_pairs": train_pairs, "val_pairs": val_pairs, "probes": {}}
+        handoffs = sorted({r.handoff_t for split in split_records.values()
+                           for r in split if r.episode_role == "expert"})
+        model_report["handoff_times"] = handoffs
+        model_report["handoff_state_differences"] = {}
+        for split, features in (("train", train_features), ("val", val_features)):
+            state = features["full_history"]
+            deter = state[:, :model.config.deter]
+            stoch = state[:, model.config.deter:].reshape(-1, model.config.stoch_groups,
+                                                         model.config.stoch_classes)
+            model_report["handoff_state_differences"][split] = {
+                "mean_deter_pair_l2": (deter[::2] - deter[1::2]).norm(dim=-1).mean().item(),
+                "mean_stoch_pair_l2": (stoch[::2] - stoch[1::2]).flatten(1).norm(dim=-1).mean().item(),
+                "mean_changed_argmax_groups": (stoch[::2].argmax(-1) != stoch[1::2].argmax(-1))
+                .float().sum(-1).mean().item(),
+            }
+        if model.config.recall_scale > 0:
+            if handoffs != [model.config.recall_t]:
+                raise ValueError("probe handoff times differ from trained recall time")
+            model_report["recall_head"] = {}
+            for split, features, labels in (("train", train_features, train_y),
+                                             ("val", val_features, val_y)):
+                endpoints = [r for r in split_records[split] if r.episode_role == "expert"]
+                endpoints.sort(key=lambda r: (r.pair_id, r.privileged_state[0]["hidden_label"]))
+                public_labels = early_key_color(model_batch(endpoints, "cpu")["agent_obs"]["image"][:, 0])
+                if not torch.equal(public_labels, labels):
+                    raise ValueError("public early color and offline probe label mapping disagree")
+                controls = {}
+                with torch.no_grad():
+                    for feature in ("full_history", "current_state", "recent_state"):
+                        prediction = model.recall_head(features[feature].to(device)).argmax(-1).cpu()
+                        correct = prediction == public_labels
+                        controls[feature] = {
+                            "accuracy": correct.float().mean().item(), "n": len(labels),
+                            "both_endpoints_correct": correct.reshape(-1, 2).all(-1).float().mean().item()}
+                model_report["recall_head"][split] = controls
+        if model.config.visual_recall_scale > 0:
+            model_report["visual_recall_head"] = {}
+            for split, labels in (("train", train_y), ("val", val_y)):
+                endpoints = [r for r in split_records[split] if r.episode_role == "expert"]
+                endpoints.sort(key=lambda r: (r.pair_id, r.privileged_state[0]["hidden_label"]))
+                images = model_batch(endpoints, "cpu")["agent_obs"]["image"]
+                public_labels = early_key_color(images[:, 0])
+                if not torch.equal(public_labels, labels):
+                    raise ValueError("public early color and offline probe label mapping disagree")
+                result = {}
+                with torch.no_grad():
+                    for t in model.config.visual_recall_times:
+                        embeddings = model.encoder(images[:, t].to(device))
+                        prediction = model.visual_recall_head(embeddings).argmax(-1).cpu()
+                        correct = prediction == public_labels
+                        result[str(t)] = {
+                            "accuracy": correct.float().mean().item(), "n": len(labels),
+                            "both_endpoints_correct": correct.reshape(-1, 2).all(-1).float().mean().item()}
+                model_report["visual_recall_head"][split] = result
         for feature_name, train_x in train_features.items():
             probe, mean, scale = fit_linear_probe(train_x, train_y, iterations=iterations)
             train_metrics = probe_metrics(probe, mean, scale, train_x, train_y)
@@ -169,6 +224,12 @@ def run_probes(checkpoint_a, checkpoint_b, input_path, manifest_path, output_dir
             torch.save({"probe": probe.state_dict(), "mean": mean, "scale": scale,
                         "feature": feature_name, "rssm_checkpoint_sha256": model_report[
                             "checkpoint_sha256"]}, output_dir / f"probe_{name}_{feature_name}.pt")
+        full = model_report["probes"]["full_history"]["val"]
+        model_report["cue_retention_status"] = (
+            "failed_identical_counterfactual_states" if full["mean_pair_feature_distance"] == 0
+            else "cue_decoding_detected_not_control_acceptance" if full["accuracy"] > 0.5
+            and full["both_endpoints_correct"] > 0
+            else "not_established")
         report["models"][name] = model_report
     (output_dir / "probe_report.json").write_text(json.dumps(report, indent=2) + "\n")
     return report

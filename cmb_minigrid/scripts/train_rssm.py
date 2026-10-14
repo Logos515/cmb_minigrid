@@ -45,7 +45,8 @@ def main(argv=None):
         training = asdict(TrainingConfig(**training))
         resolved = {"experiment_name": runtime.experiment_name, "seed": runtime.seed,
                     "device": runtime.device, "deterministic": runtime.deterministic,
-                    "rssm": asdict(RSSMConfig.from_mapping(model_values["rssm"])),
+                    "rssm": asdict(RSSMConfig.from_mapping(
+                        model_values["rssm"] | values.get("rssm", {}))),
                     "training": training, "mode": args.mode}
         for name in ("input", "manifest"):
             path = Path(getattr(args, name) or values[name]).resolve()

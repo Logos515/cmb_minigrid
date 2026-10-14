@@ -15,6 +15,7 @@ from typing import Any
 
 import torch
 import torch.nn.functional as F
+from minigrid.core.constants import COLOR_TO_IDX, OBJECT_TO_IDX
 from torch import Tensor, nn
 
 from cmb_minigrid.contracts import ContractError, RSSMState
@@ -26,6 +27,7 @@ class RSSMConfig:
     stoch_groups: int = 16
     stoch_classes: int = 16
     embed_dim: int = 64
+    encoder_type: str = "symbolic_mlp"
     hidden_dim: int = 128
     unimix: float = 0.01
     free_nats: float = 1.0
@@ -33,6 +35,10 @@ class RSSMConfig:
     representation_scale: float = 0.1
     reward_scale: float = 1.0
     continue_scale: float = 1.0
+    recall_scale: float = 0.0
+    recall_t: int = 12
+    visual_recall_scale: float = 0.0
+    visual_recall_times: tuple[int, ...] = (0, 1)
 
     def __post_init__(self):
         for name in ("deter", "stoch_groups", "stoch_classes", "embed_dim", "hidden_dim"):
@@ -41,16 +47,29 @@ class RSSMConfig:
                 raise ValueError(f"{name} must be a positive integer")
         if (self.embed_dim, self.stoch_groups, self.stoch_classes) != (64, 16, 16):
             raise ValueError("Step 4 requires embed_dim=64 and stoch=16x16")
+        if self.encoder_type not in {"symbolic_mlp", "cnn"}:
+            raise ValueError("encoder_type must be 'symbolic_mlp' or 'cnn'")
         if not math.isfinite(self.unimix) or not 0 <= self.unimix < 1:
             raise ValueError("unimix must be finite and in [0,1)")
         for name in ("free_nats", "dynamics_scale", "representation_scale",
-                     "reward_scale", "continue_scale"):
+                     "reward_scale", "continue_scale", "recall_scale",
+                     "visual_recall_scale"):
             value = getattr(self, name)
             if not math.isfinite(value) or value < 0:
                 raise ValueError(f"{name} must be finite and non-negative")
+        if isinstance(self.recall_t, bool) or not isinstance(self.recall_t, int) or self.recall_t < 0:
+            raise ValueError("recall_t must be a non-negative integer")
+        if (not isinstance(self.visual_recall_times, tuple) or not self.visual_recall_times
+                or any(isinstance(t, bool) or not isinstance(t, int) or t < 0
+                       for t in self.visual_recall_times)
+                or len(set(self.visual_recall_times)) != len(self.visual_recall_times)):
+            raise ValueError("visual_recall_times must be unique non-negative integer tuple")
 
     @classmethod
     def from_mapping(cls, values: Mapping[str, Any]) -> RSSMConfig:
+        values = dict(values)
+        if "visual_recall_times" in values:
+            values["visual_recall_times"] = tuple(values["visual_recall_times"])
         return cls(**values)
 
 
@@ -95,16 +114,49 @@ def _integers(tensor: Tensor) -> bool:
     return tensor.dtype in (torch.uint8, torch.int8, torch.int16, torch.int32, torch.int64)
 
 
+def early_key_color(image: Tensor) -> Tensor:
+    """Public obs[0] only: red=0, blue=1, missing/ambiguous/other key=-1."""
+    if image.ndim != 4 or image.shape[1:] != (7, 7, 3) or not _integers(image):
+        raise ContractError("early key image must have integer shape [B,7,7,3]")
+    key = image[..., 0] == OBJECT_TO_IDX["key"]
+    red = (key & (image[..., 1] == COLOR_TO_IDX["red"])).sum((1, 2))
+    blue = (key & (image[..., 1] == COLOR_TO_IDX["blue"])).sum((1, 2))
+    valid = (key.sum((1, 2)) == 1) & ((red + blue) == 1)
+    return torch.where(valid, blue.long(), -1)
+
+
+def recall_targets(batch: Mapping[str, Any], t: int) -> tuple[Tensor, Tensor]:
+    """No metadata/hidden labels; exclude absent cue and short/padded histories."""
+    labels = early_key_color(batch["agent_obs"]["image"][:, 0])
+    mask = batch["observation_mask"]
+    valid = labels >= 0
+    if t >= mask.shape[1]:
+        return labels, torch.zeros_like(valid)
+    return labels, valid & mask[:, :t + 1].all(1)
+
+
 class SymbolicEncoder(nn.Module):
-    """Three categorical channel embeddings + small MLP; not an RGB encoder."""
+    """Three categorical channel embeddings followed by an MLP or spatial CNN."""
 
     categories = (11, 6, 3)  # MiniGrid object/color/state vocabularies.
 
-    def __init__(self):
+    def __init__(self, encoder_type: str = "symbolic_mlp"):
         super().__init__()
+        self.encoder_type = encoder_type
         self.embeddings = nn.ModuleList([nn.Embedding(n, 4) for n in self.categories])
-        self.network = nn.Sequential(nn.Flatten(1), nn.Linear(7 * 7 * 12, 128),
-                                     nn.SiLU(), nn.Linear(128, 64), nn.LayerNorm(64))
+        if encoder_type == "cnn":
+            self.network = nn.Sequential(
+                nn.Conv2d(12, 32, kernel_size=3, padding=1), nn.SiLU(),
+                nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1), nn.SiLU(),
+                nn.Conv2d(64, 64, kernel_size=3, padding=1), nn.SiLU(),
+                nn.AdaptiveAvgPool2d(1), nn.Flatten(1),
+                nn.Linear(64, 64), nn.LayerNorm(64),
+            )
+        elif encoder_type == "symbolic_mlp":
+            self.network = nn.Sequential(nn.Flatten(1), nn.Linear(7 * 7 * 12, 128),
+                                         nn.SiLU(), nn.Linear(128, 64), nn.LayerNorm(64))
+        else:
+            raise ValueError(f"unknown encoder type: {encoder_type}")
 
     def forward(self, image: Tensor) -> Tensor:
         if image.ndim != 4 or image.shape[1:] != (7, 7, 3) or not _integers(image):
@@ -115,6 +167,8 @@ class SymbolicEncoder(nn.Module):
                 raise ContractError(f"image channel {channel} has invalid categorical IDs")
         embedded = torch.cat([emb(image[..., i].long())
                               for i, emb in enumerate(self.embeddings)], -1)
+        if self.encoder_type == "cnn":
+            embedded = embedded.permute(0, 3, 1, 2)
         return self.network(embedded)
 
 
@@ -131,7 +185,7 @@ class RSSM(nn.Module):
         c = self.config
         self.stoch_dim = c.stoch_groups * c.stoch_classes
         self.feature_dim = c.deter + self.stoch_dim
-        self.encoder = SymbolicEncoder()
+        self.encoder = SymbolicEncoder(c.encoder_type)
         self.gru = nn.GRUCell(self.stoch_dim + self.action_dim, c.deter)
         self.prior = _mlp(c.deter, c.hidden_dim, self.stoch_dim)
         self.posterior = _mlp(c.deter + c.embed_dim + 4, c.hidden_dim, self.stoch_dim)
@@ -140,6 +194,10 @@ class RSSM(nn.Module):
         self.direction_head = _mlp(self.feature_dim, c.hidden_dim, 4)
         self.reward_head = _mlp(self.feature_dim, c.hidden_dim, 1)
         self.continue_head = _mlp(self.feature_dim, c.hidden_dim, 1)
+        if c.recall_scale > 0:
+            self.recall_head = nn.Linear(self.feature_dim, 2)
+        if c.visual_recall_scale > 0:
+            self.visual_recall_head = nn.Linear(c.embed_dim, 2)
 
     def initial(self, batch: int) -> RSSMState:
         """Zero deter and category-zero one-hot sentinel, on model device/dtype.
@@ -341,4 +399,38 @@ class RSSM(nn.Module):
                            + c.continue_scale * losses["continue"]
                            + c.dynamics_scale * losses["dynamics_kl"]
                            + c.representation_scale * losses["representation_kl"])
+        if c.recall_scale > 0:
+            labels, valid = recall_targets(batch, c.recall_t)
+            if valid.any():
+                logits = self.recall_head(sequence.features[valid, c.recall_t])
+                losses["recall"] = F.cross_entropy(logits, labels[valid])
+                losses["recall_accuracy"] = (logits.argmax(-1) == labels[valid]).float().mean()
+            else:
+                # Keep an empty-target minibatch differentiable without supervising padding.
+                losses["recall"] = sequence.features.sum() * 0
+                losses["recall_accuracy"] = losses["recall"].detach()
+            losses["total"] = losses["total"] + c.recall_scale * losses["recall"]
+        if c.visual_recall_scale > 0:
+            labels = early_key_color(batch["agent_obs"]["image"][:, 0])
+            visual_losses = []
+            visual_accuracies = []
+            for t in c.visual_recall_times:
+                valid = (labels >= 0) & obs_mask[:, t] if t < obs_mask.shape[1] else torch.zeros_like(labels, dtype=torch.bool)
+                if valid.any():
+                    embedding = self.encoder(batch["agent_obs"]["image"][valid, t])
+                    logits = self.visual_recall_head(embedding)
+                    target = labels[valid]
+                    visual_losses.append(F.cross_entropy(logits, target))
+                    visual_accuracies.append((logits.argmax(-1) == target).float().mean())
+                else:
+                    # Missing target/time is excluded, while preserving a differentiable zero.
+                    visual_losses.append(next(self.visual_recall_head.parameters()).sum() * 0)
+                    visual_accuracies.append(visual_losses[-1].detach())
+            losses["visual_recall"] = torch.stack(visual_losses).mean()
+            losses["visual_recall_accuracy"] = torch.stack(visual_accuracies).mean()
+            for t, value, accuracy in zip(c.visual_recall_times, visual_losses,
+                                          visual_accuracies, strict=True):
+                losses[f"visual_recall_t{t}"] = value
+                losses[f"visual_recall_t{t}_accuracy"] = accuracy
+            losses["total"] = losses["total"] + c.visual_recall_scale * losses["visual_recall"]
         return losses

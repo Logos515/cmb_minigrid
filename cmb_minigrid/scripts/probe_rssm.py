@@ -25,7 +25,14 @@ def main(argv=None):
                             iterations=args.iterations)
         for name, model in report["models"].items():
             print(json.dumps({"model": name, "seed": model["seed"],
-                              "probes": model["probes"]}, sort_keys=True))
+                              "probes": model["probes"],
+                              "handoff_times": model["handoff_times"],
+                              "handoff_state_differences": model["handoff_state_differences"],
+                              "cue_retention_status": model["cue_retention_status"],
+                              **({"recall_head": model["recall_head"]}
+                                 if "recall_head" in model else {}),
+                              **({"visual_recall_head": model["visual_recall_head"]}
+                                 if "visual_recall_head" in model else {})}, sort_keys=True))
         print(f"report={args.output_dir / 'probe_report.json'}")
         return 0
     except (OSError, ValueError, RuntimeError, KeyError, TypeError) as exc:

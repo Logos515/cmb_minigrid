@@ -94,41 +94,74 @@ optimizer schedules, checkpoints and validation belong to Step 5.
 ## Step 5 training and checkpoint interface
 
 `cmb_minigrid.scripts.train_rssm` trains one A/B preset per invocation with its
-own seed, initialization, Adam optimizer and run directory. Shared settings are
-in `configs/train_rssm.yaml`. Entire happened episodes are filtered from obs[0]
-on each minibatch; no shuffled frame or zero-initialized cropped suffix replaces
-the full history. Only the existing public observations, actions, rewards,
-terminal flags and masks enter `RSSM.loss`; Step 4 targets/KL remain unchanged.
+own initialization seed, Adam optimizer and run directory. The final models
+use `models/best_a.pt` (RSSM-A, `deter=128`, seed 42) and `models/best_b.pt`
+(RSSM-B, `deter=256`, seed 45). Both use `encoder_type: cnn`: the three
+categorical MiniGrid channels are embedded separately, processed by spatial
+convolutions and global pooling, and mapped to the unchanged 64-dimensional
+observation embedding. Symbolic IDs are not interpreted as RGB values. The
+`symbolic_mlp` encoder remains the default for backward compatibility and old
+checkpoints.
 
-Validation uses deterministic categorical modes on the whole grouped val split.
-Each loss component is weighted by valid observation or transition count across
-batches, then the total is recomputed with the model's loss scales. Formal
-training stops after configured patience intervals without an improvement larger
-than min_delta. Smoke executes 100 sampled updates by default with stopping
-disabled. Both modes report failure if valid train loss and validation selection
-do not improve, or losses/gradients become non-finite. A zero prior gradient at
-the free-nats floor remains legitimate and is logged separately.
+Training uses complete episodes from `obs[0]` with full-history BPTT; frames
+are not shuffled and no cropped or zero-initialized history suffix is used.
+Only public observations, actions, rewards, terminal flags and masks enter the
+RSSM loss. The final CNN experiment is configured by
+`configs/train_rssm_cnn.yaml` with 1000 maximum updates, batch size 8,
+learning rate 0.001, gradient clipping at 100, validation every 50 updates,
+`min_delta=0.001`, and one CPU thread. The saved A checkpoint used patience 5;
+the saved B checkpoint used patience 100000, effectively disabling practical
+early stopping. Smoke mode executes exactly 100 updates with stopping disabled.
 
-Each checkpoint stores schema/config, model and optimizer state, step, best
-validation/counters, shuffled episode order/cursor, and RNG states. `best.pt`
-is validation-selected; `last.pt` is the latest safe resume point. Checkpoint
-writes use temporary-file replacement. Dataset/manifest SHA-256 fingerprints
-and the resolved configuration are checked on resume; only max_steps/device may
-change. `load_rssm(path, device)` loads either model independently into eval mode
-with no peer checkpoint or external YAML required. `state[t]` indexing and the
-full-history filtering interface are exactly those of Step 4.
+Validation uses deterministic categorical modes on the complete grouped val
+split. Loss components are weighted by valid observation/transition counts
+before recomputing the scaled total. Training logs losses, valid target counts,
+total and per-module gradient norms, validation metrics, and checkpoint state.
+Non-finite losses/gradients and zero total gradients fail explicitly; a zero
+prior gradient below the free-nats floor is valid and logged separately.
 
-`cmb_minigrid.scripts.probe_rssm` freezes both loaded RSSMs, validates strict
-counterfactual pairs and fits detached linear hidden-cue probes using only train
-expert endpoints and train-fitted normalization. Evaluation uses val expert
-endpoints; test remains untouched. Feature extraction stops at handoff_t with
-obs[0:t+1]/action[0:t], excluding the future branch. Controls include current
-categorical observations, reset-current states and reset recent-k=8 states;
-early states/observations check cue visibility. Paired feature distances and
-both-endpoint prediction accuracy accompany single-endpoint accuracy. Hidden
-labels are offline probe targets only; fitted weights are separate artifacts
-with no connection to main-model forward/loss. Neither cue decoding nor a
-world-model loss decrease is a sufficient memory/control acceptance criterion.
+Each checkpoint stores the schema, resolved configuration and data fingerprints,
+model, Adam state, step, validation counters, shuffled episode cursor and RNG
+states. `best.pt` is selected by validation total; `last.pt` is the latest safe
+resume point. `load_rssm(path, device)` independently loads either model into
+eval mode without a peer checkpoint or external YAML. The `state[t]` indexing
+and full-history filtering interface are unchanged from Step 4.
+
+### Final auxiliary objectives
+
+The final training objective is the Step 4 masked world-model loss plus two
+public-cue objectives:
+
+1. `5.0 * CE(recall_head(features(state[12])), early_color)`.
+2. `5.0 * mean_t CE(visual_recall_head(encoder(image[t])), early_color)` for
+   `t in (0,1)`.
+
+`early_color` is extracted only from the single visible red/blue Key in public
+`obs[0]` (`red=0`, `blue=1`). Missing, ambiguous, other-color or unavailable
+targets are masked. The visual head directly supervises the encoder at t=0/1;
+the handoff head supervises the full-history state at t=12. Neither head's
+prediction is connected to the GRU, filtering, categorical sampling or model
+inputs. Training uses sampled straight-through categorical states; validation
+and probes use deterministic argmax.
+
+### Frozen probe and acceptance boundary
+
+`cmb_minigrid.scripts.probe_rssm` freezes both RSSMs and fits detached linear
+probes on train expert endpoints only. It evaluates the validation expert
+endpoints after filtering only `obs[0:13]` and `action[0:12]`, excluding future
+branch data. It reports single-endpoint and both-endpoint accuracy, paired
+feature distances, and controls from the current observation, current reset
+state and recent `k=8` reset state. Hidden labels are offline probe targets;
+probe weights never enter RSSM training, filtering or loss.
+
+The final checkpoints achieve 100% validation full-history probe accuracy and
+100% trained handoff-head accuracy for both A and B. Current/recent controls
+remain at 50%, and direct visual classification at both t=0 and t=1 is 100%
+for both models. This establishes that the early color is represented and
+decodable in the t=12 full-history state, but does not establish policy,
+bridge or closed-loop control success. GPU/mixed-precision comparison,
+test-split evaluation, additional seed/weight sweeps and control evaluation
+remain outside this Step 5 result.
 
 ## Observation contract
 

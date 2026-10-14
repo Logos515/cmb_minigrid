@@ -100,6 +100,26 @@ def test_sequence_matches_single_steps_and_zero_initial_action():
     assert not torch.equal(left.deter, output.states[0].deter)
 
 
+def test_cnn_encoder_shape_gradients_and_filtering():
+    model = RSSM(RSSMConfig(encoder_type="cnn", visual_recall_scale=1.0)).train()
+    data = batch()
+    embedding = model.encoder(data["agent_obs"]["image"][:, 0])
+    assert embedding.shape == (2, 64)
+    losses = model.loss(data)
+    losses["total"].backward()
+    assert any(parameter.grad is not None and parameter.grad.abs().sum() > 0
+               for parameter in model.encoder.network.parameters())
+    model.eval()
+    with torch.no_grad():
+        full = model.observe(data["agent_obs"], data["actions"], sample=False)
+        state = model.initial(2)
+        for t in range(4):
+            obs = obs_at(data, t)
+            state = model.observe_step(state, None if t == 0 else data["actions"][:, t - 1],
+                                       obs, sample=False)
+            torch.testing.assert_close(model.features(state), full.features[:, t])
+
+
 def test_imagination_never_calls_encoder_and_prefix_has_no_future_leak():
     model = RSSM().eval()
     data = batch()

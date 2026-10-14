@@ -1,0 +1,19 @@
+# CNN encoder comparison; all other training and supervision settings match
+# the visual-recall run.
+input: data/samples/step3_trajectories.jsonl
+manifest: data/samples/step3_manifest.json
+rssm:
+  encoder_type: cnn
+  recall_scale: 5.0
+  recall_t: 12
+  visual_recall_scale: 5.0
+  visual_recall_times: [0, 1]
+training:
+  max_steps: 1000
+  batch_size: 8
+  learning_rate: 0.001
+  grad_clip: 100.0
+  val_every: 50
+  patience: 100000
+  min_delta: 0.001
+  num_threads: 1

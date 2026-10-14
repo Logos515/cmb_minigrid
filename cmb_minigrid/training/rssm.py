@@ -6,7 +6,7 @@ import hashlib
 import json
 import math
 import random
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
@@ -15,6 +15,7 @@ import torch
 
 from cmb_minigrid.data.dataset import TrajectoryDataset, collate_trajectories
 from cmb_minigrid.models import RSSM, RSSMConfig
+from cmb_minigrid.models.rssm import early_key_color, recall_targets
 from cmb_minigrid.reproducibility import experiment_id, set_seed
 from cmb_minigrid.runtime import select_device
 
@@ -62,7 +63,9 @@ def total_loss(losses, config: RSSMConfig):
     return (losses["reconstruction"] + config.reward_scale * losses["reward"]
             + config.continue_scale * losses["continue"]
             + config.dynamics_scale * losses["dynamics_kl"]
-            + config.representation_scale * losses["representation_kl"])
+            + config.representation_scale * losses["representation_kl"]
+            + config.recall_scale * losses.get("recall", 0.0)
+            + config.visual_recall_scale * losses.get("visual_recall", 0.0))
 
 
 @torch.no_grad()
@@ -80,11 +83,30 @@ def evaluate(model: RSSM, records, batch_size: int) -> dict[str, float]:
         for name, value in losses.items():
             if name == "total":
                 continue
-            mask = "transition_mask" if name in {"reward", "continue"} else "observation_mask"
-            count = int(batch[mask].sum())
+            if name == "visual_recall" or name == "visual_recall_accuracy":
+                continue
+            if name.startswith("visual_recall_t"):
+                labels = early_key_color(batch["agent_obs"]["image"][:, 0])
+                suffix = name.removeprefix("visual_recall_t").removesuffix("_accuracy")
+                t = int(suffix)
+                count = int(((labels >= 0) & batch["observation_mask"][:, t]).sum()) \
+                    if t < batch["observation_mask"].shape[1] else 0
+            elif name in {"recall", "recall_accuracy"}:
+                count = int(recall_targets(batch, model.config.recall_t)[1].sum())
+            else:
+                mask = "transition_mask" if name in {"reward", "continue"} else "observation_mask"
+                count = int(batch[mask].sum())
             sums[name] = sums.get(name, 0.0) + value.item() * count
             counts[name] = counts.get(name, 0) + count
     result = {name: value / max(counts[name], 1) for name, value in sums.items()}
+    visual_losses = [result[f"visual_recall_t{t}"] for t in model.config.visual_recall_times
+                     if f"visual_recall_t{t}" in result]
+    visual_accuracies = [result[f"visual_recall_t{t}_accuracy"]
+                         for t in model.config.visual_recall_times
+                         if f"visual_recall_t{t}_accuracy" in result]
+    if visual_losses:
+        result["visual_recall"] = sum(visual_losses) / len(visual_losses)
+        result["visual_recall_accuracy"] = sum(visual_accuracies) / len(visual_accuracies)
     result["total"] = total_loss(result, model.config)
     return result
 
@@ -154,6 +176,7 @@ def load_rssm(path: str | Path, device="cpu") -> tuple[RSSM, dict[str, Any]]:
 
 def _resume_signature(config):
     signature = dict(config)
+    signature["rssm"] = asdict(RSSMConfig.from_mapping(signature["rssm"]))
     signature.pop("device", None)
     signature["training"] = dict(signature["training"])
     signature["training"].pop("max_steps")
@@ -250,7 +273,9 @@ def train_rssm(config: dict[str, Any], output_dir: str | Path, *, resume=None):
                  "gradient_norm_before_clip": gradient_norm,
                  "module_gradient_norm_after_clip": module_norms,
                  "valid_observations": int(batch["observation_mask"].sum()),
-                 "valid_transitions": int(batch["transition_mask"].sum())})
+                 "valid_transitions": int(batch["transition_mask"].sum()),
+                 **({"valid_recall_targets": int(recall_targets(batch, model.config.recall_t)[1].sum())}
+                    if model.config.recall_scale > 0 else {})})
             if step % settings.val_every == 0 or step == settings.max_steps:
                 validation = evaluate(model, val.records, settings.batch_size)
                 improved = validation["total"] < best - settings.min_delta
@@ -267,7 +292,10 @@ def train_rssm(config: dict[str, Any], output_dir: str | Path, *, resume=None):
                     save_checkpoint(run_dir / "best.pt", payload)
                 save_checkpoint(run_dir / "last.pt", payload)
                 print(f"step={step} train={losses['total'].item():.6f} "
-                      f"val={validation['total']:.6f} grad={gradient_norm:.6f}", flush=True)
+                      f"val={validation['total']:.6f} grad={gradient_norm:.6f}"
+                      + (f" recall={validation['recall']:.6f} "
+                         f"recall_acc={validation['recall_accuracy']:.3f}"
+                         if model.config.recall_scale > 0 else ""), flush=True)
         final_train = evaluate(model, train.records, settings.batch_size)
         final_val = evaluate(model, val.records, settings.batch_size)
     except (RuntimeError, ValueError) as exc:

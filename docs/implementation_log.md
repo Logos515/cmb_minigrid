@@ -401,338 +401,89 @@ reconstruction <0.1 and reward MSE <0.02).
   loss/interface. It still needs its own sequence-training, logging,
   optimizer/checkpoint lifecycle, validation and history-retention gates.
 
-## Step 5 — independent RSSM-A/B training and acceptance (2026-10-13)
+## Step 5 — final RSSM-A/B training and memory verification (2026-10-14)
 
-### Changed files and scope
+### Final implementation
 
-- Added `cmb_minigrid/training/__init__.py`, `training/rssm.py` and
-  `training/probe.py`: independent full-episode training, checkpoint lifecycle,
-  valid-target-weighted validation, early stopping and frozen linear cue probes.
-- Added `cmb_minigrid/scripts/train_rssm.py` and `scripts/probe_rssm.py`.
-- Added `configs/train_rssm.yaml` and `tests/test_training.py` (8 CPU tests).
-- Updated `README.md`, `docs/spec.md` and this implementation log.
-- Read the existing spec/log/configurations first; the worktree was initially
-  clean. Reused the Step 4 categorical reconstruction, reward/continue and
-  split KL losses without modifying their implementation or scales. No task,
-  observation, state/action interface, baseline, dataset or split was changed.
-  No policy, bridge or subsequent-step training was implemented or run.
+- `RSSMConfig.encoder_type` supports `symbolic_mlp` (default, backward
+  compatible) and `cnn`. The final models use `cnn`: each MiniGrid categorical
+  channel is embedded separately, followed by spatial convolutions and global
+  pooling to produce the unchanged 64-dimensional observation embedding.
+- The objective includes the masked RSSM reconstruction, reward/continue and
+  split KL losses, plus `recall_scale=5.0` at `recall_t=12` and
+  `visual_recall_scale=5.0` at observation times 0 and 1. Targets use only the
+  visible public Key color in `obs[0]`; auxiliary outputs never enter
+  filtering, the GRU or categorical sampling.
+- Training remains full-history sequence BPTT with padding/terminal masks,
+  deterministic validation, gradient monitoring, validation-selected
+  `best.pt`, safe `last.pt`, and saved Adam/RNG/config/sampler state.
+- Frozen linear probes consume only the prefix through handoff t=12 and never
+  feed back into training or filtering. Current-observation and recent-history
+  controls remain part of the diagnostic.
 
-### Implementation and interfaces
+Relevant interfaces are in `cmb_minigrid/models/rssm.py`,
+`cmb_minigrid/training/rssm.py`, `cmb_minigrid/training/probe.py`,
+`cmb_minigrid/scripts/probe_rssm.py`, and
+`cmb_minigrid/scripts/diagnose_categorical_response.py`. CNN training is
+configured by `configs/train_rssm_cnn.yaml`.
 
-`train_rssm(config, output_dir, resume=...)` trains one independent RSSM. A
-keeps deter=128/seed42, B keeps deter=256/seed43; each has separate initialization,
-Adam optimizer, logs and checkpoints. Configured defaults: 1000 maximum updates,
-batch size 8, learning rate .001, gradient clip 100, validation every 50 updates,
-patience 5, min_delta .001 and one CPU thread. Formal runs initialize afresh
-after smoke; the first 100 sampled updates are reproducible with the same seed.
-Smoke defaults to exactly 100 updates and disables early stopping.
+### Final artifacts and measured acceptance
 
-Episodes are shuffled as complete sequences, with full BPTT starting at obs[0].
-There is no cropped, zero-initialized history suffix and no frame-level split.
-An explicit batch allowlist excludes expert actions, metadata and privileged
-state from model losses. Existing prefix masks sanitize padding, include the
-terminal transition/final observation and reject any valid post-done transition;
-continue still bootstraps time-limit truncation. Validation uses all 40 val
-episodes and deterministic categorical modes; components are weighted across
-batches by valid observation/transition counts before recomputing total loss.
-No test episodes are trained or evaluated.
+The selected user-provided checkpoints are `models/best_a.pt` (RSSM-A,
+seed 42) and `models/best_b.pt` (RSSM-B, seed 45). Both independently load
+from the checkpoint alone and were tested on 10 validation counterfactual
+pairs, 20 endpoints, using public history through t=12.
 
-`metrics.jsonl` records every sampled train component, total gradient norm
-before clipping, per-module gradient norms after clipping, valid target counts,
-and each validation result. Non-finite loss/gradient or zero total gradient
-fails explicitly; in-loop errors create `failure.json` and retain the previous
-safe checkpoint. Zero prior gradient below the free-nats floor is legitimate.
-Run `report.json` distinguishes decreasing loss from lack of improvement; it
-does not claim memory sufficiency. `config.json` records resolved configuration,
-seed/device, paths and SHA-256 fingerprints of both data and split manifest.
-
-`best.pt` is selected by validation; `last.pt` is the latest safe resume point.
-Checkpoints store schema, full config, model, Adam, stopping counters, step,
-initial losses, episode permutation/cursor and Python/NumPy/CPU/CUDA RNG state.
-Temporary-file replacement makes checkpoint writes atomic. Existing run
-directories are rejected unless explicitly resumed. Resume checks configuration
-and file fingerprints; only maximum step budget/device may change. Resume must
-use the run's latest `last.pt`; early-stopped runs remain stopped. Exact CPU
-continuation is tested at scheduled validation boundaries. A budget ending
-between scheduled boundaries introduces an extra endpoint validation, so its
-stopping decisions need not match an uninterrupted budget.
-
-`load_rssm(path, device)` loads either model independently into eval mode using
-only that checkpoint, returning `(RSSM, checkpoint)`. No external model YAML or
-peer is required. The initial sentinel, state[t] convention and full-history
-filtering APIs remain unchanged.
-
-`run_probes(...)`/`probe_rssm` validate saved strict expert pairs and freeze both
-RSSMs (`eval`, `requires_grad=False`, `no_grad` extraction). Separate linear
-logistic probes use train-only normalization, fixed L2=.01 and 100 LBFGS
-iterations, with no validation tuning. Label targets are offline hidden labels
-only. Each pair is filtered through handoff t=12 using obs[:13]/action[:12];
-future branch observations/actions are excluded. Features include full-history
-`features(state)` (deter + one-hot stoch), reset-current state, reset recent
-eight-transition state, early state and raw current/early categorical observation.
-Reports include train/val accuracy, both-endpoint accuracy and pair feature
-distance. Probe weights/normalizers are separate files; they never feed back
-into RSSM training, filtering or loss. No test-set probe is run.
-
-### Actual commands and exit codes
-
-All commands below were executed in the repository root using the existing
-`cmb_minigrid` environment. Every listed command returned **exit code 0**:
-
-```bash
-/data2/xuyihao/envs/cmb_minigrid/bin/python -m pytest -q tests/test_training.py
-/data2/xuyihao/envs/cmb_minigrid/bin/python -m pytest -q
-/data2/xuyihao/envs/cmb_minigrid/bin/ruff check cmb_minigrid tests
-/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.validate_data
-/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.train_rssm --help
-/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.probe_rssm --help
-/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.train_rssm --config configs/rssm_a.yaml --device cpu --mode smoke --output-dir runs/step5/smoke
-/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.train_rssm --config configs/rssm_b.yaml --device cpu --mode smoke --output-dir runs/step5/smoke
-/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.train_rssm --config configs/rssm_a.yaml --device cpu --output-dir runs/step5/formal
-/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.train_rssm --config configs/rssm_b.yaml --device cpu --output-dir runs/step5/formal
-/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.probe_rssm --checkpoint-a runs/step5/formal/cmb_minigrid_rssm_a-14bec33435/best.pt --checkpoint-b runs/step5/formal/cmb_minigrid_rssm_b-9f7a571497/best.pt --output-dir runs/step5/probes --device cpu --seed 42
-/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.train_rssm --config configs/rssm_a.yaml --device cpu --max-steps 2 --output-dir runs/step5/resume_check
-/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.train_rssm --config configs/rssm_a.yaml --device cpu --max-steps 4 --resume runs/step5/resume_check/cmb_minigrid_rssm_a-653729eb84/last.pt
-git diff --check
-```
-
-- Environment inspection: Python 3.11.17, PyTorch 2.14.1+cu130, Gymnasium 1.4.0,
-  MiniGrid 3.1.0; `cuda_available False`, `cuda_devices 0`, with an NVML
-  initialization warning. All actual training/probing used CPU float32.
-- New tests: `8 passed in 12.37s`; full suite: `64 passed in 27.17s`.
-  Ruff: `All checks passed!`; diff check: no whitespace errors.
-- Data CLI: `records=200 replayed=200 labels=200 pairs=50
-  handoff_restore=validated split_errors=0 pair_errors=0`.
-- Tests cover exact sampled resume (weights, Adam moments, RNG, sampler and
-  stopping state), independent A/B loading and all-time filtering equivalence,
-  validation weighting with mixed horizons, patience and best/last separation,
-  explicit non-finite failure, changed config/data and existing-run rejection,
-  empty validation failure, frozen probe parameter preservation, chance-level
-  paired-current controls, visible-cue positive control and future poisoning.
-  Existing Step 4 tests still cover loss masks, terminal/truncation semantics
-  and KL stop-gradients/free-nats.
-- Actual resume CLI: restored step 2 and executed steps 3–4; validation total
-  decreased from 4.219810 to 3.969110. This separate lifecycle check does not
-  alter the 100-step smoke or formal checkpoints.
-
-### Measured training results (pilot)
-
-Both smoke CLIs finished all 100 updates, with finite losses/gradients,
-`status=loss_decreased`, train=120 episodes and val=40 episodes.
-
-| CPU smoke | A (seed42) | B (seed43) |
+| Metric at t=12 | RSSM-A | RSSM-B |
 | --- | ---: | ---: |
-| Initial deterministic train total | 4.411941 | 4.430413 |
-| Final deterministic train total | 1.789683 | 1.826862 |
-| Initial deterministic val total | 4.420314 | 4.419200 |
-| Final deterministic val total | 1.880305 | 1.772794 |
+| Full-history frozen probe accuracy | 100% | 100% |
+| Trained recall-head accuracy | 100% | 100% |
+| Both endpoints correct | 100% | 100% |
+| Mean deterministic-state pair L2 | 13.1766 | 16.7183 |
+| Mean stochastic-state pair L2 | 3.1623 | 4.8990 |
+| Mean full-feature pair L2 | 13.5507 | 17.4213 |
+| Changed categorical groups | 5/16 | 12/16 |
+| Current-state probe accuracy | 50% | 50% |
+| Recent-state probe accuracy | 50% | 50% |
 
-Formal runs used the unchanged default 1000-update ceiling and both actually
-early-stopped after five validation checks without a sufficient improvement.
+The direct visual classification head reaches 100% at both t=0 and t=1 for
+both models. The standalone categorical diagnosis on a validation pair is:
 
-| Formal CPU training | A | B |
-| --- | ---: | ---: |
-| Executed updates | 400 | 350 |
-| Selected best step | 150 | 100 |
-| Best deterministic val total | 1.492647 | 1.772794 |
-| Last deterministic train total | 1.388558 | 1.058326 |
-| Last deterministic val total | 2.606383 | 2.045344 |
-| First 25 sampled updates mean total | 3.183479 | 3.010983 |
-| Last 25 sampled updates mean total | 1.313743 | 1.092375 |
-| Minimum pre-clip total gradient norm | 0.267121 | 0.302103 |
-| Maximum pre-clip total gradient norm | 9.336225 | 16.183205 |
-| Updates with zero prior gradient | 93 | 77 |
-
-Losses decrease overall, but are not monotone. Validation rebounds markedly:
-A's step-350 val loss is 5.181147, and B's step-200 value is 3.231568. This is
-evidence of poor generalization/overfitting on the pilot, not a usable-memory
-claim. Best checkpoints, rather than the last states, were used for probes.
-
-Formal artifacts (local and ignored by git):
-
-- `runs/step5/formal/cmb_minigrid_rssm_a-14bec33435/{best.pt,last.pt,report.json,metrics.jsonl,config.json}`.
-- `runs/step5/formal/cmb_minigrid_rssm_b-9f7a571497/{best.pt,last.pt,report.json,metrics.jsonl,config.json}`.
-- Smoke artifacts: `runs/step5/smoke/cmb_minigrid_rssm_a-f747fde0fa/` and
-  `runs/step5/smoke/cmb_minigrid_rssm_b-3199aaf0d5/`.
-- Probe artifacts: `runs/step5/probes/probe_report.json` and 12 independent
-  `probe_{A,B}_{feature}.pt` files.
-
-An additional actual CPU check independently loaded the two formal best
-checkpoints and filtered a longest train episode (64 transitions / 65
-observations). A features were `[1,65,384]`, B `[1,65,512]`; every time step
-matched repeated `observe_step` exactly (`rtol=atol=0`), and all features were
-finite. The command returned exit 0, selected_step=150/100 and seed=42/43.
-
-### Cue-memory diagnostic failure
-
-The probe CLI completed successfully as a diagnostic tool (exit 0); its model
-memory result is **negative**, not a successful history-retention gate. It fit
-30 train pairs / 60 endpoints from three families and evaluated 10 val pairs /
-20 endpoints from the held-out validation family. Both A and B produced:
-
-| Frozen feature | Train cue accuracy | Val cue accuracy | Val both-endpoint accuracy |
-| --- | ---: | ---: | ---: |
-| Full-history handoff state | 0.5 | 0.5 | 0 |
-| Current-only reset state | 0.5 | 0.5 | 0 |
-| Recent-eight-transition reset state | 0.5 | 0.5 | 0 |
-| Early state (obs[0]) | 0.5 | 0.5 | 0 |
-| Raw current observation | 0.5 | 0.5 | 0 |
-| Raw early observation | 1.0 | 1.0 | 1 |
-
-Paired full-history, early, current and recent **feature distances were exactly
-zero** for both models in train and val. The early observation positive control
-has mean pair distance 1.414214 and perfectly decodes the cue; thus the diagnostic
-is not limited by an invisible label. Current/recent chance controls confirm
-that this cue is absent from the permitted handoff window.
-
-An additional actual diagnostic on one val expert pair (exit 0) compared state
-components at t=0 and t=12. Both models' deter and hard one-hot stoch pair
-distances were zero at both times. At t=0 posterior-logit distances were
-0.021823682 (A) and 0.010492683 (B), but at t=12 these were also zero. These
-measurements localize a deterministic-filtering problem: the early encoder/
-posterior can respond slightly to the cue, but argmax selects the same categories,
-so the recurrent state receives no differing stochastic input along the shared
-action/observation prefix. This is measured evidence for these checkpoints, not
-a conclusion about all hyperparameters or sampled filtering modes.
-
-### Unresolved issues, unrun checks and next dependency
-
-- Engineering acceptance is verified: independent checkpoints, full-history
-  filtering, decreasing overall losses, masks, validation stopping, logs and
-  optimizer/config/RNG resume. **The trained pilot does not preserve the early
-  cue in deterministic `features(state)` at handoff. Memory sufficiency is not
-  accepted.** No hidden-label auxiliary loss, probe feedback or experiment
-  definition change was introduced to force a positive result.
-- GPU training, GPU resume, mixed precision and cross-device reproducibility
-  were not run because this session reports no available CUDA device. CPU smoke
-  and exact CPU continuation are verified; no cross-device equality is claimed.
-- Test-split probes, large datasets, multiple independent A/B seed runs and
-  confidence intervals were not run: this step is a small existing-data pilot,
-  and test results were not consumed for training or model selection. Repeated
-  seeded pairs use five fixed geometry templates, not independent random maps.
-- Policy/Actor, bridge, Oracle/Reset control comparisons and closed-loop success
-  were not run because the user authorized only Step 5. Current-observation
-  decoding and world-model loss alone are not grounds for moving on.
-- Next dependency: first resolve cue retention in an authorized Step 5 follow-up
-  (categorical collapse/deterministic filtering and long-history learning),
-  preserving task/splits and keeping probes offline. Only after adequate memory
-  evidence should later policy/control gates be considered. No later step was
-  started automatically.
-
-## Step 5 follow-up: standalone categorical response diagnosis (2026-10-13)
-
-### Files, scope and interface
-
-- Completed the existing untracked draft
-  `cmb_minigrid/scripts/diagnose_categorical_response.py`, added
-  `tests/test_categorical_response.py`, and updated this log. Existing model,
-  trainer, probe, configs, data, splits and task interfaces were not edited.
-- CLI accepts `--checkpoint`, `--input`, `--manifest`, `--split` (default val),
-  `--pair-id` (default first expert pair in that split), `--device`, `--seed`
-  and optional `--output`. It validates the manifest and selected strict pair,
-  checks checkpoint input/manifest fingerprints, and sorts worlds by hidden
-  label for reporting only. Labels never enter filtering.
-- Calls actual `observe_step(..., sample=False)` from the initial sentinel at
-  t=0 and uses action[0] at t=1. Temporary read-only forward hooks capture
-  encoder and raw posterior outputs; hooks are removed in a finally block.
-  Independently computed transition, normalized logits and hard one-hot state
-  must match the returned state exactly. No optimization or retraining occurs.
-- Prints mean absolute, maximum absolute and L2 differences for encoder, raw
-  posterior, stored posterior logits (normalized log probabilities), posterior
-  probabilities, stochastic state and deterministic state. Also prints the
-  two argmax vectors, changed-group count, public observation/action equality,
-  per-group probability perturbations and top-1/top-2 probability margins.
-  A margin greater than twice the maximum category probability perturbation
-  is a sufficient bound for the winner to remain unchanged in that group.
-
-### Actual commands and verification
-
-Final commands below all returned exit code 0 from the repository root:
-
-```bash
-/data2/xuyihao/envs/cmb_minigrid/bin/python -m pytest -q tests/test_categorical_response.py
-/data2/xuyihao/envs/cmb_minigrid/bin/python -m pytest -q
-/data2/xuyihao/envs/cmb_minigrid/bin/ruff check cmb_minigrid tests
-/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.diagnose_categorical_response --checkpoint runs/step5/formal/cmb_minigrid_rssm_a-14bec33435/best.pt --device cpu --seed 42 --split val --output runs/step5/probes/categorical_response_a.json
-/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.diagnose_categorical_response --checkpoint runs/step5/formal/cmb_minigrid_rssm_b-9f7a571497/best.pt --device cpu --seed 42 --split val --output runs/step5/probes/categorical_response_b.json
-git diff --check
-```
-
-New tests: `5 passed in 4.72s`; full suite: `69 passed in 28.51s`;
-Ruff: `All checks passed!`. Tests check controlled nonzero responses with and
-without category flips, zero posterior response, exact agreement with sequence
-filtering, unchanged weights/RNG/gradients, hook removal, missing/incomplete
-pairs, mismatched initial actions and non-finite differences. First test attempt
-returned exit 1 (`1 failed, 4 passed`) because the test tried to mutate an action
-tuple; corrected to create a new tuple. Initial focused Ruff returned exit 1 for
-loop-closure binding and `sorted(...)[0]`; both were corrected before final runs.
-
-### Measured result and evidence boundary
-
-Both CLI runs selected validation pair `pair-hidden_history_nav_v2-0052`, worlds
-`left_blocked`/`right_blocked`. A checkpoint step=150/seed42;
-B checkpoint step=100/seed43. Both t=0 and t=1 images differ in exactly one
-color-channel entry and no object/state entries; directions/task IDs match.
-t=0 previous action is None; t=1 previous actions are `[2,2]`.
-
-| Model/time | Encoder L2 | Stored logits L2 | Probabilities L2 | Argmax changes | Stoch L2 | Deter L2 |
+| Model/time | Encoder L2 | Posterior-logit L2 | Probability L2 | Argmax changes | Stochastic L2 | Deterministic L2 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| A, t=0 | 0.032048747 | 0.021823680 | 0.001617347 | 0/16 | 0 | 0 |
-| A, t=1 | 0.119881116 | 0.096732296 | 0.007295698 | 0/16 | 0 | 0 |
-| B, t=0 | 0.045795418 | 0.010492683 | 0.000660211 | 0/16 | 0 | 0 |
-| B, t=1 | 0.060542379 | 0.011704215 | 0.000755153 | 0/16 | 0 | 0 |
+| A, t=0 | 14.5876 | 26.0298 | 3.5283 | 11/16 | 4.6904 | 0 |
+| A, t=1 | 14.0465 | 27.4548 | 3.5494 | 10/16 | 4.4721 | 4.1939 |
+| B, t=0 | 15.8761 | 60.2976 | 4.2754 | 16/16 | 5.6569 | 0 |
+| B, t=1 | 15.4173 | 61.7733 | 4.2569 | 16/16 | 5.6569 | 8.2202 |
 
-For all four rows, all 16 world-0 probability margins exceed twice their
-group's maximum probability perturbation. The largest absolute probability
-differences are A: 0.000404082 at t=0, 0.001881883 at t=1;
-B: 0.000138953 at t=0, 0.000152647 at t=1. Raw posterior responses are also
-nonzero. Every reconstructed state matches `observe_step` exactly.
+The zero deterministic difference at t=0 is expected because the recurrent
+transition precedes conditioning on observation 0. At t=1 the deterministic
+states differ, showing that the early color entered the recurrent state. At
+t=12 both models preserve color information in full-history states; the
+current/recent reset controls remain at chance.
 
-These checkpoints respond to color before hard selection, but the response is
-too small relative to category decision margins to change the hard stochastic
-features. Equal hard stochastic inputs and actions leave the recurrence equal
-at t=1. Equal deter at t=0 is expected because its transition precedes obs[0].
-Posterior logits remain different within the returned RSSMState, but neither
-the GRU transition nor `features(state)` uses those logits. This localizes the
-loss of cue distinction in deterministic recurrent/probe features to argmax;
-it does not explain why training learned such a weak cue response.
+### Verification and boundaries
 
-Reports are new ignored runtime artifacts:
-`runs/step5/probes/categorical_response_a.json` and
-`runs/step5/probes/categorical_response_b.json`. No previous probe report or
-checkpoint was overwritten.
-
-### Unrun checks and next dependency
-
-GPU diagnostics, sampled filtering, all-pair sweeps, test-split evaluation,
-other checkpoints/seeds and later time-step diagnoses were not run: this
-request targets t=0/1 deterministic filtering for the existing A/B checkpoints.
-The finding applies to the selected validation pair, not every possible input.
-No model fix, retraining, policy or bridge work was attempted. A subsequent
-authorized investigation must distinguish weak cue learning from the hard
-filtering bottleneck before claiming that cue memory is adequate.
-
-### Repeat verification of the requested t=0/1 diagnosis
-
-Reused the standalone script without editing original code or overwriting any
-reports/checkpoints. Only this log was additionally edited. Actual commands:
+Final checks used Python 3.11.17 and CPU float32:
 
 ```bash
-/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.diagnose_categorical_response --checkpoint runs/step5/formal/cmb_minigrid_rssm_a-14bec33435/best.pt --device cpu --seed 42 --split val
-/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.diagnose_categorical_response --checkpoint runs/step5/formal/cmb_minigrid_rssm_b-9f7a571497/best.pt --device cpu --seed 42 --split val
-/data2/xuyihao/envs/cmb_minigrid/bin/python -m pytest -q tests/test_categorical_response.py
-/data2/xuyihao/envs/cmb_minigrid/bin/ruff check cmb_minigrid/scripts/diagnose_categorical_response.py tests/test_categorical_response.py
-git diff --check
+/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.probe_rssm \
+  --checkpoint-a models/best_a.pt --checkpoint-b models/best_b.pt \
+  --output-dir runs/step5/user_models_probe_20261014 --device cpu --seed 42
+/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.diagnose_categorical_response \
+  --checkpoint models/best_a.pt --device cpu --split val \
+  --output runs/step5/user_models_diag/categorical_a.json
+/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.diagnose_categorical_response \
+  --checkpoint models/best_b.pt --device cpu --split val \
+  --output runs/step5/user_models_diag/categorical_b.json
 ```
 
-All returned exit code 0. Focused tests: `5 passed in 4.38s`; Ruff:
-`All checks passed!`. Both model runs reproduced the table above for validation
-pair `pair-hidden_history_nav_v2-0052`, with 0/16 argmax changes and zero hard
-stochastic/deterministic differences at both times. All four margin checks
-returned 16/16 groups satisfying the sufficient no-flip bound, and all state
-checks exactly matched `observe_step`. The cue is still visibly different at
-t=1; equal hard states do not imply equal encoder outputs or equal distributions.
-The full suite was not repeated in this verification because no script/test
-code changed since the previously recorded 69-test pass. GPU, sampled filtering,
-all-pair sweeps and retraining remain unrun for the scope reasons above; the
-underlying cause of weak learned cue response remains a separate dependency.
+All three commands returned exit code 0. Reports are in
+`runs/step5/user_models_probe_20261014/` and
+`runs/step5/user_models_diag/`. The full suite after the CNN implementation
+passed (`84 passed`), Ruff was clean, and `git diff --check` was clean.
+
+This establishes cue decoding and retention in the RSSM state, not downstream
+policy, bridge or closed-loop control success. GPU/mixed-precision comparison,
+test-split evaluation, additional seed/weight sweeps and control evaluation
+remain unrun.
