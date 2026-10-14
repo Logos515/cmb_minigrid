@@ -618,3 +618,121 @@ a conclusion about all hyperparameters or sampled filtering modes.
   preserving task/splits and keeping probes offline. Only after adequate memory
   evidence should later policy/control gates be considered. No later step was
   started automatically.
+
+## Step 5 follow-up: standalone categorical response diagnosis (2026-10-13)
+
+### Files, scope and interface
+
+- Completed the existing untracked draft
+  `cmb_minigrid/scripts/diagnose_categorical_response.py`, added
+  `tests/test_categorical_response.py`, and updated this log. Existing model,
+  trainer, probe, configs, data, splits and task interfaces were not edited.
+- CLI accepts `--checkpoint`, `--input`, `--manifest`, `--split` (default val),
+  `--pair-id` (default first expert pair in that split), `--device`, `--seed`
+  and optional `--output`. It validates the manifest and selected strict pair,
+  checks checkpoint input/manifest fingerprints, and sorts worlds by hidden
+  label for reporting only. Labels never enter filtering.
+- Calls actual `observe_step(..., sample=False)` from the initial sentinel at
+  t=0 and uses action[0] at t=1. Temporary read-only forward hooks capture
+  encoder and raw posterior outputs; hooks are removed in a finally block.
+  Independently computed transition, normalized logits and hard one-hot state
+  must match the returned state exactly. No optimization or retraining occurs.
+- Prints mean absolute, maximum absolute and L2 differences for encoder, raw
+  posterior, stored posterior logits (normalized log probabilities), posterior
+  probabilities, stochastic state and deterministic state. Also prints the
+  two argmax vectors, changed-group count, public observation/action equality,
+  per-group probability perturbations and top-1/top-2 probability margins.
+  A margin greater than twice the maximum category probability perturbation
+  is a sufficient bound for the winner to remain unchanged in that group.
+
+### Actual commands and verification
+
+Final commands below all returned exit code 0 from the repository root:
+
+```bash
+/data2/xuyihao/envs/cmb_minigrid/bin/python -m pytest -q tests/test_categorical_response.py
+/data2/xuyihao/envs/cmb_minigrid/bin/python -m pytest -q
+/data2/xuyihao/envs/cmb_minigrid/bin/ruff check cmb_minigrid tests
+/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.diagnose_categorical_response --checkpoint runs/step5/formal/cmb_minigrid_rssm_a-14bec33435/best.pt --device cpu --seed 42 --split val --output runs/step5/probes/categorical_response_a.json
+/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.diagnose_categorical_response --checkpoint runs/step5/formal/cmb_minigrid_rssm_b-9f7a571497/best.pt --device cpu --seed 42 --split val --output runs/step5/probes/categorical_response_b.json
+git diff --check
+```
+
+New tests: `5 passed in 4.72s`; full suite: `69 passed in 28.51s`;
+Ruff: `All checks passed!`. Tests check controlled nonzero responses with and
+without category flips, zero posterior response, exact agreement with sequence
+filtering, unchanged weights/RNG/gradients, hook removal, missing/incomplete
+pairs, mismatched initial actions and non-finite differences. First test attempt
+returned exit 1 (`1 failed, 4 passed`) because the test tried to mutate an action
+tuple; corrected to create a new tuple. Initial focused Ruff returned exit 1 for
+loop-closure binding and `sorted(...)[0]`; both were corrected before final runs.
+
+### Measured result and evidence boundary
+
+Both CLI runs selected validation pair `pair-hidden_history_nav_v2-0052`, worlds
+`left_blocked`/`right_blocked`. A checkpoint step=150/seed42;
+B checkpoint step=100/seed43. Both t=0 and t=1 images differ in exactly one
+color-channel entry and no object/state entries; directions/task IDs match.
+t=0 previous action is None; t=1 previous actions are `[2,2]`.
+
+| Model/time | Encoder L2 | Stored logits L2 | Probabilities L2 | Argmax changes | Stoch L2 | Deter L2 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| A, t=0 | 0.032048747 | 0.021823680 | 0.001617347 | 0/16 | 0 | 0 |
+| A, t=1 | 0.119881116 | 0.096732296 | 0.007295698 | 0/16 | 0 | 0 |
+| B, t=0 | 0.045795418 | 0.010492683 | 0.000660211 | 0/16 | 0 | 0 |
+| B, t=1 | 0.060542379 | 0.011704215 | 0.000755153 | 0/16 | 0 | 0 |
+
+For all four rows, all 16 world-0 probability margins exceed twice their
+group's maximum probability perturbation. The largest absolute probability
+differences are A: 0.000404082 at t=0, 0.001881883 at t=1;
+B: 0.000138953 at t=0, 0.000152647 at t=1. Raw posterior responses are also
+nonzero. Every reconstructed state matches `observe_step` exactly.
+
+These checkpoints respond to color before hard selection, but the response is
+too small relative to category decision margins to change the hard stochastic
+features. Equal hard stochastic inputs and actions leave the recurrence equal
+at t=1. Equal deter at t=0 is expected because its transition precedes obs[0].
+Posterior logits remain different within the returned RSSMState, but neither
+the GRU transition nor `features(state)` uses those logits. This localizes the
+loss of cue distinction in deterministic recurrent/probe features to argmax;
+it does not explain why training learned such a weak cue response.
+
+Reports are new ignored runtime artifacts:
+`runs/step5/probes/categorical_response_a.json` and
+`runs/step5/probes/categorical_response_b.json`. No previous probe report or
+checkpoint was overwritten.
+
+### Unrun checks and next dependency
+
+GPU diagnostics, sampled filtering, all-pair sweeps, test-split evaluation,
+other checkpoints/seeds and later time-step diagnoses were not run: this
+request targets t=0/1 deterministic filtering for the existing A/B checkpoints.
+The finding applies to the selected validation pair, not every possible input.
+No model fix, retraining, policy or bridge work was attempted. A subsequent
+authorized investigation must distinguish weak cue learning from the hard
+filtering bottleneck before claiming that cue memory is adequate.
+
+### Repeat verification of the requested t=0/1 diagnosis
+
+Reused the standalone script without editing original code or overwriting any
+reports/checkpoints. Only this log was additionally edited. Actual commands:
+
+```bash
+/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.diagnose_categorical_response --checkpoint runs/step5/formal/cmb_minigrid_rssm_a-14bec33435/best.pt --device cpu --seed 42 --split val
+/data2/xuyihao/envs/cmb_minigrid/bin/python -m cmb_minigrid.scripts.diagnose_categorical_response --checkpoint runs/step5/formal/cmb_minigrid_rssm_b-9f7a571497/best.pt --device cpu --seed 42 --split val
+/data2/xuyihao/envs/cmb_minigrid/bin/python -m pytest -q tests/test_categorical_response.py
+/data2/xuyihao/envs/cmb_minigrid/bin/ruff check cmb_minigrid/scripts/diagnose_categorical_response.py tests/test_categorical_response.py
+git diff --check
+```
+
+All returned exit code 0. Focused tests: `5 passed in 4.38s`; Ruff:
+`All checks passed!`. Both model runs reproduced the table above for validation
+pair `pair-hidden_history_nav_v2-0052`, with 0/16 argmax changes and zero hard
+stochastic/deterministic differences at both times. All four margin checks
+returned 16/16 groups satisfying the sufficient no-flip bound, and all state
+checks exactly matched `observe_step`. The cue is still visibly different at
+t=1; equal hard states do not imply equal encoder outputs or equal distributions.
+The full suite was not repeated in this verification because no script/test
+code changed since the previously recorded 69-test pass. GPU, sampled filtering,
+all-pair sweeps and retraining remain unrun for the scope reasons above; the
+underlying cause of weak learned cue response remains a separate dependency.
