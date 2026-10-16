@@ -487,3 +487,109 @@ This establishes cue decoding and retention in the RSSM state, not downstream
 policy, bridge or closed-loop control success. GPU/mixed-precision comparison,
 test-split evaluation, additional seed/weight sweeps and control evaluation
 remain unrun.
+
+## Step 6 — frozen-RSSM Actor training and Oracle/Reset closed-loop gate (2026-10-16)
+
+### Final implementation
+
+- `cmb_minigrid/models/policy.py` defines `ActorPolicy`, a three-action
+  (`left=0`, `right=1`, `forward=2`) behavior-cloning head consuming an RSSM
+  feature and a fixed public goal token.
+- `cmb_minigrid/training/policy.py` trains the Actor on detached posterior
+  features of a frozen RSSM using train/val expert records and offline
+  `expert_actions` labels. Class weighting is selected by `class_weighting`
+  (`inverse`, `sqrt` or `none`).
+- `run_closed_loop` implements three independent closed loops:
+  `a_full_history`, `oracle_b_full_history` and `reset_b`. Full-history
+  filtering follows `obs[t] -> state[t] -> action[t]`; Reset-B reconstructs
+  each state from `initial(1)` and the current observation only. Expert
+  actions never advance the environment.
+- `run_offline_replay` / `evaluate_offline_replays` replay `record.actions[t]`
+  and record Actor predictions without passing them to `env.step`
+  (`actor_actions_replayed=false`).
+- Closed-loop and offline trajectory records include `first_error_t`,
+  predicted/expert actions, `first_error_phase`, `first_error_before_handoff`
+  and `steps_before_first_error`; each mode has a `first_error_summary`.
+  Validation logging also reports full training-set loss/accuracy
+  (`train_metrics` in `metrics.jsonl`, `final_train` in `report.json`).
+
+CLIs are `cmb_minigrid.scripts.train_policy`, `evaluate_policy`,
+`evaluate_policy_offline` and `diagnose_policy_errors`. Configs are
+`configs/train_policy.yaml`, `configs/train_policy_unweighted.yaml` and
+`configs/train_policy_sqrt.yaml`. Tests are `tests/test_policy.py` and
+`tests/test_policy_offline.py`. Step 5 checkpoints, trajectory data, split,
+observation contract, environment and Bridge code were not modified.
+
+The public `evaluate_policy` CLI is fixed to the test split. Training-split
+evaluation was run through an inline Python heredoc that selects
+`manifest.assignment == "train"` and calls `run_closed_loop`; a `--split`
+option is needed before repeated training-split evaluation in later steps.
+
+### Final artifacts and measured acceptance
+
+The selected frozen components are:
+
+| Role | Path | Notes |
+| --- | --- | --- |
+| RSSM-A | `models/best_a.pt` | Step 5 checkpoint, unchanged |
+| RSSM-B | `models/best_b.pt` | Step 5 checkpoint, unchanged |
+| Actor-A | `models/policy_a.pt` | user-provided |
+| Actor-B | `models/policy_b.pt` | user-provided; square-root inverse-frequency weighting, feature 512, hidden 128, `best_step=50`, `best_val=0.7915889` |
+
+The Actor-B SHA-256 is
+`6a8294a722cf1b34073f8dedefb078dc0369020083f3a09d30e7909cf3950d63`.
+Data are `data/samples/step3_trajectories.jsonl` with
+`data/samples/step3_manifest.json`: map family v1 is test, v2 validation and
+v3/v4/v5 train, with 20 expert episodes per family. The branch decision is at
+`handoff_t=12`. Train action counts are `forward=1120`, `left=60`,
+`right=60`.
+
+Training-split closed-loop results on 60 expert episodes:
+
+| Mode | Episodes | Branch accuracy | Closed-loop success | First-error summary |
+| --- | ---: | ---: | ---: | --- |
+| A full-history | 60 | 1.000 | 1.000 (60/60) | no errors |
+| Oracle-B full-history | 60 | 1.000 | 1.000 (60/60) | no errors |
+| Reset-B | 60 | 0.000 | 0.000 (0/60) | all first errors at t=12 |
+
+Reports are
+`runs/step6/evaluation_models_train_20261016/closed_loop_report.json` (A mode;
+its B entries use a superseded Actor-B) and
+`runs/step6/evaluation_policy_b_retest_train_20261016/closed_loop_report.json`
+(current Actor-B, Oracle-B and Reset-B). The Oracle-B minus Reset-B gap is
+1.0 for both branch accuracy and success on the training split. Reset-B is
+correct through the shared prefix and fails only at the handoff, so the
+remaining failure is the history-dependent branch choice that a Bridge must
+transmit.
+
+### Verification and boundaries
+
+The Oracle/Reset gate holds only on the training split. On the 20 test
+episodes the earlier weighted Actors gave 0% closed-loop success for A and
+Oracle-B, no Oracle-B versus Reset-B gap, and `bridge_gate=hold_diagnosis`
+(`runs/step6/evaluation_weighted/`). First-error and t=8..11 diagnoses
+(`runs/step6/evaluation_first_error/`,
+`runs/step6/policy_error_diagnosis_t8_t11/`) show that full-history Actors
+make premature `left/right` turns while every expert label at t=8..11 is
+`forward`, and that their own early errors cause closed-loop distribution
+shift; teacher-forced replay still reaches the handoff action correctly. This
+is an Actor generalization failure, not missing color information in the
+Step 5 B state. Training-split Bridge results therefore establish in-
+distribution cue transmission only, and evaluating on the training split is a
+change from the test-split protocol in `AI_TASKS.md` that should be recorded
+when Bridge results are reported.
+
+Actor training overfits quickly: all formal variants selected step 50 as
+best validation checkpoint and validation loss then increased. High offline
+teacher-forced accuracy was not sufficient evidence of a usable closed-loop
+Actor. A square-root Actor-B test run reported Oracle-B success `1.0` with
+branch accuracy `0.0`; this success/branch metric-contract inconsistency is
+undiagnosed and should be checked before reusing these metrics for Bridge
+evaluation.
+
+The last full checks were `88 passed`, Ruff clean and `git diff --check`
+clean; after the weighting ablation only the focused weighting tests were run
+(`5 passed`). The full suite, Ruff and `git diff --check` were not rerun.
+GPU/mixed-precision training, Actor resume, multi-seed policy sweeps and
+validation/test evaluation of the current `models/policy_a.pt` and
+`models/policy_b.pt` remain unrun.

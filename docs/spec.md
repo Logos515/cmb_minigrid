@@ -163,6 +163,60 @@ bridge or closed-loop control success. GPU/mixed-precision comparison,
 test-split evaluation, additional seed/weight sweeps and control evaluation
 remain outside this Step 5 result.
 
+## Step 6: frozen-RSSM Actor training and Oracle/Reset evaluation
+
+Step 6 adds behavior-cloning policies without changing either RSSM or the
+environment interface. `cmb_minigrid.scripts.train_policy` loads one of the
+independent Step 5 checkpoints, freezes every RSSM parameter, and extracts
+deterministic full-history posterior features with `sample=False`. The
+features are detached before Actor optimization. Expert action labels come
+only from offline `TrajectoryRecord.expert_actions`; hidden labels, privileged
+state, maps, future observations, and future expert actions are never Actor
+inputs.
+
+`ActorPolicy` receives the RSSM feature and a fixed public goal token of one,
+then predicts `(left, right, forward)`. Training uses train expert episodes
+and validation uses grouped val expert episodes. The default behavior-cloning
+loss uses inverse-frequency class weights computed only from train expert
+labels, because that split contains 1120 forward, 60 left, and 60 right
+actions. Validation metrics remain unweighted. Smoke mode executes exactly
+100 updates; formal mode validates periodically and may stop after patience.
+Policy checkpoints contain the Actor, Adam state, resolved policy settings,
+source RSSM hash/configuration, data/manifest fingerprints, seed, and counters.
+
+`cmb_minigrid.scripts.evaluate_policy` evaluates only test expert episodes and
+saves one JSON row per trajectory. At each time `t`, the loop consumes the
+current observation once, forms `state[t]`, predicts `action[t]`, and steps the
+environment. The independent modes are:
+
+1. `a_full_history`: RSSM-A filters the complete public history and Policy-A
+   acts from each posterior state.
+2. `oracle_b_full_history`: RSSM-B filters the same full public history and
+   Policy-B acts from each posterior state. Oracle means B receives full
+   history, not that it reads a hidden label or simulator map.
+3. `reset_b`: at each time RSSM-B starts from `initial(1)` and filters only
+   the current observation, with no previous action or retained state.
+
+Reports contain handoff branch correctness, terminal success rate, per-
+trajectory actions/termination flags, and the Oracle-B minus Reset-B gap. The
+bridge gate is diagnostic only. If Oracle-B and Reset-B have no clear gap,
+Bridge work must stop and policy learning, environment leakage, or RSSM
+forgetting must be diagnosed instead of claiming success.
+
+`cmb_minigrid.scripts.evaluate_policy_offline` separately measures offline
+behavior cloning. It replays each recorded expert action into the environment,
+filters RSSM with that recorded action/observation history, and computes an
+Actor prediction at every `obs[t]`. Actor predictions are comparison outputs
+only and never alter the replay state. It reports per-step and handoff action
+accuracy; these teacher-forced metrics must not be presented as closed-loop
+success.
+
+Both offline and closed-loop reports also record the first action mismatch:
+the time index, predicted/expert action pair, and whether the mismatch occurs
+before or at/after `handoff_t`. In closed-loop mode this is a diagnostic
+comparison against the expert action sequence; the environment still follows
+the Actor prediction, so later observations may diverge after that first error.
+
 ## Observation contract
 
 `AgentObs` contains only a local symbolic image `(H,W,3)`, non-negative

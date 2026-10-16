@@ -1,0 +1,14 @@
+input: data/samples/step3_trajectories.jsonl
+manifest: data/samples/step3_manifest.json
+device: cpu
+seed: 45
+training:
+  max_steps: 500
+  batch_size: 256
+  learning_rate: 0.001
+  val_every: 50
+  patience: 10000
+  min_delta: 0.001
+  hidden_dim: 128
+  num_threads: 1
+  class_weighting: true
