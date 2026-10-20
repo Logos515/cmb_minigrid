@@ -699,3 +699,412 @@ observation contract are unchanged. Environment: conda `cmb_minigrid`
 Step 8 needs `handoff_dataset.pt` (`state_a`, `state_b_star`, `obs_t`,
 `future`) and `initialize_all` baselines; Step 9 needs `restore_env`,
 `continue_from_handoff` and the same-snapshot contract.
+
+
+## Step 8 — CMB Bridge training and Reset comparison (2026-10-20)
+
+### Files
+
+New: `cmb_minigrid/bridge/{__init__,cmb,training}.py`,
+`cmb_minigrid/scripts/train_cmb.py`, `tests/test_cmb.py`. Modified:
+`configs/cmb.yaml` (added `sender_hidden`/`receiver_hidden`; existing
+`tokens: 4`, `token_classes: 16`, `encoder_dim: 64` unchanged). RSSM-A/B,
+Actor-B, the Step 3 data/split, observation contract and Step 7 code are
+unchanged. The top-level stub `bridge/__init__.py` is unused.
+
+### Implementation and interfaces
+
+- `CMBBridge(CMBConfig)`:
+  - `send(features_a)` -> `CMBMessage(logits, onehot)`; Sender is an MLP from
+    `features(state_A[t])` (384) to 4 tokens x 16 classes, a **discrete**
+    message (straight-through one-hot; argmax in eval, sampling optional).
+    Payload is 16 bits (2 bytes packed).
+  - `receive(message, obs_t, rssm_b)` concatenates the flattened message, frozen
+    B's 64-dim `encoder(obs_t.image)` and the public direction one-hot (+4;
+    B's own posterior also gets direction), then an MLP outputs 256 deter
+    (tanh, B's GRU range) and 16x16 logits (via B's `_logits`: unimix +
+    log-softmax) and a hard one-hot sampled with `rssm_b.sample`. This is
+    `state_B_hat[t]`, already conditioned on `obs[t]`; B's `observe_step` is not
+    called on `obs[t]` (a test fails if it is). Frozen B is passed as an argument
+    and is not in the bridge checkpoint. `save_cmb`/`load_cmb`, 140,608
+    parameters (Sender 57,536, Receiver 83,072).
+- `train_cmb` (CLI `python -m cmb_minigrid.scripts.train_cmb`): A, B and Actor-B
+  are `requires_grad=False`. Student path CMB -> `state_B_hat` -> Actor-B /
+  `imagine_step` is differentiable through the frozen modules; the Oracle
+  teacher (`state_B_star`, its Actor-B logits, its `imagine_step` rollout) is
+  detached / `no_grad`.
+  - Stage 1 loss: MSE(deter) + KL(B* posterior || hat posterior) + KL(Actor-B
+    action distribution from B* || from hat).
+  - Stage 2 adds multi-step distillation: same recorded `action[t:t+K]` through
+    `imagine_step` for teacher and student, per-step deter MSE + prior KL, masked
+    for episodes shorter than K, averaged for K=5 and K=10 then averaged.
+  - Real future observations are never a training signal; they are used only to
+    evaluate decoded imagined states (image CE) against `obs[t+k]`.
+  - Defaults: Adam lr 1e-3, batch 32 of 120 train samples, 300+300 updates,
+    validation every 25, patience 8, best-val selection per stage (stage 2 starts
+    from the selected stage-1 weights). Each update checks finite loss and
+    nonzero Sender and Receiver gradient norms and logs them in
+    `metrics.jsonl`; checkpoints `stage1_best.pt`, `stage1_selected.pt`,
+    `best.pt`; `report.json` holds val/test metrics for Reset, Replay-4/8,
+    Linear, MLP, CMB and Oracle-B on identical samples, a per-metric
+    `cmb_not_worse` verdict vs Reset, and the overhead table.
+- Equal-capacity MLP: Step 7 MLP maps re-fitted with
+  `build_handoff --mlp-target-params 140608` (hidden 136, 64-float bottleneck,
+  140,112 parameters; `runs/step7/handoff_matched_20261020`, dataset bitwise
+  identical to the Step 7 one). This MLP maps `state_A` only (no `obs_t` encoding),
+  is trained with the Step 7 all-timestep MSE+KL objective, not the Step 8 action
+  / multi-step losses, so "equal capacity" means parameter count and bottleneck
+  width, not an identical training recipe.
+
+### Overhead (from `report.json`)
+
+| Method | Parameters | Payload |
+| --- | ---: | --- |
+| CMB (4x16 discrete) | 140,608 | 16 bits (2 bytes packed; 256 bytes as float one-hot) |
+| MLP (matched) | 140,112 | 64 floats = 256 bytes |
+| Linear | 197,120 | 384 floats = 1,536 bytes |
+
+### Verified
+
+- `pytest tests/test_cmb.py`: 10 passed. Covers: `state_B_hat` legal and
+  consumed by Actor-B, `imagine_step` and `observe_step(obs[t+1])`; Receiver
+  never calls `observe_step`; nonzero finite Sender/Receiver gradients in both
+  stages, and from the multi-step term alone, with no gradient on A/B/Actor and
+  none on a teacher tensor that requires grad; changing real future observations
+  leaves the training loss identical; the message affects `state_B_hat` for equal
+  `obs_t`; checkpoint round trip; single-batch overfit and seed reproducibility;
+  overhead counts; `evaluate_methods` and a 3+3-step end-to-end training run.
+- Smoke CLI (`--smoke`, 20+20 updates, exit 0, `runs/step8/smoke_20261020`) and
+  the formal run
+  `python -m cmb_minigrid.scripts.train_cmb --handoff-dataset
+  runs/step7/handoff_matched_20261020/handoff_dataset.pt --checkpoint-a
+  models/best_a.pt --checkpoint-b models/best_b.pt --policy-b models/policy_b.pt
+  --linear-map .../linear_map.pt --mlp-map .../mlp_map.pt --output-dir
+  runs/step8/formal_20261020 --seed 42` (exit 0; seeds 43 and 44 also exit 0,
+  `runs/step8/formal_seed43_20261020`, `formal_seed44_20261020`). Actor-B
+  SHA-256 `6a8294a7...` (unchanged).
+- Full suite: 112 passed, 3 failed (same 3 pre-existing failures as Step 7); Ruff
+  and `git diff --check` clean.
+
+### Results (val = family v2, test = family v1, 40 samples each, handoff t=12)
+
+Seed 42 (best stage-2 step 525), test split:
+
+| Metric | Reset | Linear | MLP | CMB | Oracle-B |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Handoff action acc vs expert | 0.00 | 0.50 | 0.00 | 1.00 | 1.00 |
+| Action KL to Oracle | 14.46 | 0.68 | 2.66 | 0.013 | 0 |
+| Future image CE, K=10 | 0.282 | 0.343 | 0.349 | 0.311 | 0.351 |
+| Imagined deter drift to Oracle, K=10 | 9.76 | - | - | 1.06 | 0 |
+
+CMB seeds on test (acc / KL / drift K=10): 42: 1.00 / 0.013 / 1.06; 43: 1.00 /
+0.005 / 1.44; **44: 0.50 / 0.944 / 1.50**. Seed variance is therefore large and
+one of three CMB training seeds recovered only half of the handoff actions.
+
+### Acceptance and honest assessment
+
+- Passed: `state_B_hat` is consumed by Actor-B and the RSSM; nonzero
+  backpropagating gradients; the student branch is differentiable through frozen
+  B and only the Oracle teacher is `no_grad`.
+- "Not worse than Reset" is **mixed, not a clean pass**:
+  - Test, seeds 42/43: action accuracy, action KL and imagined-state drift beat
+    Reset by a wide margin, but **future image CE is worse than Reset for every
+    seed** (0.31 vs 0.28 at K=10; 0.39 vs 0.29 at K=5), so that criterion fails.
+  - The Oracle-B state itself has worse future image CE (0.35-0.47) than Reset
+    (0.27-0.29), so image CE does not measure memory here and a student that
+    imitates Oracle inherits this; Replay-4 has the lowest CE (0.24).
+  - Val: Actor-B with the Oracle state picks the wrong handoff action on all val
+    samples (accuracy 0.0), so Actor-B does not generalize to family v2 and
+    "action KL to Oracle" on val distills a wrong teacher. CMB's val KL (4.44)
+    is worse than Reset's (1.53) while its accuracy vs expert is 1.0 (it
+    disagrees with the faulty Oracle). Val loss was also very noisy (about 3 to
+    28 between checks), so best-checkpoint selection is unreliable.
+- Handoff action accuracy is binary-ish: the expert handoff action is a turn
+  while Reset predicts forward, hence Reset's 0.0 on both splits.
+- Nothing here shows a shared, model-independent space: the bridge is a learned
+  bottleneck mapping for one specific A/B pair on one task with a one-bit cue.
+  History Swap and closed-loop evidence belong to Step 9.
+
+### Unresolved / not run
+
+- Pre-existing failing tests (see Step 7) not touched.
+- Only 120 train handoff states (t=12 only) -> overfitting/noise; no
+  augmentation across other `t`, no learning-rate or loss-weight sweeps, no
+  early-stopping variant that avoids the noisy val criterion.
+- Three bridge seeds with the same RSSM/Actor checkpoints; no CIs, no
+  RSSM-seed variation (Step 10). The MLP baseline is not trained with the Step 8
+  losses; a recipe-matched MLP bridge is not run.
+- Not run: GPU, resume-from-checkpoint of `train_cmb`, closed-loop control
+  (Step 9), stochastic message sampling (`sample_message`), capacity ablations.
+
+### Next-step dependencies
+
+Step 9 can load `models`-style checkpoints with `load_cmb`
+(`runs/step8/formal_20261020/best.pt`; note seed 44 shows instability), use
+`CMBBridge.send`/`receive` separately for History Swap (messages are `[B,4]`
+integer indices via `CMBMessage.indices`), and the Step 7
+`restore_env`/`continue_from_handoff` helpers.
+
+
+## Step 9 — closed-loop takeover, History Swap and result tables (2026-10-20)
+
+### Files
+
+New: `cmb_minigrid/handoff/runner.py`, `cmb_minigrid/scripts/run_handoff.py`,
+`tests/test_handoff_runner.py`. No existing code, data, split, observation
+contract, RSSM, Actor or bridge checkpoint was modified.
+
+### Implementation and interfaces
+
+- `HandoffRunner(rssm_a, rssm_b, policy, methods, stochastic=False, seed=0)`:
+  - `run_sample(sample, method)` restores a fresh `HiddenHistoryNavEnv` from
+    the sample's handoff snapshot, checks `env.snapshot() == sample.env_snapshot`,
+    builds `state_B[t]` with the method (via `initialize_all`, so it is
+    validated as a legal B state), then loops: Actor-B picks `action[t]` from
+    `features(state)`, the real env steps, `obs[t+1]` is fused into B with
+    `observe_step(state, action[t], obs[t+1])`. `obs[t]` is never fused again.
+  - `run(samples)` runs every sample x method. `stochastic=True` samples B's
+    discrete states under a per-run seeded RNG (`seed*1_000_003 + sample index`)
+    scope; default is deterministic argmax.
+- `CMBInit` wraps a trained `CMBBridge`: Sender on `features(state_A[t])`,
+  Receiver on B's encoding of `obs_t`. Methods: `reset`, `replay_4/8/16`
+  (`replay_16` = full history because `t=12`), `linear`, `mlp`, `cmb`, `oracle_b`.
+- Per-row record: ids, split, family, method, `snapshot_sha`, `obs_t_sha`,
+  `snapshot_restored_equal`, first action vs expert handoff action
+  (`first_branch_correct`), `success` (Goal reached before the 64-step limit),
+  `truncated`, steps after handoff, `wrong_actions` (action differs from the
+  privileged BFS planner's action at the current pose), `collisions`
+  (forward that did not move the agent), `optimal_steps` (planner steps from the
+  snapshot), `path_efficiency` (`optimal/steps` if successful else 0), reward,
+  `payload_bytes`, `b_observe_steps_at_takeover` (frames conceptually fused to
+  build the state; the cached Oracle state makes no real B call), `takeover_ms`
+  and `closed_loop_ms` (wall-clock, single CPU thread, noisy). The planner and
+  hidden label are used only for scoring.
+- Payload accounting (what A's side hands over, assumed byte widths): Reset 0;
+  Replay-N `w*148 + (w-1)` bytes (uint8 7x7x3 image + direction per frame plus
+  actions, `w=min(N,t+1)`); Linear 384 float32 = 1,536; MLP 64-float bottleneck
+  = 256; CMB 16 bits = 2 bytes packed; Oracle-B full history = 1,936 (unconstrained).
+- `run_history_swap(runner, cmb, samples)`: for each expert pair (equal `obs_t`,
+  different early cue) and each ordered (own, donor), three conditions are run in
+  the *own* endpoint's freshly restored snapshot with the *own* `obs_t` passed to
+  the Receiver; only the message differs: `own`, `swap` (donor's message) and
+  `same_cue` (message from another pair with the same hidden label in the same
+  family). Rows record snapshot/obs hashes, messages, first action, outcome,
+  `flipped_vs_own` and `follows_message_cue`.
+- Outputs of `python -m cmb_minigrid.scripts.run_handoff`: `handoff_runs.jsonl/.csv`,
+  `main_table.csv` (rows for scope `family`, `split`, `all`), `history_swap_rows.csv`,
+  `history_swap_summary.csv`, `report.json` (args, hashes, versions, tables,
+  integrity flags). The script checks that the dataset and each CMB checkpoint
+  were built from the given A/B (and Actor-B for the CMB) hashes. Default roles
+  `expert` only: exploration records share prefix and snapshot with their expert,
+  so their closed loop would just duplicate rows.
+
+### Verified
+
+- `pytest tests/test_handoff_runner.py`: 8 passed. Covers: identical snapshot
+  hash/`obs_t` hash/restored-equal across all 8 methods; spied `observe_step`
+  calls (takeover frames are exactly the last N prefix frames with the first
+  carrying no action; the first fusion after takeover is `obs[t+1]` reached by
+  `action[t]`; call counts equal takeover + steps - 1, so `obs_t` is not re-fused);
+  exact reproduction of rows (excluding timing) for deterministic and seeded
+  stochastic runs; a forward-only stub times out at 52 steps with 52 collisions
+  and zero efficiency, an expert-action stub gets success, 0 wrong actions,
+  efficiency 1.0; payload bytes; table/CSV consistency; History Swap with an
+  index-tagged stub bridge (swap flips to the donor's action, same-cue control
+  does not, snapshot and `obs_t` hashes identical in every condition, Receiver
+  receives only the shared `obs_t`) and with a real `CMBBridge`.
+- CLI smoke (6 test samples, exit 0, `runs/step9/smoke_20261020`) and formal run:
+  `python -m cmb_minigrid.scripts.run_handoff --handoff-dataset
+  runs/step7/handoff_matched_20261020/handoff_dataset.pt --checkpoint-a
+  models/best_a.pt --checkpoint-b models/best_b.pt --policy-b models/policy_b.pt
+  --cmb-checkpoint runs/step8/formal_20261020/best.pt
+  runs/step8/formal_seed43_20261020/best.pt runs/step8/formal_seed44_20261020/best.pt
+  --linear-map .../linear_map.pt --mlp-map .../mlp_map.pt --output-dir
+  runs/step9/formal_20261020_a` (exit 0; 100 expert samples x 10 methods = 1000
+  rows). A second identical run (`_b`, exit 0) gave identical rows once the two
+  timing columns are dropped. `all_snapshots_restored_equal=True`,
+  `history_swap_integrity=True`.
+- Full suite: 120 passed, 3 failed (the same 3 pre-existing failures); Ruff and
+  `git diff --check` clean.
+
+### Results (expert samples; test = family v1, val = v2, train = v3-v5)
+
+Test split, n=20 per method:
+
+| Method | First-branch acc | Success | Mean wrong actions | Mean collisions | Path eff. (all) | Payload B |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Reset | 0.00 | 0.50 | 29.0 | 24.0 | 0.18 | 0 |
+| Replay-4 | 0.00 | 0.50 | 27.0 | 22.0 | 0.21 | 595 |
+| Replay-8 | 0.00 | 0.50 | 25.0 | 19.5 | 0.30 | 1,191 |
+| Replay-16 (= full) | 1.00 | 1.00 | 0.0 | 0.0 | 1.00 | 1,936 |
+| Linear | 0.50 | 1.00 | 4.0 | 3.0 | 0.55 | 1,536 |
+| MLP (matched) | 0.00 | 1.00 | 3.0 | 2.5 | 0.68 | 256 |
+| CMB seed 42 | 1.00 | 1.00 | 0.0 | 0.0 | 1.00 | 2 |
+| CMB seed 43 | 1.00 | 1.00 | 1.5 | 1.0 | 0.80 | 2 |
+| CMB seed 44 | 0.50 | 1.00 | 3.5 | 3.0 | 0.71 | 2 |
+| Oracle-B | 1.00 | 1.00 | 0.0 | 0.0 | 1.00 | 1,936 |
+
+Per-family and per-split rows for all three splits are in `main_table.csv`.
+Train split (in distribution): CMB seeds 42/43/44 first-branch 1.00/1.00/0.67,
+success 1.00/0.83/0.67; Oracle 1.00/1.00.
+
+History Swap (all conditions use the own snapshot and own `obs_t`):
+
+| CMB seed | Split | `own` first-branch | `swap` flips first action | `swap` follows donor cue | `swap` success | `same_cue` flips |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| 42 | test/val/train | 1.00 | 1.00 | 1.00 | 0.00 | 0.00 |
+| 43 | test/val/train | 1.00 | 1.00 | 1.00 | 0.00 | 0.00 |
+| 44 | test/val | 0.50 | 1.00 | 0.50 | 0.00 | 0.00 |
+| 44 | train | 0.67 | 1.00 | 0.67 | 0.00 | 0.00 |
+
+### Interpretation and limits
+
+- Closed-loop **success is not a memory measure here**: the wrong branch is a
+  visible dead end and Actor-B can sometimes recover, so Reset reaches the goal
+  in 50% of test episodes while its first handoff action is never the correct
+  turn. First-branch accuracy, wrong actions and path efficiency are the more
+  diagnostic columns. Replay-4/8 do not help (their window never contains
+  `obs[0]`/`obs[1]`, which hold the cue); Replay-16 equals Oracle by construction.
+- On val the Oracle-B first-branch accuracy is 0.00 (Actor-B does not
+  generalize to family v2, as in Step 8), although its success is 1.00 through
+  recovery; the val Oracle is therefore not a valid ceiling, and CMB's val
+  first-branch 1.00 (seeds 42/43) disagrees with that faulty Oracle.
+- History Swap shows that the message is **causally used**: with the physical
+  state and `obs_t` fixed, exchanging only the message flips Actor-B's handoff
+  action in 100% of cases for all three bridge seeds, same-cue messages from other
+  histories do not, and swapped runs never succeed. It does not show *what*
+  the message encodes beyond the binary early cue, nor a model-independent
+  shared space (one A/B pair, one task, one-bit cue). Seed 44 flips actions
+  but often to the wrong one, i.e. its own message is correct only half the time.
+- Timing columns are wall-clock on one CPU thread and are noisy; no confidence
+  intervals or multi-RSSM-seed statistics yet (Step 10).
+
+### Unresolved / not run
+
+- 3 pre-existing test failures untouched (see Step 7).
+- Not run: GPU; the stochastic (`--stochastic`) mode on the real CLI (only
+  unit-tested); null/zero-message and other ablations, capacity and history-gap
+  sweeps, different RSSM seeds (Step 10); exploration-role handoffs; closed loop
+  with Actor-A; History Swap for Linear/MLP baselines.
+- Payload byte widths are stated assumptions, not measured transfers.
+
+### Next-step dependencies
+
+Step 10 can reuse `HandoffRunner`, `run_history_swap` and the CSV writers; the
+multi-seed requirement means training several RSSM-A/B pairs (new Step 5-8
+artifacts), which has not been done.
+
+
+## Step 10 — statistics, ablations and report (pilot) (2026-10-20)
+
+### Files
+
+New: `cmb_minigrid/experiments/{__init__,stats,svg}.py`,
+`cmb_minigrid/scripts/{run_pilot,make_report}.py`, `tests/test_experiment_stats.py`,
+`tests/test_experiment_svg.py`, `tests/test_make_report.py`,
+`reports/{experiment_report.md,analysis.md,config_manifest.json,repro_commands.sh,tables/,figures/}`.
+Modified (backward compatible): `cmb_minigrid/bridge/training.py` (`train_cmb`
+accepts `state_weight/action_weight/multistep_weight`; a stage with 0 steps is
+skipped; `best.pt` is written after every executed stage), `scripts/train_cmb.py`
+(`--tokens --token-classes --state-weight --action-weight --multistep-weight`),
+`handoff/runner.py` (History Swap gains a `zero` condition and `path_efficiency`),
+`scripts/run_handoff.py` (`--cmb-names`), `tests/test_cmb.py`,
+`tests/test_handoff_runner.py`. Data, split, observation contract, Step 5/6 recipes
+and configs were not changed.
+
+### Implementation
+
+- `run_pilot`: per RSSM seed group runs existing CLIs as subprocesses (resumable,
+  commands/exit codes/seconds in `runs/step10/manifest.json`): `train_rssm` A
+  (`rssm_a.yaml` + `train_rssm_cnn.yaml`, seed 1000+g) and B (`rssm_b.yaml`, seed
+  2000+g) with 1000 updates and no practical early stopping for both (the pre-existing
+  A used patience 5), `probe_rssm`, `train_policy` (`train_policy_sqrt.yaml`, seed
+  2000+g), `build_handoff` (MLP matched to the 4x16 CMB's 140,608 parameters),
+  six `train_cmb` variants (full 4x16, capacity 2x16 / 8x16 / 8x32, loss: state-only,
+  state+action), and `run_handoff` with Replay windows {2,4,6,8,10,12,13,16}, Linear,
+  MLP, all CMB variants, Oracle and History Swap (own / swap / zero / same-cue).
+  Group `g0` = the pre-existing checkpoints (`models/best_a.pt`, `best_b.pt`,
+  `policy_b.pt`). One bridge seed (42) per group.
+- `stats.py`: clustered bootstrap, unit = pair (both endpoints together) nested in
+  map family nested in RSSM seed group; groups resampled with replacement, then
+  families (if >1) and pairs; statistic = mean over groups of the pair mean;
+  percentile 95% CI, 4000 replicates, seed 12345; paired differences on aligned
+  units. `svg.py`: dependency-free forest plots (matplotlib is not installed), palette
+  slots from the validated reference palette (`validate_palette.py`: pass; the aqua
+  slot is unused), per-seed dots, tooltips and numeric labels.
+- `make_report`: reads only run artifacts; writes `tables/*.csv` (methods per scope and
+  split, paired differences, gates, message conditions, overhead), eight SVG figures,
+  `config_manifest.json` (versions, seeds, data/config hashes, per-run configs),
+  `repro_commands.sh` and `experiment_report.md` (auto tables + hand-written
+  `analysis.md`). Operational gates (mine): probe full-history val accuracy >= 0.9 for
+  A and B; Oracle-B minus Reset-B first-branch accuracy >= 0.5 on test.
+
+### Verified
+
+- New tests: stats 6, SVG 1, make_report 1 (synthetic tree with known values: estimates,
+  CIs, paired difference, gates, swap/zero rows, hand-written analysis inclusion,
+  manifest/commands), plus loss-ablation (`train_cmb` with `action_weight=0`,
+  `stage2_steps=0`) and `zero` History Swap tests. Full suite: **130 passed, 3 failed**
+  (the same 3 pre-existing failures); Ruff and `git diff --check` clean.
+- Smoke pipeline (`run_pilot --root runs/step10_smoke --groups 1 2 --smoke`, exit 0,
+  3 min) and formal pilot: `python -m cmb_minigrid.scripts.run_pilot --root runs/step10
+  --groups 1 2 ... 15 --workers 8` (first invocation groups 1-5 plus g0: 69 jobs ok in
+  948 s; the extension to groups 6-15 added jobs, in total 189 jobs, 0 failed groups,
+  1,603 s for the second invocation). Report:
+  `python -m cmb_minigrid.scripts.make_report --root runs/step10 --output reports
+  --analysis reports/analysis.md` (exit 0). Figures were rendered with a headless
+  browser and inspected for label overlap.
+
+### Results (details and CIs in `reports/experiment_report.md`)
+
+- Gates over 15 new groups: probe 6/15, actor 10/15, both 6/15 (g4, g8, g10, g12, g14,
+  g15); Oracle-B first-branch accuracy is 1.0 in only 6/15 groups. The Step 5/6 recipes
+  are not seed-robust, which caps every bridge distilled from Oracle-B.
+- First 5 groups (pre-planned): CMB first-branch 0.40 [0.10, 0.70]; CMB - Reset +0.40
+  [+0.10, +0.70]; vs Replay-8 +0.10 [-0.30, +0.60], MLP +0.00 [-0.30, +0.30], Linear +0.10
+  [0.00, +0.30], Oracle/Replay-13 0.00 [0.00, 0.00]. All 15 groups: CMB 0.47 [0.27, 0.70],
+  Oracle 0.53, Replay-13 0.53, Linear 0.33, MLP 0.33. Gate-passed 6 groups (sensitivity):
+  CMB 0.92 = Oracle = Replay-13, Linear 0.67, MLP 0.50; CMB - MLP +0.42 [+0.17, +0.67].
+- The CMB never exceeded Replay with a window that reaches `obs[0]` or Oracle-B; it matches
+  them with 2 bytes vs 1,936 bytes. Replay-4/8 do not contain the cue. Linear/MLP
+  have higher closed-loop success (0.83) than CMB/Oracle (0.75) in the gate-passed
+  cohort because success includes recovery from the wrong-branch dead end.
+- Ablations: no detectable capacity effect beyond 8 bits (all-15 first-branch 0.47 /
+  0.47 / 0.47 / 0.50); first-branch identical across loss variants, small inconsistent
+  path-efficiency differences; swapped/zeroed message drop first-branch to 0.10 / 0.13
+  (all 15) and 0.00 / 0.00 (gate-passed) while a same-cue message from another history
+  changes nothing.
+- Evidence boundaries (also in the report): single cue transmitted — supported where A
+  carries the cue; sustained closed-loop recovery — not established (even Oracle-B has
+  success 0.75 and path efficiency 0.53, Actor-B errs after the branch); shared cross-model
+  space — not tested.
+
+### Not done / unresolved
+
+- **History-gap ablation {8,16,32,64} not run**: the gap is fixed at 12 by the environment
+  (`HANDOFF_T`); other gaps need new map families (task-definition change requiring your
+  approval), new data, retrained RSSMs and a larger `max_steps` (currently 64).
+- The cohort was extended from 5 to 15 groups after seeing 1/5 pass the gates (post-hoc,
+  disclosed in the report); the gate-passed analysis is selected on Oracle-B performance.
+  Dozens of paired comparisons, no multiplicity correction. Single test map family (10 pairs
+  per group), one bridge seed per group. The Step 5/6 recipe was not tuned to fix the seed
+  fragility.
+- Reproducibility caveat: `git_commit` in the manifest is HEAD (the Step 7 commit) because
+  the Step 8-10 code was uncommitted when the pilot ran; commit before relying on the hash.
+  Bitwise cross-machine equality is not claimed.
+- Not run: GPU, bridge-seed variance within the new groups, val/train-based ablation figures
+  (tables only), Step 11. The 3 pre-existing test failures remain.
+
+
+## Research report (2026-10-20)
+
+Wrote `reports/research_report.md`, a hand-written synthesis of Steps 3-10 (Chinese), on
+top of the auto-generated `reports/experiment_report.md`. No new experiments were run for
+it; new numbers in its "phenomena" section (first-action modes, probe-vs-Oracle
+correspondence, per-family Oracle accuracy, Actor-B behavior on family v3) were computed
+by re-reading `runs/step10/*/closed_loop/handoff_runs.jsonl` and
+`runs/step10/*/probe/probe_report.json`. Hypotheses that were not tested are labeled as such
+in the report (e.g. why imagined rollouts from full-history states decode worse than from
+the Reset state; why the cue representation fails to transfer to the held-out family).
+Report-level caveats repeated there: post-hoc cohort extension, CMB vs Linear/MLP recipe
+mismatch, Step 6 vs Step 9 meaning of "Reset", history-gap ablation not run.

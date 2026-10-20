@@ -7,3 +7,5 @@ cmb:
   tokens: 4
   token_classes: 16
   encoder_dim: 64
+  sender_hidden: 128
+  receiver_hidden: 128

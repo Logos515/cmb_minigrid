@@ -1,0 +1,17 @@
+group,status,probe_A_full_val_acc,probe_A_current_val_acc,probe_A_status,probe_B_full_val_acc,probe_B_current_val_acc,probe_B_status,oracle_first_branch_test,reset_first_branch_test,actor_gap,gate_probe_pass,gate_actor_pass,gate_pass
+g0,ok,1.0,1.0,cue_decoding_detected_not_control_acceptance,1.0,1.0,cue_decoding_detected_not_control_acceptance,1.0,0.0,1.0,True,True,True
+g1,ok,0.5,1.0,not_established,0.5,1.0,not_established,0.0,0.0,0.0,False,False,False
+g2,ok,0.5,1.0,not_established,0.5,1.0,not_established,0.5,0.0,0.5,False,True,False
+g3,ok,1.0,1.0,cue_decoding_detected_not_control_acceptance,0.5,1.0,not_established,0.0,0.0,0.0,False,False,False
+g4,ok,1.0,1.0,cue_decoding_detected_not_control_acceptance,1.0,1.0,cue_decoding_detected_not_control_acceptance,1.0,0.0,1.0,True,True,True
+g5,ok,1.0,1.0,cue_decoding_detected_not_control_acceptance,0.5,1.0,not_established,0.5,0.0,0.5,False,True,False
+g6,ok,0.5,1.0,not_established,0.5,1.0,not_established,0.0,0.0,0.0,False,False,False
+g7,ok,0.5,1.0,not_established,0.5,1.0,not_established,0.0,0.0,0.0,False,False,False
+g8,ok,1.0,1.0,cue_decoding_detected_not_control_acceptance,1.0,1.0,cue_decoding_detected_not_control_acceptance,1.0,0.0,1.0,True,True,True
+g9,ok,0.5,1.0,not_established,1.0,1.0,cue_decoding_detected_not_control_acceptance,1.0,0.0,1.0,False,True,False
+g10,ok,1.0,1.0,cue_decoding_detected_not_control_acceptance,1.0,1.0,cue_decoding_detected_not_control_acceptance,1.0,0.0,1.0,True,True,True
+g11,ok,1.0,1.0,cue_decoding_detected_not_control_acceptance,0.5,1.0,not_established,0.5,0.0,0.5,False,True,False
+g12,ok,1.0,1.0,cue_decoding_detected_not_control_acceptance,1.0,1.0,cue_decoding_detected_not_control_acceptance,0.5,0.0,0.5,True,True,True
+g13,ok,0.5,1.0,not_established,0.5,1.0,not_established,0.0,0.0,0.0,False,False,False
+g14,ok,1.0,1.0,cue_decoding_detected_not_control_acceptance,1.0,1.0,cue_decoding_detected_not_control_acceptance,1.0,0.0,1.0,True,True,True
+g15,ok,1.0,1.0,cue_decoding_detected_not_control_acceptance,1.0,1.0,cue_decoding_detected_not_control_acceptance,1.0,0.0,1.0,True,True,True

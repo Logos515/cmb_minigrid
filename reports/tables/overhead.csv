@@ -1,0 +1,5 @@
+variant,cmb_sender,cmb_receiver,cmb_total,cmb_payload_bits,cmb_payload_bytes_packed,cmb_payload_bytes_one_hot_float32,note,mlp_total,mlp_payload_bytes,linear_total,linear_payload_bytes
+cap_2x16,53408,78976,132384,8.0,1,128,"2 tokens x 16 classes, discrete",140112,256,197120,1536
+cap_8x16,65792,91264,157056,32.0,4,512,"8 tokens x 16 classes, discrete",140112,256,197120,1536
+cap_8x32,82304,107648,189952,40.0,5,1024,"8 tokens x 32 classes, discrete",140112,256,197120,1536
+cmb,57536,83072,140608,16.0,2,256,"4 tokens x 16 classes, discrete",140112,256,197120,1536

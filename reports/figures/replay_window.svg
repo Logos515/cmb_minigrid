@@ -1,0 +1,226 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 382" width="820" height="382" role="img" aria-label="Replay window sweep (frames 0-12 hold the cue; Replay-13/16 = full history)">
+<rect width="820" height="382" fill="#fcfcfb"/>
+<text x="16" y="24" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" font-weight="600" fill="#0b0b0b">Replay window sweep (frames 0-12 hold the cue; Replay-13/16 = full history)</text>
+<text x="16" y="44" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11.5" fill="#52514e">test split, family v1; cohort = all 15 new RSSM seed groups (dots); whiskers = 95% clustered bootstrap CI</text>
+<line x1="210.0" x2="210.0" y1="64" y2="330" stroke="#e4e3df" stroke-width="1"/>
+<text x="210.0" y="346" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11" fill="#52514e">0</text>
+<line x1="335.0" x2="335.0" y1="64" y2="330" stroke="#e4e3df" stroke-width="1"/>
+<text x="335.0" y="346" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11" fill="#52514e">0.25</text>
+<line x1="460.0" x2="460.0" y1="64" y2="330" stroke="#e4e3df" stroke-width="1"/>
+<text x="460.0" y="346" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11" fill="#52514e">0.5</text>
+<line x1="585.0" x2="585.0" y1="64" y2="330" stroke="#e4e3df" stroke-width="1"/>
+<text x="585.0" y="346" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11" fill="#52514e">0.75</text>
+<line x1="710.0" x2="710.0" y1="64" y2="330" stroke="#e4e3df" stroke-width="1"/>
+<text x="710.0" y="346" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11" fill="#52514e">1</text>
+<text x="460.0" y="372" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" fill="#52514e">first-branch acc.</text>
+<g><title>Reset (Replay-1): 0.000 (95% CI [0.00, 0.00])</title>
+<text x="200" y="87.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" fill="#0b0b0b">Reset (Replay-1)</text>
+<line x1="210.0" x2="210.0" y1="83.0" y2="83.0" stroke="#8a8984" stroke-width="2" stroke-linecap="round"/>
+<circle cx="210.0" cy="78.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 1: 0.000</title></circle>
+<circle cx="210.0" cy="80.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 2: 0.000</title></circle>
+<circle cx="210.0" cy="83.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 3: 0.000</title></circle>
+<circle cx="210.0" cy="85.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 4: 0.000</title></circle>
+<circle cx="210.0" cy="87.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 5: 0.000</title></circle>
+<circle cx="210.0" cy="78.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 6: 0.000</title></circle>
+<circle cx="210.0" cy="80.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 7: 0.000</title></circle>
+<circle cx="210.0" cy="83.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 8: 0.000</title></circle>
+<circle cx="210.0" cy="85.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 9: 0.000</title></circle>
+<circle cx="210.0" cy="87.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 10: 0.000</title></circle>
+<circle cx="210.0" cy="78.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 11: 0.000</title></circle>
+<circle cx="210.0" cy="80.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 12: 0.000</title></circle>
+<circle cx="210.0" cy="83.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 13: 0.000</title></circle>
+<circle cx="210.0" cy="85.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 14: 0.000</title></circle>
+<circle cx="210.0" cy="87.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 15: 0.000</title></circle>
+<circle cx="210.0" cy="83.0" r="4.5" fill="#8a8984" stroke="#fcfcfb" stroke-width="2"/>
+<text x="720" y="87.0" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11.5" fill="#0b0b0b">0.00</text>
+</g>
+<g><title>Replay-2: 0.000 (95% CI [0.00, 0.00])</title>
+<text x="200" y="113.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" fill="#0b0b0b">Replay-2</text>
+<line x1="210.0" x2="210.0" y1="109.0" y2="109.0" stroke="#8a8984" stroke-width="2" stroke-linecap="round"/>
+<circle cx="210.0" cy="104.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 1: 0.000</title></circle>
+<circle cx="210.0" cy="106.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 2: 0.000</title></circle>
+<circle cx="210.0" cy="109.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 3: 0.000</title></circle>
+<circle cx="210.0" cy="111.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 4: 0.000</title></circle>
+<circle cx="210.0" cy="113.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 5: 0.000</title></circle>
+<circle cx="210.0" cy="104.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 6: 0.000</title></circle>
+<circle cx="210.0" cy="106.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 7: 0.000</title></circle>
+<circle cx="210.0" cy="109.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 8: 0.000</title></circle>
+<circle cx="210.0" cy="111.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 9: 0.000</title></circle>
+<circle cx="210.0" cy="113.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 10: 0.000</title></circle>
+<circle cx="210.0" cy="104.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 11: 0.000</title></circle>
+<circle cx="210.0" cy="106.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 12: 0.000</title></circle>
+<circle cx="210.0" cy="109.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 13: 0.000</title></circle>
+<circle cx="210.0" cy="111.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 14: 0.000</title></circle>
+<circle cx="210.0" cy="113.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 15: 0.000</title></circle>
+<circle cx="210.0" cy="109.0" r="4.5" fill="#8a8984" stroke="#fcfcfb" stroke-width="2"/>
+<text x="720" y="113.0" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11.5" fill="#0b0b0b">0.00</text>
+</g>
+<g><title>Replay-4: 0.000 (95% CI [0.00, 0.00])</title>
+<text x="200" y="139.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" fill="#0b0b0b">Replay-4</text>
+<line x1="210.0" x2="210.0" y1="135.0" y2="135.0" stroke="#8a8984" stroke-width="2" stroke-linecap="round"/>
+<circle cx="210.0" cy="130.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 1: 0.000</title></circle>
+<circle cx="210.0" cy="132.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 2: 0.000</title></circle>
+<circle cx="210.0" cy="135.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 3: 0.000</title></circle>
+<circle cx="210.0" cy="137.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 4: 0.000</title></circle>
+<circle cx="210.0" cy="139.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 5: 0.000</title></circle>
+<circle cx="210.0" cy="130.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 6: 0.000</title></circle>
+<circle cx="210.0" cy="132.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 7: 0.000</title></circle>
+<circle cx="210.0" cy="135.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 8: 0.000</title></circle>
+<circle cx="210.0" cy="137.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 9: 0.000</title></circle>
+<circle cx="210.0" cy="139.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 10: 0.000</title></circle>
+<circle cx="210.0" cy="130.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 11: 0.000</title></circle>
+<circle cx="210.0" cy="132.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 12: 0.000</title></circle>
+<circle cx="210.0" cy="135.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 13: 0.000</title></circle>
+<circle cx="210.0" cy="137.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 14: 0.000</title></circle>
+<circle cx="210.0" cy="139.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 15: 0.000</title></circle>
+<circle cx="210.0" cy="135.0" r="4.5" fill="#8a8984" stroke="#fcfcfb" stroke-width="2"/>
+<text x="720" y="139.0" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11.5" fill="#0b0b0b">0.00</text>
+</g>
+<g><title>Replay-6: 0.067 (95% CI [0.00, 0.17])</title>
+<text x="200" y="165.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" fill="#0b0b0b">Replay-6</text>
+<line x1="210.0" x2="293.3" y1="161.0" y2="161.0" stroke="#8a8984" stroke-width="2" stroke-linecap="round"/>
+<circle cx="210.0" cy="156.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 1: 0.000</title></circle>
+<circle cx="210.0" cy="158.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 2: 0.000</title></circle>
+<circle cx="460.0" cy="161.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 3: 0.500</title></circle>
+<circle cx="210.0" cy="163.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 4: 0.000</title></circle>
+<circle cx="210.0" cy="165.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 5: 0.000</title></circle>
+<circle cx="210.0" cy="156.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 6: 0.000</title></circle>
+<circle cx="210.0" cy="158.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 7: 0.000</title></circle>
+<circle cx="210.0" cy="161.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 8: 0.000</title></circle>
+<circle cx="210.0" cy="163.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 9: 0.000</title></circle>
+<circle cx="210.0" cy="165.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 10: 0.000</title></circle>
+<circle cx="460.0" cy="156.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 11: 0.500</title></circle>
+<circle cx="210.0" cy="158.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 12: 0.000</title></circle>
+<circle cx="210.0" cy="161.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 13: 0.000</title></circle>
+<circle cx="210.0" cy="163.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 14: 0.000</title></circle>
+<circle cx="210.0" cy="165.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 15: 0.000</title></circle>
+<circle cx="243.3" cy="161.0" r="4.5" fill="#8a8984" stroke="#fcfcfb" stroke-width="2"/>
+<text x="720" y="165.0" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11.5" fill="#0b0b0b">0.07</text>
+</g>
+<g><title>Replay-8: 0.133 (95% CI [0.03, 0.23])</title>
+<text x="200" y="191.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" fill="#0b0b0b">Replay-8</text>
+<line x1="226.7" x2="326.7" y1="187.0" y2="187.0" stroke="#8a8984" stroke-width="2" stroke-linecap="round"/>
+<circle cx="210.0" cy="182.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 1: 0.000</title></circle>
+<circle cx="210.0" cy="184.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 2: 0.000</title></circle>
+<circle cx="460.0" cy="187.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 3: 0.500</title></circle>
+<circle cx="210.0" cy="189.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 4: 0.000</title></circle>
+<circle cx="210.0" cy="191.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 5: 0.000</title></circle>
+<circle cx="210.0" cy="182.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 6: 0.000</title></circle>
+<circle cx="210.0" cy="184.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 7: 0.000</title></circle>
+<circle cx="460.0" cy="187.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 8: 0.500</title></circle>
+<circle cx="460.0" cy="189.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 9: 0.500</title></circle>
+<circle cx="210.0" cy="191.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 10: 0.000</title></circle>
+<circle cx="460.0" cy="182.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 11: 0.500</title></circle>
+<circle cx="210.0" cy="184.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 12: 0.000</title></circle>
+<circle cx="210.0" cy="187.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 13: 0.000</title></circle>
+<circle cx="210.0" cy="189.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 14: 0.000</title></circle>
+<circle cx="210.0" cy="191.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 15: 0.000</title></circle>
+<circle cx="276.7" cy="187.0" r="4.5" fill="#8a8984" stroke="#fcfcfb" stroke-width="2"/>
+<text x="720" y="191.0" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11.5" fill="#0b0b0b">0.13</text>
+</g>
+<g><title>Replay-10: 0.167 (95% CI [0.07, 0.30])</title>
+<text x="200" y="217.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" fill="#0b0b0b">Replay-10</text>
+<line x1="243.3" x2="360.0" y1="213.0" y2="213.0" stroke="#8a8984" stroke-width="2" stroke-linecap="round"/>
+<circle cx="210.0" cy="208.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 1: 0.000</title></circle>
+<circle cx="210.0" cy="210.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 2: 0.000</title></circle>
+<circle cx="460.0" cy="213.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 3: 0.500</title></circle>
+<circle cx="210.0" cy="215.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 4: 0.000</title></circle>
+<circle cx="210.0" cy="217.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 5: 0.000</title></circle>
+<circle cx="210.0" cy="208.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 6: 0.000</title></circle>
+<circle cx="210.0" cy="210.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 7: 0.000</title></circle>
+<circle cx="460.0" cy="213.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 8: 0.500</title></circle>
+<circle cx="460.0" cy="215.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 9: 0.500</title></circle>
+<circle cx="210.0" cy="217.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 10: 0.000</title></circle>
+<circle cx="460.0" cy="208.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 11: 0.500</title></circle>
+<circle cx="210.0" cy="210.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 12: 0.000</title></circle>
+<circle cx="460.0" cy="213.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 13: 0.500</title></circle>
+<circle cx="210.0" cy="215.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 14: 0.000</title></circle>
+<circle cx="210.0" cy="217.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 15: 0.000</title></circle>
+<circle cx="293.3" cy="213.0" r="4.5" fill="#8a8984" stroke="#fcfcfb" stroke-width="2"/>
+<text x="720" y="217.0" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11.5" fill="#0b0b0b">0.17</text>
+</g>
+<g><title>Replay-12: 0.267 (95% CI [0.13, 0.43])</title>
+<text x="200" y="243.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" fill="#0b0b0b">Replay-12</text>
+<line x1="276.7" x2="426.7" y1="239.0" y2="239.0" stroke="#8a8984" stroke-width="2" stroke-linecap="round"/>
+<circle cx="210.0" cy="234.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 1: 0.000</title></circle>
+<circle cx="210.0" cy="236.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 2: 0.000</title></circle>
+<circle cx="460.0" cy="239.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 3: 0.500</title></circle>
+<circle cx="210.0" cy="241.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 4: 0.000</title></circle>
+<circle cx="210.0" cy="243.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 5: 0.000</title></circle>
+<circle cx="460.0" cy="234.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 6: 0.500</title></circle>
+<circle cx="460.0" cy="236.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 7: 0.500</title></circle>
+<circle cx="460.0" cy="239.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 8: 0.500</title></circle>
+<circle cx="210.0" cy="241.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 9: 0.000</title></circle>
+<circle cx="710.0" cy="243.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 10: 1.000</title></circle>
+<circle cx="460.0" cy="234.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 11: 0.500</title></circle>
+<circle cx="210.0" cy="236.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 12: 0.000</title></circle>
+<circle cx="210.0" cy="239.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 13: 0.000</title></circle>
+<circle cx="210.0" cy="241.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 14: 0.000</title></circle>
+<circle cx="460.0" cy="243.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 15: 0.500</title></circle>
+<circle cx="343.3" cy="239.0" r="4.5" fill="#8a8984" stroke="#fcfcfb" stroke-width="2"/>
+<text x="720" y="243.0" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11.5" fill="#0b0b0b">0.27</text>
+</g>
+<g><title>Replay-13: 0.533 (95% CI [0.33, 0.73])</title>
+<text x="200" y="269.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" fill="#0b0b0b">Replay-13</text>
+<line x1="376.3" x2="576.7" y1="265.0" y2="265.0" stroke="#8a8984" stroke-width="2" stroke-linecap="round"/>
+<circle cx="210.0" cy="260.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 1: 0.000</title></circle>
+<circle cx="710.0" cy="262.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 2: 1.000</title></circle>
+<circle cx="460.0" cy="265.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 3: 0.500</title></circle>
+<circle cx="460.0" cy="267.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 4: 0.500</title></circle>
+<circle cx="210.0" cy="269.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 5: 0.000</title></circle>
+<circle cx="710.0" cy="260.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 6: 1.000</title></circle>
+<circle cx="710.0" cy="262.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 7: 1.000</title></circle>
+<circle cx="460.0" cy="265.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 8: 0.500</title></circle>
+<circle cx="210.0" cy="267.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 9: 0.000</title></circle>
+<circle cx="710.0" cy="269.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 10: 1.000</title></circle>
+<circle cx="460.0" cy="260.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 11: 0.500</title></circle>
+<circle cx="210.0" cy="262.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 12: 0.000</title></circle>
+<circle cx="210.0" cy="265.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 13: 0.000</title></circle>
+<circle cx="710.0" cy="267.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 14: 1.000</title></circle>
+<circle cx="710.0" cy="269.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 15: 1.000</title></circle>
+<circle cx="476.7" cy="265.0" r="4.5" fill="#8a8984" stroke="#fcfcfb" stroke-width="2"/>
+<text x="720" y="269.0" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11.5" fill="#0b0b0b">0.53</text>
+</g>
+<g><title>Replay-16: 0.533 (95% CI [0.33, 0.73])</title>
+<text x="200" y="295.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" fill="#0b0b0b">Replay-16</text>
+<line x1="376.3" x2="576.7" y1="291.0" y2="291.0" stroke="#8a8984" stroke-width="2" stroke-linecap="round"/>
+<circle cx="210.0" cy="286.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 1: 0.000</title></circle>
+<circle cx="710.0" cy="288.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 2: 1.000</title></circle>
+<circle cx="460.0" cy="291.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 3: 0.500</title></circle>
+<circle cx="460.0" cy="293.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 4: 0.500</title></circle>
+<circle cx="210.0" cy="295.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 5: 0.000</title></circle>
+<circle cx="710.0" cy="286.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 6: 1.000</title></circle>
+<circle cx="710.0" cy="288.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 7: 1.000</title></circle>
+<circle cx="460.0" cy="291.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 8: 0.500</title></circle>
+<circle cx="210.0" cy="293.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 9: 0.000</title></circle>
+<circle cx="710.0" cy="295.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 10: 1.000</title></circle>
+<circle cx="460.0" cy="286.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 11: 0.500</title></circle>
+<circle cx="210.0" cy="288.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 12: 0.000</title></circle>
+<circle cx="210.0" cy="291.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 13: 0.000</title></circle>
+<circle cx="710.0" cy="293.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 14: 1.000</title></circle>
+<circle cx="710.0" cy="295.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 15: 1.000</title></circle>
+<circle cx="476.7" cy="291.0" r="4.5" fill="#8a8984" stroke="#fcfcfb" stroke-width="2"/>
+<text x="720" y="295.0" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11.5" fill="#0b0b0b">0.53</text>
+</g>
+<g><title>Oracle-B (full history): 0.533 (95% CI [0.33, 0.73])</title>
+<text x="200" y="321.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" fill="#0b0b0b">Oracle-B (full history)</text>
+<line x1="376.3" x2="576.7" y1="317.0" y2="317.0" stroke="#0b0b0b" stroke-width="2" stroke-linecap="round"/>
+<circle cx="210.0" cy="312.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 1: 0.000</title></circle>
+<circle cx="710.0" cy="314.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 2: 1.000</title></circle>
+<circle cx="460.0" cy="317.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 3: 0.500</title></circle>
+<circle cx="460.0" cy="319.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 4: 0.500</title></circle>
+<circle cx="210.0" cy="321.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 5: 0.000</title></circle>
+<circle cx="710.0" cy="312.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 6: 1.000</title></circle>
+<circle cx="710.0" cy="314.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 7: 1.000</title></circle>
+<circle cx="460.0" cy="317.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 8: 0.500</title></circle>
+<circle cx="210.0" cy="319.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 9: 0.000</title></circle>
+<circle cx="710.0" cy="321.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 10: 1.000</title></circle>
+<circle cx="460.0" cy="312.6" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 11: 0.500</title></circle>
+<circle cx="210.0" cy="314.8" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 12: 0.000</title></circle>
+<circle cx="210.0" cy="317.0" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 13: 0.000</title></circle>
+<circle cx="710.0" cy="319.2" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 14: 1.000</title></circle>
+<circle cx="710.0" cy="321.4" r="2.6" fill="none" stroke="#52514e" stroke-width="1"><title>seed group 15: 1.000</title></circle>
+<circle cx="476.7" cy="317.0" r="4.5" fill="#0b0b0b" stroke="#fcfcfb" stroke-width="2"/>
+<text x="720" y="321.0" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11.5" fill="#0b0b0b">0.53</text>
+</g>
+</svg>

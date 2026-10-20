@@ -1,0 +1,4993 @@
+{
+  "versions": {
+    "python": "3.11.17",
+    "torch": "2.14.1+cu130",
+    "gymnasium": "1.4.0",
+    "minigrid": "3.2.0",
+    "numpy": "2.4.6"
+  },
+  "git_commit": "28991736a68bf4458a8d7ea2081c08c045990521",
+  "git_note": "HEAD at run time; Step 8-10 code was uncommitted in the working tree",
+  "seeds": {
+    "g1": {
+      "rssm_a": 1001,
+      "rssm_b": 2001,
+      "policy_b": 2001,
+      "cmb": 42
+    },
+    "g2": {
+      "rssm_a": 1002,
+      "rssm_b": 2002,
+      "policy_b": 2002,
+      "cmb": 42
+    },
+    "g3": {
+      "rssm_a": 1003,
+      "rssm_b": 2003,
+      "policy_b": 2003,
+      "cmb": 42
+    },
+    "g4": {
+      "rssm_a": 1004,
+      "rssm_b": 2004,
+      "policy_b": 2004,
+      "cmb": 42
+    },
+    "g5": {
+      "rssm_a": 1005,
+      "rssm_b": 2005,
+      "policy_b": 2005,
+      "cmb": 42
+    },
+    "g6": {
+      "rssm_a": 1006,
+      "rssm_b": 2006,
+      "policy_b": 2006,
+      "cmb": 42
+    },
+    "g7": {
+      "rssm_a": 1007,
+      "rssm_b": 2007,
+      "policy_b": 2007,
+      "cmb": 42
+    },
+    "g8": {
+      "rssm_a": 1008,
+      "rssm_b": 2008,
+      "policy_b": 2008,
+      "cmb": 42
+    },
+    "g9": {
+      "rssm_a": 1009,
+      "rssm_b": 2009,
+      "policy_b": 2009,
+      "cmb": 42
+    },
+    "g10": {
+      "rssm_a": 1010,
+      "rssm_b": 2010,
+      "policy_b": 2010,
+      "cmb": 42
+    },
+    "g11": {
+      "rssm_a": 1011,
+      "rssm_b": 2011,
+      "policy_b": 2011,
+      "cmb": 42
+    },
+    "g12": {
+      "rssm_a": 1012,
+      "rssm_b": 2012,
+      "policy_b": 2012,
+      "cmb": 42
+    },
+    "g13": {
+      "rssm_a": 1013,
+      "rssm_b": 2013,
+      "policy_b": 2013,
+      "cmb": 42
+    },
+    "g14": {
+      "rssm_a": 1014,
+      "rssm_b": 2014,
+      "policy_b": 2014,
+      "cmb": 42
+    },
+    "g15": {
+      "rssm_a": 1015,
+      "rssm_b": 2015,
+      "policy_b": 2015,
+      "cmb": 42
+    }
+  },
+  "bootstrap": {
+    "n_boot": 4000,
+    "seed": 12345,
+    "level": 0.95,
+    "clusters": "RSSM seed group > map family > pair (both endpoints together)"
+  },
+  "data": {
+    "trajectories_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+    "split_manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+  },
+  "configs_sha256": {
+    "configs/cmb.yaml": "66e17613d3feec27bd6fb03766207cb7e2e8899ff2007a38f87683da7653a95f",
+    "configs/data.yaml": "fe31e90b013a085325963d4a47995320f54a61c7549ce8ecc7723809f4289995",
+    "configs/default.yaml": "18f4c72c70dc499dc8fea13107eaf0d763bbd14a65f3033d57bf589ad53014ff",
+    "configs/env.yaml": "7ad1c849fd642bb67cf05a6808bb59a3bd4f1e96a535680a1045702477f6886b",
+    "configs/hidden_history.yaml": "4cb95e29b13cc8d47f4e54252aaccb2089abcad4f927255d004dd88a08ba5748",
+    "configs/rssm_a.yaml": "263c54a5668eecfef201a1d36043bda3f269b41fbb8ded27f8487930288993d8",
+    "configs/rssm_b.yaml": "a9a0f8d1192a380ce606367a674aba82bdce6093ec2ff4c8f3e0dd2a286b1b3d",
+    "configs/train_policy.yaml": "e8ebb31bdd12c03db81a13a2975aae1df43ff1db8c4aafdbe98989b97bba37b9",
+    "configs/train_policy_sqrt.yaml": "e76e14abbf100c7503f98b8b28b6052f756f37c0560450ca1c4f1b8ecca083fa",
+    "configs/train_policy_unweighted.yaml": "8ec44d0bc38367f6033df721df8fffa921ffe76b7fe9df89d29e9e5b3b83da7c",
+    "configs/train_rssm.yaml": "6820d5b902ac4319b29d83379019592a0b5b9f022cfc082204ac7b6f5a29bce3",
+    "configs/train_rssm_cnn.yaml": "b11124aebce9774f38bd34df6ac99e38ab123ac219b0d3f18e0b8d28ad57e061",
+    "configs/train_rssm_recall.yaml": "a154138bdbbf4e9e6c8dd214ebd232928f91dc8d14df5cb71b105eab85c991d0"
+  },
+  "wall_seconds": 1603.2,
+  "failed_groups": [],
+  "groups": {
+    "g0": {
+      "paths": {
+        "a": "/home/xyh/Desktop/cmb_minigrid/models/best_a.pt",
+        "b": "/home/xyh/Desktop/cmb_minigrid/models/best_b.pt",
+        "policy": "/home/xyh/Desktop/cmb_minigrid/models/policy_b.pt"
+      },
+      "g0/cmb/cap_2x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "4c0cd4d951762920d0d8daa47dcc1e8286908c897c535a9ea5da8a3c191aa95c",
+        "checkpoint_a_sha256": "f7ab6de60e4f6799d0987f5c074199480423b3b5ad1a8b091521dbbe460bc07b",
+        "checkpoint_b_sha256": "7d833c1b0221e2c50bfff9374a9d52e01c569e611c2a7dbadfbca419a4395c4b",
+        "policy_b_sha256": "6a8294a722cf1b34073f8dedefb078dc0369020083f3a09d30e7909cf3950d63",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 2,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g0/cmb/cap_8x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "4c0cd4d951762920d0d8daa47dcc1e8286908c897c535a9ea5da8a3c191aa95c",
+        "checkpoint_a_sha256": "f7ab6de60e4f6799d0987f5c074199480423b3b5ad1a8b091521dbbe460bc07b",
+        "checkpoint_b_sha256": "7d833c1b0221e2c50bfff9374a9d52e01c569e611c2a7dbadfbca419a4395c4b",
+        "policy_b_sha256": "6a8294a722cf1b34073f8dedefb078dc0369020083f3a09d30e7909cf3950d63",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g0/cmb/cap_8x32/config.json": {
+        "seed": 42,
+        "handoff_sha256": "4c0cd4d951762920d0d8daa47dcc1e8286908c897c535a9ea5da8a3c191aa95c",
+        "checkpoint_a_sha256": "f7ab6de60e4f6799d0987f5c074199480423b3b5ad1a8b091521dbbe460bc07b",
+        "checkpoint_b_sha256": "7d833c1b0221e2c50bfff9374a9d52e01c569e611c2a7dbadfbca419a4395c4b",
+        "policy_b_sha256": "6a8294a722cf1b34073f8dedefb078dc0369020083f3a09d30e7909cf3950d63",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 32,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g0/cmb/cmb/config.json": {
+        "seed": 42,
+        "handoff_sha256": "4c0cd4d951762920d0d8daa47dcc1e8286908c897c535a9ea5da8a3c191aa95c",
+        "checkpoint_a_sha256": "f7ab6de60e4f6799d0987f5c074199480423b3b5ad1a8b091521dbbe460bc07b",
+        "checkpoint_b_sha256": "7d833c1b0221e2c50bfff9374a9d52e01c569e611c2a7dbadfbca419a4395c4b",
+        "policy_b_sha256": "6a8294a722cf1b34073f8dedefb078dc0369020083f3a09d30e7909cf3950d63",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g0/cmb/loss_state_action/config.json": {
+        "seed": 42,
+        "handoff_sha256": "4c0cd4d951762920d0d8daa47dcc1e8286908c897c535a9ea5da8a3c191aa95c",
+        "checkpoint_a_sha256": "f7ab6de60e4f6799d0987f5c074199480423b3b5ad1a8b091521dbbe460bc07b",
+        "checkpoint_b_sha256": "7d833c1b0221e2c50bfff9374a9d52e01c569e611c2a7dbadfbca419a4395c4b",
+        "policy_b_sha256": "6a8294a722cf1b34073f8dedefb078dc0369020083f3a09d30e7909cf3950d63",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g0/cmb/loss_state_only/config.json": {
+        "seed": 42,
+        "handoff_sha256": "4c0cd4d951762920d0d8daa47dcc1e8286908c897c535a9ea5da8a3c191aa95c",
+        "checkpoint_a_sha256": "f7ab6de60e4f6799d0987f5c074199480423b3b5ad1a8b091521dbbe460bc07b",
+        "checkpoint_b_sha256": "7d833c1b0221e2c50bfff9374a9d52e01c569e611c2a7dbadfbca419a4395c4b",
+        "policy_b_sha256": "6a8294a722cf1b34073f8dedefb078dc0369020083f3a09d30e7909cf3950d63",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 0.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      }
+    },
+    "g1": {
+      "paths": {
+        "a": "runs/step10/g1/rssm_a/cmb_minigrid_rssm_a-15e81a5a07/best.pt",
+        "b": "runs/step10/g1/rssm_b/cmb_minigrid_rssm_b-bea17faef7/best.pt",
+        "policy": "runs/step10/g1/policy_b/best.pt"
+      },
+      "g1/rssm_a/cmb_minigrid_rssm_a-15e81a5a07/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_a",
+        "seed": 1001,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 128,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g1/rssm_b/cmb_minigrid_rssm_b-bea17faef7/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_b",
+        "seed": 2001,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g1/policy_b/config.json": {
+        "seed": 2001,
+        "device": "cpu",
+        "mode": "formal",
+        "rssm_checkpoint": "/home/xyh/Desktop/cmb_minigrid/runs/step10/g1/rssm_b/cmb_minigrid_rssm_b-bea17faef7/best.pt",
+        "rssm_checkpoint_sha256": "ba6b848637ac229601b01f6bb7571c3e0715ff252bae8168719cdf118eec029e",
+        "rssm_checkpoint_config": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30",
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 256,
+          "learning_rate": 0.001,
+          "val_every": 50,
+          "patience": 10000,
+          "min_delta": 0.001,
+          "hidden_dim": 128,
+          "num_threads": 1,
+          "class_weighting": "sqrt"
+        },
+        "policy": {
+          "feature_dim": 512,
+          "hidden_dim": 128
+        }
+      },
+      "g1/cmb/cap_2x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "a92e947c40e26d1575b8c569a66216eb964bb1e3c34fff587a050c39f4c1ca25",
+        "checkpoint_a_sha256": "a353d9e88a5f8be310232a1b7bf6ca002ecfe98105bb85bdafe30825f951ceeb",
+        "checkpoint_b_sha256": "ba6b848637ac229601b01f6bb7571c3e0715ff252bae8168719cdf118eec029e",
+        "policy_b_sha256": "e295bcef5170904490950b5d48245222b36b20a1f4706dedf20c3ef1127dacf8",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 2,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g1/cmb/cap_8x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "a92e947c40e26d1575b8c569a66216eb964bb1e3c34fff587a050c39f4c1ca25",
+        "checkpoint_a_sha256": "a353d9e88a5f8be310232a1b7bf6ca002ecfe98105bb85bdafe30825f951ceeb",
+        "checkpoint_b_sha256": "ba6b848637ac229601b01f6bb7571c3e0715ff252bae8168719cdf118eec029e",
+        "policy_b_sha256": "e295bcef5170904490950b5d48245222b36b20a1f4706dedf20c3ef1127dacf8",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g1/cmb/cap_8x32/config.json": {
+        "seed": 42,
+        "handoff_sha256": "a92e947c40e26d1575b8c569a66216eb964bb1e3c34fff587a050c39f4c1ca25",
+        "checkpoint_a_sha256": "a353d9e88a5f8be310232a1b7bf6ca002ecfe98105bb85bdafe30825f951ceeb",
+        "checkpoint_b_sha256": "ba6b848637ac229601b01f6bb7571c3e0715ff252bae8168719cdf118eec029e",
+        "policy_b_sha256": "e295bcef5170904490950b5d48245222b36b20a1f4706dedf20c3ef1127dacf8",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 32,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g1/cmb/cmb/config.json": {
+        "seed": 42,
+        "handoff_sha256": "a92e947c40e26d1575b8c569a66216eb964bb1e3c34fff587a050c39f4c1ca25",
+        "checkpoint_a_sha256": "a353d9e88a5f8be310232a1b7bf6ca002ecfe98105bb85bdafe30825f951ceeb",
+        "checkpoint_b_sha256": "ba6b848637ac229601b01f6bb7571c3e0715ff252bae8168719cdf118eec029e",
+        "policy_b_sha256": "e295bcef5170904490950b5d48245222b36b20a1f4706dedf20c3ef1127dacf8",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g1/cmb/loss_state_action/config.json": {
+        "seed": 42,
+        "handoff_sha256": "a92e947c40e26d1575b8c569a66216eb964bb1e3c34fff587a050c39f4c1ca25",
+        "checkpoint_a_sha256": "a353d9e88a5f8be310232a1b7bf6ca002ecfe98105bb85bdafe30825f951ceeb",
+        "checkpoint_b_sha256": "ba6b848637ac229601b01f6bb7571c3e0715ff252bae8168719cdf118eec029e",
+        "policy_b_sha256": "e295bcef5170904490950b5d48245222b36b20a1f4706dedf20c3ef1127dacf8",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g1/cmb/loss_state_only/config.json": {
+        "seed": 42,
+        "handoff_sha256": "a92e947c40e26d1575b8c569a66216eb964bb1e3c34fff587a050c39f4c1ca25",
+        "checkpoint_a_sha256": "a353d9e88a5f8be310232a1b7bf6ca002ecfe98105bb85bdafe30825f951ceeb",
+        "checkpoint_b_sha256": "ba6b848637ac229601b01f6bb7571c3e0715ff252bae8168719cdf118eec029e",
+        "policy_b_sha256": "e295bcef5170904490950b5d48245222b36b20a1f4706dedf20c3ef1127dacf8",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 0.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      }
+    },
+    "g2": {
+      "paths": {
+        "a": "runs/step10/g2/rssm_a/cmb_minigrid_rssm_a-639f93d331/best.pt",
+        "b": "runs/step10/g2/rssm_b/cmb_minigrid_rssm_b-1ec07e6b7d/best.pt",
+        "policy": "runs/step10/g2/policy_b/best.pt"
+      },
+      "g2/rssm_a/cmb_minigrid_rssm_a-639f93d331/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_a",
+        "seed": 1002,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 128,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g2/rssm_b/cmb_minigrid_rssm_b-1ec07e6b7d/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_b",
+        "seed": 2002,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g2/policy_b/config.json": {
+        "seed": 2002,
+        "device": "cpu",
+        "mode": "formal",
+        "rssm_checkpoint": "/home/xyh/Desktop/cmb_minigrid/runs/step10/g2/rssm_b/cmb_minigrid_rssm_b-1ec07e6b7d/best.pt",
+        "rssm_checkpoint_sha256": "16e2226bc64a1e039d9ffc3ea0667082e80838b0d1457bacdcdf3c7b5b936f35",
+        "rssm_checkpoint_config": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30",
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 256,
+          "learning_rate": 0.001,
+          "val_every": 50,
+          "patience": 10000,
+          "min_delta": 0.001,
+          "hidden_dim": 128,
+          "num_threads": 1,
+          "class_weighting": "sqrt"
+        },
+        "policy": {
+          "feature_dim": 512,
+          "hidden_dim": 128
+        }
+      },
+      "g2/cmb/cap_2x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "2f8e37c737748165a57a03e56483ec821ed712a21a5bc71ce1d82dc0531a997f",
+        "checkpoint_a_sha256": "c5b0039b20732c9e579882b8f20a9310e4ee93db85c2592cd37e1b339d4ded67",
+        "checkpoint_b_sha256": "16e2226bc64a1e039d9ffc3ea0667082e80838b0d1457bacdcdf3c7b5b936f35",
+        "policy_b_sha256": "4cc6a235686a444d40a49d648df0e34e431b0fe3b7b0c8ffb02e2be23602711e",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 2,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g2/cmb/cap_8x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "2f8e37c737748165a57a03e56483ec821ed712a21a5bc71ce1d82dc0531a997f",
+        "checkpoint_a_sha256": "c5b0039b20732c9e579882b8f20a9310e4ee93db85c2592cd37e1b339d4ded67",
+        "checkpoint_b_sha256": "16e2226bc64a1e039d9ffc3ea0667082e80838b0d1457bacdcdf3c7b5b936f35",
+        "policy_b_sha256": "4cc6a235686a444d40a49d648df0e34e431b0fe3b7b0c8ffb02e2be23602711e",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g2/cmb/cap_8x32/config.json": {
+        "seed": 42,
+        "handoff_sha256": "2f8e37c737748165a57a03e56483ec821ed712a21a5bc71ce1d82dc0531a997f",
+        "checkpoint_a_sha256": "c5b0039b20732c9e579882b8f20a9310e4ee93db85c2592cd37e1b339d4ded67",
+        "checkpoint_b_sha256": "16e2226bc64a1e039d9ffc3ea0667082e80838b0d1457bacdcdf3c7b5b936f35",
+        "policy_b_sha256": "4cc6a235686a444d40a49d648df0e34e431b0fe3b7b0c8ffb02e2be23602711e",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 32,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g2/cmb/cmb/config.json": {
+        "seed": 42,
+        "handoff_sha256": "2f8e37c737748165a57a03e56483ec821ed712a21a5bc71ce1d82dc0531a997f",
+        "checkpoint_a_sha256": "c5b0039b20732c9e579882b8f20a9310e4ee93db85c2592cd37e1b339d4ded67",
+        "checkpoint_b_sha256": "16e2226bc64a1e039d9ffc3ea0667082e80838b0d1457bacdcdf3c7b5b936f35",
+        "policy_b_sha256": "4cc6a235686a444d40a49d648df0e34e431b0fe3b7b0c8ffb02e2be23602711e",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g2/cmb/loss_state_action/config.json": {
+        "seed": 42,
+        "handoff_sha256": "2f8e37c737748165a57a03e56483ec821ed712a21a5bc71ce1d82dc0531a997f",
+        "checkpoint_a_sha256": "c5b0039b20732c9e579882b8f20a9310e4ee93db85c2592cd37e1b339d4ded67",
+        "checkpoint_b_sha256": "16e2226bc64a1e039d9ffc3ea0667082e80838b0d1457bacdcdf3c7b5b936f35",
+        "policy_b_sha256": "4cc6a235686a444d40a49d648df0e34e431b0fe3b7b0c8ffb02e2be23602711e",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g2/cmb/loss_state_only/config.json": {
+        "seed": 42,
+        "handoff_sha256": "2f8e37c737748165a57a03e56483ec821ed712a21a5bc71ce1d82dc0531a997f",
+        "checkpoint_a_sha256": "c5b0039b20732c9e579882b8f20a9310e4ee93db85c2592cd37e1b339d4ded67",
+        "checkpoint_b_sha256": "16e2226bc64a1e039d9ffc3ea0667082e80838b0d1457bacdcdf3c7b5b936f35",
+        "policy_b_sha256": "4cc6a235686a444d40a49d648df0e34e431b0fe3b7b0c8ffb02e2be23602711e",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 0.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      }
+    },
+    "g3": {
+      "paths": {
+        "a": "runs/step10/g3/rssm_a/cmb_minigrid_rssm_a-4e853452c1/best.pt",
+        "b": "runs/step10/g3/rssm_b/cmb_minigrid_rssm_b-2daefe09fb/best.pt",
+        "policy": "runs/step10/g3/policy_b/best.pt"
+      },
+      "g3/rssm_a/cmb_minigrid_rssm_a-4e853452c1/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_a",
+        "seed": 1003,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 128,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g3/rssm_b/cmb_minigrid_rssm_b-2daefe09fb/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_b",
+        "seed": 2003,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g3/policy_b/config.json": {
+        "seed": 2003,
+        "device": "cpu",
+        "mode": "formal",
+        "rssm_checkpoint": "/home/xyh/Desktop/cmb_minigrid/runs/step10/g3/rssm_b/cmb_minigrid_rssm_b-2daefe09fb/best.pt",
+        "rssm_checkpoint_sha256": "0e724ab797040a1ab5729d57e62eab5d80e78a52d893ffd7f633017e294d6bfa",
+        "rssm_checkpoint_config": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30",
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 256,
+          "learning_rate": 0.001,
+          "val_every": 50,
+          "patience": 10000,
+          "min_delta": 0.001,
+          "hidden_dim": 128,
+          "num_threads": 1,
+          "class_weighting": "sqrt"
+        },
+        "policy": {
+          "feature_dim": 512,
+          "hidden_dim": 128
+        }
+      },
+      "g3/cmb/cap_2x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "40a97656baedcbc2bb930c3ace3cff2045b4adbac9aa32d6960a427cc209b25f",
+        "checkpoint_a_sha256": "2c091ee38ba0fe0456a4c29f8c931c6185891511f92c937dff36704729098478",
+        "checkpoint_b_sha256": "0e724ab797040a1ab5729d57e62eab5d80e78a52d893ffd7f633017e294d6bfa",
+        "policy_b_sha256": "5bfd3539d5f08653e0b8be472f1cdfaf765f04e980a18b6fed032ed86583693a",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 2,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g3/cmb/cap_8x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "40a97656baedcbc2bb930c3ace3cff2045b4adbac9aa32d6960a427cc209b25f",
+        "checkpoint_a_sha256": "2c091ee38ba0fe0456a4c29f8c931c6185891511f92c937dff36704729098478",
+        "checkpoint_b_sha256": "0e724ab797040a1ab5729d57e62eab5d80e78a52d893ffd7f633017e294d6bfa",
+        "policy_b_sha256": "5bfd3539d5f08653e0b8be472f1cdfaf765f04e980a18b6fed032ed86583693a",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g3/cmb/cap_8x32/config.json": {
+        "seed": 42,
+        "handoff_sha256": "40a97656baedcbc2bb930c3ace3cff2045b4adbac9aa32d6960a427cc209b25f",
+        "checkpoint_a_sha256": "2c091ee38ba0fe0456a4c29f8c931c6185891511f92c937dff36704729098478",
+        "checkpoint_b_sha256": "0e724ab797040a1ab5729d57e62eab5d80e78a52d893ffd7f633017e294d6bfa",
+        "policy_b_sha256": "5bfd3539d5f08653e0b8be472f1cdfaf765f04e980a18b6fed032ed86583693a",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 32,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g3/cmb/cmb/config.json": {
+        "seed": 42,
+        "handoff_sha256": "40a97656baedcbc2bb930c3ace3cff2045b4adbac9aa32d6960a427cc209b25f",
+        "checkpoint_a_sha256": "2c091ee38ba0fe0456a4c29f8c931c6185891511f92c937dff36704729098478",
+        "checkpoint_b_sha256": "0e724ab797040a1ab5729d57e62eab5d80e78a52d893ffd7f633017e294d6bfa",
+        "policy_b_sha256": "5bfd3539d5f08653e0b8be472f1cdfaf765f04e980a18b6fed032ed86583693a",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g3/cmb/loss_state_action/config.json": {
+        "seed": 42,
+        "handoff_sha256": "40a97656baedcbc2bb930c3ace3cff2045b4adbac9aa32d6960a427cc209b25f",
+        "checkpoint_a_sha256": "2c091ee38ba0fe0456a4c29f8c931c6185891511f92c937dff36704729098478",
+        "checkpoint_b_sha256": "0e724ab797040a1ab5729d57e62eab5d80e78a52d893ffd7f633017e294d6bfa",
+        "policy_b_sha256": "5bfd3539d5f08653e0b8be472f1cdfaf765f04e980a18b6fed032ed86583693a",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g3/cmb/loss_state_only/config.json": {
+        "seed": 42,
+        "handoff_sha256": "40a97656baedcbc2bb930c3ace3cff2045b4adbac9aa32d6960a427cc209b25f",
+        "checkpoint_a_sha256": "2c091ee38ba0fe0456a4c29f8c931c6185891511f92c937dff36704729098478",
+        "checkpoint_b_sha256": "0e724ab797040a1ab5729d57e62eab5d80e78a52d893ffd7f633017e294d6bfa",
+        "policy_b_sha256": "5bfd3539d5f08653e0b8be472f1cdfaf765f04e980a18b6fed032ed86583693a",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 0.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      }
+    },
+    "g4": {
+      "paths": {
+        "a": "runs/step10/g4/rssm_a/cmb_minigrid_rssm_a-6b5b2d1987/best.pt",
+        "b": "runs/step10/g4/rssm_b/cmb_minigrid_rssm_b-68b04c1afb/best.pt",
+        "policy": "runs/step10/g4/policy_b/best.pt"
+      },
+      "g4/rssm_a/cmb_minigrid_rssm_a-6b5b2d1987/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_a",
+        "seed": 1004,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 128,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g4/rssm_b/cmb_minigrid_rssm_b-68b04c1afb/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_b",
+        "seed": 2004,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g4/policy_b/config.json": {
+        "seed": 2004,
+        "device": "cpu",
+        "mode": "formal",
+        "rssm_checkpoint": "/home/xyh/Desktop/cmb_minigrid/runs/step10/g4/rssm_b/cmb_minigrid_rssm_b-68b04c1afb/best.pt",
+        "rssm_checkpoint_sha256": "8eaa8b1ca4305dab1e2b775674995df8f0bd5e87b612b0145623fd2474b0fc35",
+        "rssm_checkpoint_config": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30",
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 256,
+          "learning_rate": 0.001,
+          "val_every": 50,
+          "patience": 10000,
+          "min_delta": 0.001,
+          "hidden_dim": 128,
+          "num_threads": 1,
+          "class_weighting": "sqrt"
+        },
+        "policy": {
+          "feature_dim": 512,
+          "hidden_dim": 128
+        }
+      },
+      "g4/cmb/cap_2x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "3a1e1c477f8ae0d4803a366d576c6be3bf073c4d133ef359579b6123c185c558",
+        "checkpoint_a_sha256": "4c91e09f159a1722c742e6f34b1e900669a50097c47c2c69ba4b005ace6f312d",
+        "checkpoint_b_sha256": "8eaa8b1ca4305dab1e2b775674995df8f0bd5e87b612b0145623fd2474b0fc35",
+        "policy_b_sha256": "9249040dfddcfb7dcbd0cd0aa459c30e364afd52cfdf5cf953df853b78108191",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 2,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g4/cmb/cap_8x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "3a1e1c477f8ae0d4803a366d576c6be3bf073c4d133ef359579b6123c185c558",
+        "checkpoint_a_sha256": "4c91e09f159a1722c742e6f34b1e900669a50097c47c2c69ba4b005ace6f312d",
+        "checkpoint_b_sha256": "8eaa8b1ca4305dab1e2b775674995df8f0bd5e87b612b0145623fd2474b0fc35",
+        "policy_b_sha256": "9249040dfddcfb7dcbd0cd0aa459c30e364afd52cfdf5cf953df853b78108191",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g4/cmb/cap_8x32/config.json": {
+        "seed": 42,
+        "handoff_sha256": "3a1e1c477f8ae0d4803a366d576c6be3bf073c4d133ef359579b6123c185c558",
+        "checkpoint_a_sha256": "4c91e09f159a1722c742e6f34b1e900669a50097c47c2c69ba4b005ace6f312d",
+        "checkpoint_b_sha256": "8eaa8b1ca4305dab1e2b775674995df8f0bd5e87b612b0145623fd2474b0fc35",
+        "policy_b_sha256": "9249040dfddcfb7dcbd0cd0aa459c30e364afd52cfdf5cf953df853b78108191",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 32,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g4/cmb/cmb/config.json": {
+        "seed": 42,
+        "handoff_sha256": "3a1e1c477f8ae0d4803a366d576c6be3bf073c4d133ef359579b6123c185c558",
+        "checkpoint_a_sha256": "4c91e09f159a1722c742e6f34b1e900669a50097c47c2c69ba4b005ace6f312d",
+        "checkpoint_b_sha256": "8eaa8b1ca4305dab1e2b775674995df8f0bd5e87b612b0145623fd2474b0fc35",
+        "policy_b_sha256": "9249040dfddcfb7dcbd0cd0aa459c30e364afd52cfdf5cf953df853b78108191",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g4/cmb/loss_state_action/config.json": {
+        "seed": 42,
+        "handoff_sha256": "3a1e1c477f8ae0d4803a366d576c6be3bf073c4d133ef359579b6123c185c558",
+        "checkpoint_a_sha256": "4c91e09f159a1722c742e6f34b1e900669a50097c47c2c69ba4b005ace6f312d",
+        "checkpoint_b_sha256": "8eaa8b1ca4305dab1e2b775674995df8f0bd5e87b612b0145623fd2474b0fc35",
+        "policy_b_sha256": "9249040dfddcfb7dcbd0cd0aa459c30e364afd52cfdf5cf953df853b78108191",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g4/cmb/loss_state_only/config.json": {
+        "seed": 42,
+        "handoff_sha256": "3a1e1c477f8ae0d4803a366d576c6be3bf073c4d133ef359579b6123c185c558",
+        "checkpoint_a_sha256": "4c91e09f159a1722c742e6f34b1e900669a50097c47c2c69ba4b005ace6f312d",
+        "checkpoint_b_sha256": "8eaa8b1ca4305dab1e2b775674995df8f0bd5e87b612b0145623fd2474b0fc35",
+        "policy_b_sha256": "9249040dfddcfb7dcbd0cd0aa459c30e364afd52cfdf5cf953df853b78108191",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 0.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      }
+    },
+    "g5": {
+      "paths": {
+        "a": "runs/step10/g5/rssm_a/cmb_minigrid_rssm_a-c7832c2e8c/best.pt",
+        "b": "runs/step10/g5/rssm_b/cmb_minigrid_rssm_b-dbb568d029/best.pt",
+        "policy": "runs/step10/g5/policy_b/best.pt"
+      },
+      "g5/rssm_a/cmb_minigrid_rssm_a-c7832c2e8c/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_a",
+        "seed": 1005,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 128,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g5/rssm_b/cmb_minigrid_rssm_b-dbb568d029/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_b",
+        "seed": 2005,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g5/policy_b/config.json": {
+        "seed": 2005,
+        "device": "cpu",
+        "mode": "formal",
+        "rssm_checkpoint": "/home/xyh/Desktop/cmb_minigrid/runs/step10/g5/rssm_b/cmb_minigrid_rssm_b-dbb568d029/best.pt",
+        "rssm_checkpoint_sha256": "80b8ad2816458a721ff460a60ea27a1b487ad1f77386115dfb4ef97e865a45f7",
+        "rssm_checkpoint_config": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30",
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 256,
+          "learning_rate": 0.001,
+          "val_every": 50,
+          "patience": 10000,
+          "min_delta": 0.001,
+          "hidden_dim": 128,
+          "num_threads": 1,
+          "class_weighting": "sqrt"
+        },
+        "policy": {
+          "feature_dim": 512,
+          "hidden_dim": 128
+        }
+      },
+      "g5/cmb/cap_2x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "410935439c03dcedbd6ca44ae22e60ac9a18e1050510e17b6905e38632a46c8b",
+        "checkpoint_a_sha256": "df0b9d6ed386b374a5aa330c879d6f7d1828d83b7ead1cb841450dd36a8bded7",
+        "checkpoint_b_sha256": "80b8ad2816458a721ff460a60ea27a1b487ad1f77386115dfb4ef97e865a45f7",
+        "policy_b_sha256": "739649404a904e3db4859d1666ba308cf736998aaede2c7bd1659da27a453c6c",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 2,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g5/cmb/cap_8x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "410935439c03dcedbd6ca44ae22e60ac9a18e1050510e17b6905e38632a46c8b",
+        "checkpoint_a_sha256": "df0b9d6ed386b374a5aa330c879d6f7d1828d83b7ead1cb841450dd36a8bded7",
+        "checkpoint_b_sha256": "80b8ad2816458a721ff460a60ea27a1b487ad1f77386115dfb4ef97e865a45f7",
+        "policy_b_sha256": "739649404a904e3db4859d1666ba308cf736998aaede2c7bd1659da27a453c6c",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g5/cmb/cap_8x32/config.json": {
+        "seed": 42,
+        "handoff_sha256": "410935439c03dcedbd6ca44ae22e60ac9a18e1050510e17b6905e38632a46c8b",
+        "checkpoint_a_sha256": "df0b9d6ed386b374a5aa330c879d6f7d1828d83b7ead1cb841450dd36a8bded7",
+        "checkpoint_b_sha256": "80b8ad2816458a721ff460a60ea27a1b487ad1f77386115dfb4ef97e865a45f7",
+        "policy_b_sha256": "739649404a904e3db4859d1666ba308cf736998aaede2c7bd1659da27a453c6c",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 32,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g5/cmb/cmb/config.json": {
+        "seed": 42,
+        "handoff_sha256": "410935439c03dcedbd6ca44ae22e60ac9a18e1050510e17b6905e38632a46c8b",
+        "checkpoint_a_sha256": "df0b9d6ed386b374a5aa330c879d6f7d1828d83b7ead1cb841450dd36a8bded7",
+        "checkpoint_b_sha256": "80b8ad2816458a721ff460a60ea27a1b487ad1f77386115dfb4ef97e865a45f7",
+        "policy_b_sha256": "739649404a904e3db4859d1666ba308cf736998aaede2c7bd1659da27a453c6c",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g5/cmb/loss_state_action/config.json": {
+        "seed": 42,
+        "handoff_sha256": "410935439c03dcedbd6ca44ae22e60ac9a18e1050510e17b6905e38632a46c8b",
+        "checkpoint_a_sha256": "df0b9d6ed386b374a5aa330c879d6f7d1828d83b7ead1cb841450dd36a8bded7",
+        "checkpoint_b_sha256": "80b8ad2816458a721ff460a60ea27a1b487ad1f77386115dfb4ef97e865a45f7",
+        "policy_b_sha256": "739649404a904e3db4859d1666ba308cf736998aaede2c7bd1659da27a453c6c",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g5/cmb/loss_state_only/config.json": {
+        "seed": 42,
+        "handoff_sha256": "410935439c03dcedbd6ca44ae22e60ac9a18e1050510e17b6905e38632a46c8b",
+        "checkpoint_a_sha256": "df0b9d6ed386b374a5aa330c879d6f7d1828d83b7ead1cb841450dd36a8bded7",
+        "checkpoint_b_sha256": "80b8ad2816458a721ff460a60ea27a1b487ad1f77386115dfb4ef97e865a45f7",
+        "policy_b_sha256": "739649404a904e3db4859d1666ba308cf736998aaede2c7bd1659da27a453c6c",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 0.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      }
+    },
+    "g6": {
+      "paths": {
+        "a": "runs/step10/g6/rssm_a/cmb_minigrid_rssm_a-6b0bceea72/best.pt",
+        "b": "runs/step10/g6/rssm_b/cmb_minigrid_rssm_b-9367d329dd/best.pt",
+        "policy": "runs/step10/g6/policy_b/best.pt"
+      },
+      "g6/rssm_a/cmb_minigrid_rssm_a-6b0bceea72/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_a",
+        "seed": 1006,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 128,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g6/rssm_b/cmb_minigrid_rssm_b-9367d329dd/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_b",
+        "seed": 2006,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g6/policy_b/config.json": {
+        "seed": 2006,
+        "device": "cpu",
+        "mode": "formal",
+        "rssm_checkpoint": "/home/xyh/Desktop/cmb_minigrid/runs/step10/g6/rssm_b/cmb_minigrid_rssm_b-9367d329dd/best.pt",
+        "rssm_checkpoint_sha256": "546ed9651447c63f4049735c6beaca226de6bdf66494cf0df5998bbc6936bb02",
+        "rssm_checkpoint_config": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30",
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 256,
+          "learning_rate": 0.001,
+          "val_every": 50,
+          "patience": 10000,
+          "min_delta": 0.001,
+          "hidden_dim": 128,
+          "num_threads": 1,
+          "class_weighting": "sqrt"
+        },
+        "policy": {
+          "feature_dim": 512,
+          "hidden_dim": 128
+        }
+      },
+      "g6/cmb/cap_2x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "ff1b62b3cc92721bd84b7eaa07d1f7c88fda8beb2962f3b425ddeb5dfba8a897",
+        "checkpoint_a_sha256": "930dee0ca61d7529bc7e73dd56c2457a251ea1bbf38f7f9943bbe8c48f9562ef",
+        "checkpoint_b_sha256": "546ed9651447c63f4049735c6beaca226de6bdf66494cf0df5998bbc6936bb02",
+        "policy_b_sha256": "e0eb6dd0e52a27011bd35dba3319f78165d9e8a45abaa80e41d59e7432ca2d8a",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 2,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g6/cmb/cap_8x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "ff1b62b3cc92721bd84b7eaa07d1f7c88fda8beb2962f3b425ddeb5dfba8a897",
+        "checkpoint_a_sha256": "930dee0ca61d7529bc7e73dd56c2457a251ea1bbf38f7f9943bbe8c48f9562ef",
+        "checkpoint_b_sha256": "546ed9651447c63f4049735c6beaca226de6bdf66494cf0df5998bbc6936bb02",
+        "policy_b_sha256": "e0eb6dd0e52a27011bd35dba3319f78165d9e8a45abaa80e41d59e7432ca2d8a",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g6/cmb/cap_8x32/config.json": {
+        "seed": 42,
+        "handoff_sha256": "ff1b62b3cc92721bd84b7eaa07d1f7c88fda8beb2962f3b425ddeb5dfba8a897",
+        "checkpoint_a_sha256": "930dee0ca61d7529bc7e73dd56c2457a251ea1bbf38f7f9943bbe8c48f9562ef",
+        "checkpoint_b_sha256": "546ed9651447c63f4049735c6beaca226de6bdf66494cf0df5998bbc6936bb02",
+        "policy_b_sha256": "e0eb6dd0e52a27011bd35dba3319f78165d9e8a45abaa80e41d59e7432ca2d8a",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 32,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g6/cmb/cmb/config.json": {
+        "seed": 42,
+        "handoff_sha256": "ff1b62b3cc92721bd84b7eaa07d1f7c88fda8beb2962f3b425ddeb5dfba8a897",
+        "checkpoint_a_sha256": "930dee0ca61d7529bc7e73dd56c2457a251ea1bbf38f7f9943bbe8c48f9562ef",
+        "checkpoint_b_sha256": "546ed9651447c63f4049735c6beaca226de6bdf66494cf0df5998bbc6936bb02",
+        "policy_b_sha256": "e0eb6dd0e52a27011bd35dba3319f78165d9e8a45abaa80e41d59e7432ca2d8a",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g6/cmb/loss_state_action/config.json": {
+        "seed": 42,
+        "handoff_sha256": "ff1b62b3cc92721bd84b7eaa07d1f7c88fda8beb2962f3b425ddeb5dfba8a897",
+        "checkpoint_a_sha256": "930dee0ca61d7529bc7e73dd56c2457a251ea1bbf38f7f9943bbe8c48f9562ef",
+        "checkpoint_b_sha256": "546ed9651447c63f4049735c6beaca226de6bdf66494cf0df5998bbc6936bb02",
+        "policy_b_sha256": "e0eb6dd0e52a27011bd35dba3319f78165d9e8a45abaa80e41d59e7432ca2d8a",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g6/cmb/loss_state_only/config.json": {
+        "seed": 42,
+        "handoff_sha256": "ff1b62b3cc92721bd84b7eaa07d1f7c88fda8beb2962f3b425ddeb5dfba8a897",
+        "checkpoint_a_sha256": "930dee0ca61d7529bc7e73dd56c2457a251ea1bbf38f7f9943bbe8c48f9562ef",
+        "checkpoint_b_sha256": "546ed9651447c63f4049735c6beaca226de6bdf66494cf0df5998bbc6936bb02",
+        "policy_b_sha256": "e0eb6dd0e52a27011bd35dba3319f78165d9e8a45abaa80e41d59e7432ca2d8a",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 0.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      }
+    },
+    "g7": {
+      "paths": {
+        "a": "runs/step10/g7/rssm_a/cmb_minigrid_rssm_a-20950c52c7/best.pt",
+        "b": "runs/step10/g7/rssm_b/cmb_minigrid_rssm_b-26d8f5a96f/best.pt",
+        "policy": "runs/step10/g7/policy_b/best.pt"
+      },
+      "g7/rssm_a/cmb_minigrid_rssm_a-20950c52c7/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_a",
+        "seed": 1007,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 128,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g7/rssm_b/cmb_minigrid_rssm_b-26d8f5a96f/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_b",
+        "seed": 2007,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g7/policy_b/config.json": {
+        "seed": 2007,
+        "device": "cpu",
+        "mode": "formal",
+        "rssm_checkpoint": "/home/xyh/Desktop/cmb_minigrid/runs/step10/g7/rssm_b/cmb_minigrid_rssm_b-26d8f5a96f/best.pt",
+        "rssm_checkpoint_sha256": "10ff2344e07dacbcc9f7a4cfe5e7d28eb8fd47cd9b14b1dc0ae94df5af8a0fb4",
+        "rssm_checkpoint_config": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30",
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 256,
+          "learning_rate": 0.001,
+          "val_every": 50,
+          "patience": 10000,
+          "min_delta": 0.001,
+          "hidden_dim": 128,
+          "num_threads": 1,
+          "class_weighting": "sqrt"
+        },
+        "policy": {
+          "feature_dim": 512,
+          "hidden_dim": 128
+        }
+      },
+      "g7/cmb/cap_2x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "5ceebf1beabfab84f1e3289c51ecf128a6db528c174a80a79d0abf655965aa81",
+        "checkpoint_a_sha256": "4a676df8e08ddcce021c5ccf0290661c1d82032cda22b5b09546425fef7af0ab",
+        "checkpoint_b_sha256": "10ff2344e07dacbcc9f7a4cfe5e7d28eb8fd47cd9b14b1dc0ae94df5af8a0fb4",
+        "policy_b_sha256": "3face7f4f47081d9b6a6c63170a58bb6d9d7ab2a5478d8ce37db79482b3188c6",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 2,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g7/cmb/cap_8x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "5ceebf1beabfab84f1e3289c51ecf128a6db528c174a80a79d0abf655965aa81",
+        "checkpoint_a_sha256": "4a676df8e08ddcce021c5ccf0290661c1d82032cda22b5b09546425fef7af0ab",
+        "checkpoint_b_sha256": "10ff2344e07dacbcc9f7a4cfe5e7d28eb8fd47cd9b14b1dc0ae94df5af8a0fb4",
+        "policy_b_sha256": "3face7f4f47081d9b6a6c63170a58bb6d9d7ab2a5478d8ce37db79482b3188c6",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g7/cmb/cap_8x32/config.json": {
+        "seed": 42,
+        "handoff_sha256": "5ceebf1beabfab84f1e3289c51ecf128a6db528c174a80a79d0abf655965aa81",
+        "checkpoint_a_sha256": "4a676df8e08ddcce021c5ccf0290661c1d82032cda22b5b09546425fef7af0ab",
+        "checkpoint_b_sha256": "10ff2344e07dacbcc9f7a4cfe5e7d28eb8fd47cd9b14b1dc0ae94df5af8a0fb4",
+        "policy_b_sha256": "3face7f4f47081d9b6a6c63170a58bb6d9d7ab2a5478d8ce37db79482b3188c6",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 32,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g7/cmb/cmb/config.json": {
+        "seed": 42,
+        "handoff_sha256": "5ceebf1beabfab84f1e3289c51ecf128a6db528c174a80a79d0abf655965aa81",
+        "checkpoint_a_sha256": "4a676df8e08ddcce021c5ccf0290661c1d82032cda22b5b09546425fef7af0ab",
+        "checkpoint_b_sha256": "10ff2344e07dacbcc9f7a4cfe5e7d28eb8fd47cd9b14b1dc0ae94df5af8a0fb4",
+        "policy_b_sha256": "3face7f4f47081d9b6a6c63170a58bb6d9d7ab2a5478d8ce37db79482b3188c6",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g7/cmb/loss_state_action/config.json": {
+        "seed": 42,
+        "handoff_sha256": "5ceebf1beabfab84f1e3289c51ecf128a6db528c174a80a79d0abf655965aa81",
+        "checkpoint_a_sha256": "4a676df8e08ddcce021c5ccf0290661c1d82032cda22b5b09546425fef7af0ab",
+        "checkpoint_b_sha256": "10ff2344e07dacbcc9f7a4cfe5e7d28eb8fd47cd9b14b1dc0ae94df5af8a0fb4",
+        "policy_b_sha256": "3face7f4f47081d9b6a6c63170a58bb6d9d7ab2a5478d8ce37db79482b3188c6",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g7/cmb/loss_state_only/config.json": {
+        "seed": 42,
+        "handoff_sha256": "5ceebf1beabfab84f1e3289c51ecf128a6db528c174a80a79d0abf655965aa81",
+        "checkpoint_a_sha256": "4a676df8e08ddcce021c5ccf0290661c1d82032cda22b5b09546425fef7af0ab",
+        "checkpoint_b_sha256": "10ff2344e07dacbcc9f7a4cfe5e7d28eb8fd47cd9b14b1dc0ae94df5af8a0fb4",
+        "policy_b_sha256": "3face7f4f47081d9b6a6c63170a58bb6d9d7ab2a5478d8ce37db79482b3188c6",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 0.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      }
+    },
+    "g8": {
+      "paths": {
+        "a": "runs/step10/g8/rssm_a/cmb_minigrid_rssm_a-d9b410d716/best.pt",
+        "b": "runs/step10/g8/rssm_b/cmb_minigrid_rssm_b-0d61e82d77/best.pt",
+        "policy": "runs/step10/g8/policy_b/best.pt"
+      },
+      "g8/rssm_a/cmb_minigrid_rssm_a-d9b410d716/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_a",
+        "seed": 1008,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 128,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g8/rssm_b/cmb_minigrid_rssm_b-0d61e82d77/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_b",
+        "seed": 2008,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g8/policy_b/config.json": {
+        "seed": 2008,
+        "device": "cpu",
+        "mode": "formal",
+        "rssm_checkpoint": "/home/xyh/Desktop/cmb_minigrid/runs/step10/g8/rssm_b/cmb_minigrid_rssm_b-0d61e82d77/best.pt",
+        "rssm_checkpoint_sha256": "5e962884c755ff5f41490c26b61ce1f0d2c06e62cf35999283918daad57064a8",
+        "rssm_checkpoint_config": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30",
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 256,
+          "learning_rate": 0.001,
+          "val_every": 50,
+          "patience": 10000,
+          "min_delta": 0.001,
+          "hidden_dim": 128,
+          "num_threads": 1,
+          "class_weighting": "sqrt"
+        },
+        "policy": {
+          "feature_dim": 512,
+          "hidden_dim": 128
+        }
+      },
+      "g8/cmb/cap_2x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "d5f0c1c3c1be02b24bba21bd1a8225832252c5a50682416e117f918afdbff30e",
+        "checkpoint_a_sha256": "a6d3a26c64d644cfe62506b995d0badf93e19d64d61a3ee777e196581cd4d5a5",
+        "checkpoint_b_sha256": "5e962884c755ff5f41490c26b61ce1f0d2c06e62cf35999283918daad57064a8",
+        "policy_b_sha256": "e7dda07d530ac37ea702cc3fd8170127d13b08f87338e78e1d1337377a8a6b40",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 2,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g8/cmb/cap_8x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "d5f0c1c3c1be02b24bba21bd1a8225832252c5a50682416e117f918afdbff30e",
+        "checkpoint_a_sha256": "a6d3a26c64d644cfe62506b995d0badf93e19d64d61a3ee777e196581cd4d5a5",
+        "checkpoint_b_sha256": "5e962884c755ff5f41490c26b61ce1f0d2c06e62cf35999283918daad57064a8",
+        "policy_b_sha256": "e7dda07d530ac37ea702cc3fd8170127d13b08f87338e78e1d1337377a8a6b40",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g8/cmb/cap_8x32/config.json": {
+        "seed": 42,
+        "handoff_sha256": "d5f0c1c3c1be02b24bba21bd1a8225832252c5a50682416e117f918afdbff30e",
+        "checkpoint_a_sha256": "a6d3a26c64d644cfe62506b995d0badf93e19d64d61a3ee777e196581cd4d5a5",
+        "checkpoint_b_sha256": "5e962884c755ff5f41490c26b61ce1f0d2c06e62cf35999283918daad57064a8",
+        "policy_b_sha256": "e7dda07d530ac37ea702cc3fd8170127d13b08f87338e78e1d1337377a8a6b40",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 32,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g8/cmb/cmb/config.json": {
+        "seed": 42,
+        "handoff_sha256": "d5f0c1c3c1be02b24bba21bd1a8225832252c5a50682416e117f918afdbff30e",
+        "checkpoint_a_sha256": "a6d3a26c64d644cfe62506b995d0badf93e19d64d61a3ee777e196581cd4d5a5",
+        "checkpoint_b_sha256": "5e962884c755ff5f41490c26b61ce1f0d2c06e62cf35999283918daad57064a8",
+        "policy_b_sha256": "e7dda07d530ac37ea702cc3fd8170127d13b08f87338e78e1d1337377a8a6b40",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g8/cmb/loss_state_action/config.json": {
+        "seed": 42,
+        "handoff_sha256": "d5f0c1c3c1be02b24bba21bd1a8225832252c5a50682416e117f918afdbff30e",
+        "checkpoint_a_sha256": "a6d3a26c64d644cfe62506b995d0badf93e19d64d61a3ee777e196581cd4d5a5",
+        "checkpoint_b_sha256": "5e962884c755ff5f41490c26b61ce1f0d2c06e62cf35999283918daad57064a8",
+        "policy_b_sha256": "e7dda07d530ac37ea702cc3fd8170127d13b08f87338e78e1d1337377a8a6b40",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g8/cmb/loss_state_only/config.json": {
+        "seed": 42,
+        "handoff_sha256": "d5f0c1c3c1be02b24bba21bd1a8225832252c5a50682416e117f918afdbff30e",
+        "checkpoint_a_sha256": "a6d3a26c64d644cfe62506b995d0badf93e19d64d61a3ee777e196581cd4d5a5",
+        "checkpoint_b_sha256": "5e962884c755ff5f41490c26b61ce1f0d2c06e62cf35999283918daad57064a8",
+        "policy_b_sha256": "e7dda07d530ac37ea702cc3fd8170127d13b08f87338e78e1d1337377a8a6b40",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 0.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      }
+    },
+    "g9": {
+      "paths": {
+        "a": "runs/step10/g9/rssm_a/cmb_minigrid_rssm_a-632336643a/best.pt",
+        "b": "runs/step10/g9/rssm_b/cmb_minigrid_rssm_b-bb415843eb/best.pt",
+        "policy": "runs/step10/g9/policy_b/best.pt"
+      },
+      "g9/rssm_a/cmb_minigrid_rssm_a-632336643a/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_a",
+        "seed": 1009,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 128,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g9/rssm_b/cmb_minigrid_rssm_b-bb415843eb/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_b",
+        "seed": 2009,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g9/policy_b/config.json": {
+        "seed": 2009,
+        "device": "cpu",
+        "mode": "formal",
+        "rssm_checkpoint": "/home/xyh/Desktop/cmb_minigrid/runs/step10/g9/rssm_b/cmb_minigrid_rssm_b-bb415843eb/best.pt",
+        "rssm_checkpoint_sha256": "3e4ce25f0237595f32101396ea9505e437ac564db77e59b138da422f5da8a0a4",
+        "rssm_checkpoint_config": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30",
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 256,
+          "learning_rate": 0.001,
+          "val_every": 50,
+          "patience": 10000,
+          "min_delta": 0.001,
+          "hidden_dim": 128,
+          "num_threads": 1,
+          "class_weighting": "sqrt"
+        },
+        "policy": {
+          "feature_dim": 512,
+          "hidden_dim": 128
+        }
+      },
+      "g9/cmb/cap_2x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "f2839f37083ff7a2ec0bb39d9c4755d2aefdf600002d5f5c28a871baea125d0c",
+        "checkpoint_a_sha256": "05e50800885a32c1c3342e084e76590a5ac0192cd9032ad89e4e4af00c5d9d95",
+        "checkpoint_b_sha256": "3e4ce25f0237595f32101396ea9505e437ac564db77e59b138da422f5da8a0a4",
+        "policy_b_sha256": "313af0ee57ccbc6ee00a60857e912ca110ad32b58f4aea8257909b2f93a94798",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 2,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g9/cmb/cap_8x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "f2839f37083ff7a2ec0bb39d9c4755d2aefdf600002d5f5c28a871baea125d0c",
+        "checkpoint_a_sha256": "05e50800885a32c1c3342e084e76590a5ac0192cd9032ad89e4e4af00c5d9d95",
+        "checkpoint_b_sha256": "3e4ce25f0237595f32101396ea9505e437ac564db77e59b138da422f5da8a0a4",
+        "policy_b_sha256": "313af0ee57ccbc6ee00a60857e912ca110ad32b58f4aea8257909b2f93a94798",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g9/cmb/cap_8x32/config.json": {
+        "seed": 42,
+        "handoff_sha256": "f2839f37083ff7a2ec0bb39d9c4755d2aefdf600002d5f5c28a871baea125d0c",
+        "checkpoint_a_sha256": "05e50800885a32c1c3342e084e76590a5ac0192cd9032ad89e4e4af00c5d9d95",
+        "checkpoint_b_sha256": "3e4ce25f0237595f32101396ea9505e437ac564db77e59b138da422f5da8a0a4",
+        "policy_b_sha256": "313af0ee57ccbc6ee00a60857e912ca110ad32b58f4aea8257909b2f93a94798",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 32,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g9/cmb/cmb/config.json": {
+        "seed": 42,
+        "handoff_sha256": "f2839f37083ff7a2ec0bb39d9c4755d2aefdf600002d5f5c28a871baea125d0c",
+        "checkpoint_a_sha256": "05e50800885a32c1c3342e084e76590a5ac0192cd9032ad89e4e4af00c5d9d95",
+        "checkpoint_b_sha256": "3e4ce25f0237595f32101396ea9505e437ac564db77e59b138da422f5da8a0a4",
+        "policy_b_sha256": "313af0ee57ccbc6ee00a60857e912ca110ad32b58f4aea8257909b2f93a94798",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g9/cmb/loss_state_action/config.json": {
+        "seed": 42,
+        "handoff_sha256": "f2839f37083ff7a2ec0bb39d9c4755d2aefdf600002d5f5c28a871baea125d0c",
+        "checkpoint_a_sha256": "05e50800885a32c1c3342e084e76590a5ac0192cd9032ad89e4e4af00c5d9d95",
+        "checkpoint_b_sha256": "3e4ce25f0237595f32101396ea9505e437ac564db77e59b138da422f5da8a0a4",
+        "policy_b_sha256": "313af0ee57ccbc6ee00a60857e912ca110ad32b58f4aea8257909b2f93a94798",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g9/cmb/loss_state_only/config.json": {
+        "seed": 42,
+        "handoff_sha256": "f2839f37083ff7a2ec0bb39d9c4755d2aefdf600002d5f5c28a871baea125d0c",
+        "checkpoint_a_sha256": "05e50800885a32c1c3342e084e76590a5ac0192cd9032ad89e4e4af00c5d9d95",
+        "checkpoint_b_sha256": "3e4ce25f0237595f32101396ea9505e437ac564db77e59b138da422f5da8a0a4",
+        "policy_b_sha256": "313af0ee57ccbc6ee00a60857e912ca110ad32b58f4aea8257909b2f93a94798",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 0.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      }
+    },
+    "g10": {
+      "paths": {
+        "a": "runs/step10/g10/rssm_a/cmb_minigrid_rssm_a-c1267f6973/best.pt",
+        "b": "runs/step10/g10/rssm_b/cmb_minigrid_rssm_b-4f651ba1c0/best.pt",
+        "policy": "runs/step10/g10/policy_b/best.pt"
+      },
+      "g10/rssm_a/cmb_minigrid_rssm_a-c1267f6973/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_a",
+        "seed": 1010,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 128,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g10/rssm_b/cmb_minigrid_rssm_b-4f651ba1c0/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_b",
+        "seed": 2010,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g10/policy_b/config.json": {
+        "seed": 2010,
+        "device": "cpu",
+        "mode": "formal",
+        "rssm_checkpoint": "/home/xyh/Desktop/cmb_minigrid/runs/step10/g10/rssm_b/cmb_minigrid_rssm_b-4f651ba1c0/best.pt",
+        "rssm_checkpoint_sha256": "73bf6813abc914165b92418b738eca8139cbd6aa3051c0bd7880bb9c028c6a3a",
+        "rssm_checkpoint_config": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30",
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 256,
+          "learning_rate": 0.001,
+          "val_every": 50,
+          "patience": 10000,
+          "min_delta": 0.001,
+          "hidden_dim": 128,
+          "num_threads": 1,
+          "class_weighting": "sqrt"
+        },
+        "policy": {
+          "feature_dim": 512,
+          "hidden_dim": 128
+        }
+      },
+      "g10/cmb/cap_2x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "469d7b5efdc8fbbda8c2692b2571b31f2f6ceab167ca75b4be848e017815aee3",
+        "checkpoint_a_sha256": "ebdea9591c180f42d0359bb58a576646ec6496e70b25c9a41ce75163110c3bcc",
+        "checkpoint_b_sha256": "73bf6813abc914165b92418b738eca8139cbd6aa3051c0bd7880bb9c028c6a3a",
+        "policy_b_sha256": "3cbd6d147738e191bca93382d855d0f6a93f0cd5eca5fc1f05fe4e8526f37227",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 2,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g10/cmb/cap_8x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "469d7b5efdc8fbbda8c2692b2571b31f2f6ceab167ca75b4be848e017815aee3",
+        "checkpoint_a_sha256": "ebdea9591c180f42d0359bb58a576646ec6496e70b25c9a41ce75163110c3bcc",
+        "checkpoint_b_sha256": "73bf6813abc914165b92418b738eca8139cbd6aa3051c0bd7880bb9c028c6a3a",
+        "policy_b_sha256": "3cbd6d147738e191bca93382d855d0f6a93f0cd5eca5fc1f05fe4e8526f37227",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g10/cmb/cap_8x32/config.json": {
+        "seed": 42,
+        "handoff_sha256": "469d7b5efdc8fbbda8c2692b2571b31f2f6ceab167ca75b4be848e017815aee3",
+        "checkpoint_a_sha256": "ebdea9591c180f42d0359bb58a576646ec6496e70b25c9a41ce75163110c3bcc",
+        "checkpoint_b_sha256": "73bf6813abc914165b92418b738eca8139cbd6aa3051c0bd7880bb9c028c6a3a",
+        "policy_b_sha256": "3cbd6d147738e191bca93382d855d0f6a93f0cd5eca5fc1f05fe4e8526f37227",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 32,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g10/cmb/cmb/config.json": {
+        "seed": 42,
+        "handoff_sha256": "469d7b5efdc8fbbda8c2692b2571b31f2f6ceab167ca75b4be848e017815aee3",
+        "checkpoint_a_sha256": "ebdea9591c180f42d0359bb58a576646ec6496e70b25c9a41ce75163110c3bcc",
+        "checkpoint_b_sha256": "73bf6813abc914165b92418b738eca8139cbd6aa3051c0bd7880bb9c028c6a3a",
+        "policy_b_sha256": "3cbd6d147738e191bca93382d855d0f6a93f0cd5eca5fc1f05fe4e8526f37227",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g10/cmb/loss_state_action/config.json": {
+        "seed": 42,
+        "handoff_sha256": "469d7b5efdc8fbbda8c2692b2571b31f2f6ceab167ca75b4be848e017815aee3",
+        "checkpoint_a_sha256": "ebdea9591c180f42d0359bb58a576646ec6496e70b25c9a41ce75163110c3bcc",
+        "checkpoint_b_sha256": "73bf6813abc914165b92418b738eca8139cbd6aa3051c0bd7880bb9c028c6a3a",
+        "policy_b_sha256": "3cbd6d147738e191bca93382d855d0f6a93f0cd5eca5fc1f05fe4e8526f37227",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g10/cmb/loss_state_only/config.json": {
+        "seed": 42,
+        "handoff_sha256": "469d7b5efdc8fbbda8c2692b2571b31f2f6ceab167ca75b4be848e017815aee3",
+        "checkpoint_a_sha256": "ebdea9591c180f42d0359bb58a576646ec6496e70b25c9a41ce75163110c3bcc",
+        "checkpoint_b_sha256": "73bf6813abc914165b92418b738eca8139cbd6aa3051c0bd7880bb9c028c6a3a",
+        "policy_b_sha256": "3cbd6d147738e191bca93382d855d0f6a93f0cd5eca5fc1f05fe4e8526f37227",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 0.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      }
+    },
+    "g11": {
+      "paths": {
+        "a": "runs/step10/g11/rssm_a/cmb_minigrid_rssm_a-9b1050c58c/best.pt",
+        "b": "runs/step10/g11/rssm_b/cmb_minigrid_rssm_b-1b336d94cd/best.pt",
+        "policy": "runs/step10/g11/policy_b/best.pt"
+      },
+      "g11/rssm_a/cmb_minigrid_rssm_a-9b1050c58c/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_a",
+        "seed": 1011,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 128,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g11/rssm_b/cmb_minigrid_rssm_b-1b336d94cd/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_b",
+        "seed": 2011,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g11/policy_b/config.json": {
+        "seed": 2011,
+        "device": "cpu",
+        "mode": "formal",
+        "rssm_checkpoint": "/home/xyh/Desktop/cmb_minigrid/runs/step10/g11/rssm_b/cmb_minigrid_rssm_b-1b336d94cd/best.pt",
+        "rssm_checkpoint_sha256": "5f4ce5a1e13f8100b60c73f3743c0b8cdf9854fd58e2495bb89bb1d39434a7ac",
+        "rssm_checkpoint_config": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30",
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 256,
+          "learning_rate": 0.001,
+          "val_every": 50,
+          "patience": 10000,
+          "min_delta": 0.001,
+          "hidden_dim": 128,
+          "num_threads": 1,
+          "class_weighting": "sqrt"
+        },
+        "policy": {
+          "feature_dim": 512,
+          "hidden_dim": 128
+        }
+      },
+      "g11/cmb/cap_2x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "8e59d2d68b1181027fdea36412ec5b085546586691437ec6529e06963485ab1b",
+        "checkpoint_a_sha256": "b37ba4f50051b03a3fab48e302413196e1472adca28cc4d0f26b21b50132d511",
+        "checkpoint_b_sha256": "5f4ce5a1e13f8100b60c73f3743c0b8cdf9854fd58e2495bb89bb1d39434a7ac",
+        "policy_b_sha256": "2e1f752e2e3d671cb750d9fbf20ba68a3d4e975f846dee0108bb9221e725949f",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 2,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g11/cmb/cap_8x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "8e59d2d68b1181027fdea36412ec5b085546586691437ec6529e06963485ab1b",
+        "checkpoint_a_sha256": "b37ba4f50051b03a3fab48e302413196e1472adca28cc4d0f26b21b50132d511",
+        "checkpoint_b_sha256": "5f4ce5a1e13f8100b60c73f3743c0b8cdf9854fd58e2495bb89bb1d39434a7ac",
+        "policy_b_sha256": "2e1f752e2e3d671cb750d9fbf20ba68a3d4e975f846dee0108bb9221e725949f",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g11/cmb/cap_8x32/config.json": {
+        "seed": 42,
+        "handoff_sha256": "8e59d2d68b1181027fdea36412ec5b085546586691437ec6529e06963485ab1b",
+        "checkpoint_a_sha256": "b37ba4f50051b03a3fab48e302413196e1472adca28cc4d0f26b21b50132d511",
+        "checkpoint_b_sha256": "5f4ce5a1e13f8100b60c73f3743c0b8cdf9854fd58e2495bb89bb1d39434a7ac",
+        "policy_b_sha256": "2e1f752e2e3d671cb750d9fbf20ba68a3d4e975f846dee0108bb9221e725949f",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 32,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g11/cmb/cmb/config.json": {
+        "seed": 42,
+        "handoff_sha256": "8e59d2d68b1181027fdea36412ec5b085546586691437ec6529e06963485ab1b",
+        "checkpoint_a_sha256": "b37ba4f50051b03a3fab48e302413196e1472adca28cc4d0f26b21b50132d511",
+        "checkpoint_b_sha256": "5f4ce5a1e13f8100b60c73f3743c0b8cdf9854fd58e2495bb89bb1d39434a7ac",
+        "policy_b_sha256": "2e1f752e2e3d671cb750d9fbf20ba68a3d4e975f846dee0108bb9221e725949f",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g11/cmb/loss_state_action/config.json": {
+        "seed": 42,
+        "handoff_sha256": "8e59d2d68b1181027fdea36412ec5b085546586691437ec6529e06963485ab1b",
+        "checkpoint_a_sha256": "b37ba4f50051b03a3fab48e302413196e1472adca28cc4d0f26b21b50132d511",
+        "checkpoint_b_sha256": "5f4ce5a1e13f8100b60c73f3743c0b8cdf9854fd58e2495bb89bb1d39434a7ac",
+        "policy_b_sha256": "2e1f752e2e3d671cb750d9fbf20ba68a3d4e975f846dee0108bb9221e725949f",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g11/cmb/loss_state_only/config.json": {
+        "seed": 42,
+        "handoff_sha256": "8e59d2d68b1181027fdea36412ec5b085546586691437ec6529e06963485ab1b",
+        "checkpoint_a_sha256": "b37ba4f50051b03a3fab48e302413196e1472adca28cc4d0f26b21b50132d511",
+        "checkpoint_b_sha256": "5f4ce5a1e13f8100b60c73f3743c0b8cdf9854fd58e2495bb89bb1d39434a7ac",
+        "policy_b_sha256": "2e1f752e2e3d671cb750d9fbf20ba68a3d4e975f846dee0108bb9221e725949f",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 0.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      }
+    },
+    "g12": {
+      "paths": {
+        "a": "runs/step10/g12/rssm_a/cmb_minigrid_rssm_a-24fdf0fc6e/best.pt",
+        "b": "runs/step10/g12/rssm_b/cmb_minigrid_rssm_b-d8acc8cc1a/best.pt",
+        "policy": "runs/step10/g12/policy_b/best.pt"
+      },
+      "g12/rssm_a/cmb_minigrid_rssm_a-24fdf0fc6e/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_a",
+        "seed": 1012,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 128,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g12/rssm_b/cmb_minigrid_rssm_b-d8acc8cc1a/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_b",
+        "seed": 2012,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g12/policy_b/config.json": {
+        "seed": 2012,
+        "device": "cpu",
+        "mode": "formal",
+        "rssm_checkpoint": "/home/xyh/Desktop/cmb_minigrid/runs/step10/g12/rssm_b/cmb_minigrid_rssm_b-d8acc8cc1a/best.pt",
+        "rssm_checkpoint_sha256": "d81977e8ab2d1b4b2a89a96ba23563fb330b1e56becafb9d500eefdc0738a1b3",
+        "rssm_checkpoint_config": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30",
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 256,
+          "learning_rate": 0.001,
+          "val_every": 50,
+          "patience": 10000,
+          "min_delta": 0.001,
+          "hidden_dim": 128,
+          "num_threads": 1,
+          "class_weighting": "sqrt"
+        },
+        "policy": {
+          "feature_dim": 512,
+          "hidden_dim": 128
+        }
+      },
+      "g12/cmb/cap_2x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "0ca2caad2f44cf6fcc90fdad678768f40260b1a26054f528cc420064aeaf8a0b",
+        "checkpoint_a_sha256": "f6a656210038c8468c7703d395bcaa8531f5ee4995e1938d380a0e98bc26be32",
+        "checkpoint_b_sha256": "d81977e8ab2d1b4b2a89a96ba23563fb330b1e56becafb9d500eefdc0738a1b3",
+        "policy_b_sha256": "c86062d5a3f734b14c8a651182ebff37ddd2c99483bc29571339a85bcb5b5eb9",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 2,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g12/cmb/cap_8x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "0ca2caad2f44cf6fcc90fdad678768f40260b1a26054f528cc420064aeaf8a0b",
+        "checkpoint_a_sha256": "f6a656210038c8468c7703d395bcaa8531f5ee4995e1938d380a0e98bc26be32",
+        "checkpoint_b_sha256": "d81977e8ab2d1b4b2a89a96ba23563fb330b1e56becafb9d500eefdc0738a1b3",
+        "policy_b_sha256": "c86062d5a3f734b14c8a651182ebff37ddd2c99483bc29571339a85bcb5b5eb9",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g12/cmb/cap_8x32/config.json": {
+        "seed": 42,
+        "handoff_sha256": "0ca2caad2f44cf6fcc90fdad678768f40260b1a26054f528cc420064aeaf8a0b",
+        "checkpoint_a_sha256": "f6a656210038c8468c7703d395bcaa8531f5ee4995e1938d380a0e98bc26be32",
+        "checkpoint_b_sha256": "d81977e8ab2d1b4b2a89a96ba23563fb330b1e56becafb9d500eefdc0738a1b3",
+        "policy_b_sha256": "c86062d5a3f734b14c8a651182ebff37ddd2c99483bc29571339a85bcb5b5eb9",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 32,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g12/cmb/cmb/config.json": {
+        "seed": 42,
+        "handoff_sha256": "0ca2caad2f44cf6fcc90fdad678768f40260b1a26054f528cc420064aeaf8a0b",
+        "checkpoint_a_sha256": "f6a656210038c8468c7703d395bcaa8531f5ee4995e1938d380a0e98bc26be32",
+        "checkpoint_b_sha256": "d81977e8ab2d1b4b2a89a96ba23563fb330b1e56becafb9d500eefdc0738a1b3",
+        "policy_b_sha256": "c86062d5a3f734b14c8a651182ebff37ddd2c99483bc29571339a85bcb5b5eb9",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g12/cmb/loss_state_action/config.json": {
+        "seed": 42,
+        "handoff_sha256": "0ca2caad2f44cf6fcc90fdad678768f40260b1a26054f528cc420064aeaf8a0b",
+        "checkpoint_a_sha256": "f6a656210038c8468c7703d395bcaa8531f5ee4995e1938d380a0e98bc26be32",
+        "checkpoint_b_sha256": "d81977e8ab2d1b4b2a89a96ba23563fb330b1e56becafb9d500eefdc0738a1b3",
+        "policy_b_sha256": "c86062d5a3f734b14c8a651182ebff37ddd2c99483bc29571339a85bcb5b5eb9",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g12/cmb/loss_state_only/config.json": {
+        "seed": 42,
+        "handoff_sha256": "0ca2caad2f44cf6fcc90fdad678768f40260b1a26054f528cc420064aeaf8a0b",
+        "checkpoint_a_sha256": "f6a656210038c8468c7703d395bcaa8531f5ee4995e1938d380a0e98bc26be32",
+        "checkpoint_b_sha256": "d81977e8ab2d1b4b2a89a96ba23563fb330b1e56becafb9d500eefdc0738a1b3",
+        "policy_b_sha256": "c86062d5a3f734b14c8a651182ebff37ddd2c99483bc29571339a85bcb5b5eb9",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 0.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      }
+    },
+    "g13": {
+      "paths": {
+        "a": "runs/step10/g13/rssm_a/cmb_minigrid_rssm_a-79632814b6/best.pt",
+        "b": "runs/step10/g13/rssm_b/cmb_minigrid_rssm_b-09637e8dbb/best.pt",
+        "policy": "runs/step10/g13/policy_b/best.pt"
+      },
+      "g13/rssm_a/cmb_minigrid_rssm_a-79632814b6/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_a",
+        "seed": 1013,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 128,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g13/rssm_b/cmb_minigrid_rssm_b-09637e8dbb/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_b",
+        "seed": 2013,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g13/policy_b/config.json": {
+        "seed": 2013,
+        "device": "cpu",
+        "mode": "formal",
+        "rssm_checkpoint": "/home/xyh/Desktop/cmb_minigrid/runs/step10/g13/rssm_b/cmb_minigrid_rssm_b-09637e8dbb/best.pt",
+        "rssm_checkpoint_sha256": "fc4f58f6fcd060110f4718fc41341e9070d8ef18d0d751b3c6d537afa2008471",
+        "rssm_checkpoint_config": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30",
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 256,
+          "learning_rate": 0.001,
+          "val_every": 50,
+          "patience": 10000,
+          "min_delta": 0.001,
+          "hidden_dim": 128,
+          "num_threads": 1,
+          "class_weighting": "sqrt"
+        },
+        "policy": {
+          "feature_dim": 512,
+          "hidden_dim": 128
+        }
+      },
+      "g13/cmb/cap_2x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "855657438cc525b41d98cd2bec783eac13efa9ac4c9996aaba2040e27fb7c3ae",
+        "checkpoint_a_sha256": "43ab91711288d06101ef835d938d3010e8ba470a1e4f6affec7ae66b9d84d8c1",
+        "checkpoint_b_sha256": "fc4f58f6fcd060110f4718fc41341e9070d8ef18d0d751b3c6d537afa2008471",
+        "policy_b_sha256": "210b43e193a7d4174e9b36a533ee955e87d49bb9217953ebfc6a90f5119ae813",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 2,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g13/cmb/cap_8x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "855657438cc525b41d98cd2bec783eac13efa9ac4c9996aaba2040e27fb7c3ae",
+        "checkpoint_a_sha256": "43ab91711288d06101ef835d938d3010e8ba470a1e4f6affec7ae66b9d84d8c1",
+        "checkpoint_b_sha256": "fc4f58f6fcd060110f4718fc41341e9070d8ef18d0d751b3c6d537afa2008471",
+        "policy_b_sha256": "210b43e193a7d4174e9b36a533ee955e87d49bb9217953ebfc6a90f5119ae813",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g13/cmb/cap_8x32/config.json": {
+        "seed": 42,
+        "handoff_sha256": "855657438cc525b41d98cd2bec783eac13efa9ac4c9996aaba2040e27fb7c3ae",
+        "checkpoint_a_sha256": "43ab91711288d06101ef835d938d3010e8ba470a1e4f6affec7ae66b9d84d8c1",
+        "checkpoint_b_sha256": "fc4f58f6fcd060110f4718fc41341e9070d8ef18d0d751b3c6d537afa2008471",
+        "policy_b_sha256": "210b43e193a7d4174e9b36a533ee955e87d49bb9217953ebfc6a90f5119ae813",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 32,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g13/cmb/cmb/config.json": {
+        "seed": 42,
+        "handoff_sha256": "855657438cc525b41d98cd2bec783eac13efa9ac4c9996aaba2040e27fb7c3ae",
+        "checkpoint_a_sha256": "43ab91711288d06101ef835d938d3010e8ba470a1e4f6affec7ae66b9d84d8c1",
+        "checkpoint_b_sha256": "fc4f58f6fcd060110f4718fc41341e9070d8ef18d0d751b3c6d537afa2008471",
+        "policy_b_sha256": "210b43e193a7d4174e9b36a533ee955e87d49bb9217953ebfc6a90f5119ae813",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g13/cmb/loss_state_action/config.json": {
+        "seed": 42,
+        "handoff_sha256": "855657438cc525b41d98cd2bec783eac13efa9ac4c9996aaba2040e27fb7c3ae",
+        "checkpoint_a_sha256": "43ab91711288d06101ef835d938d3010e8ba470a1e4f6affec7ae66b9d84d8c1",
+        "checkpoint_b_sha256": "fc4f58f6fcd060110f4718fc41341e9070d8ef18d0d751b3c6d537afa2008471",
+        "policy_b_sha256": "210b43e193a7d4174e9b36a533ee955e87d49bb9217953ebfc6a90f5119ae813",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g13/cmb/loss_state_only/config.json": {
+        "seed": 42,
+        "handoff_sha256": "855657438cc525b41d98cd2bec783eac13efa9ac4c9996aaba2040e27fb7c3ae",
+        "checkpoint_a_sha256": "43ab91711288d06101ef835d938d3010e8ba470a1e4f6affec7ae66b9d84d8c1",
+        "checkpoint_b_sha256": "fc4f58f6fcd060110f4718fc41341e9070d8ef18d0d751b3c6d537afa2008471",
+        "policy_b_sha256": "210b43e193a7d4174e9b36a533ee955e87d49bb9217953ebfc6a90f5119ae813",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 0.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      }
+    },
+    "g14": {
+      "paths": {
+        "a": "runs/step10/g14/rssm_a/cmb_minigrid_rssm_a-6694713267/best.pt",
+        "b": "runs/step10/g14/rssm_b/cmb_minigrid_rssm_b-1abcd09967/best.pt",
+        "policy": "runs/step10/g14/policy_b/best.pt"
+      },
+      "g14/rssm_a/cmb_minigrid_rssm_a-6694713267/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_a",
+        "seed": 1014,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 128,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g14/rssm_b/cmb_minigrid_rssm_b-1abcd09967/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_b",
+        "seed": 2014,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g14/policy_b/config.json": {
+        "seed": 2014,
+        "device": "cpu",
+        "mode": "formal",
+        "rssm_checkpoint": "/home/xyh/Desktop/cmb_minigrid/runs/step10/g14/rssm_b/cmb_minigrid_rssm_b-1abcd09967/best.pt",
+        "rssm_checkpoint_sha256": "2ca04ba06b1395a8853ebb24c88c4de7e7d1ab85a29a88a9e63292feb0023eed",
+        "rssm_checkpoint_config": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30",
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 256,
+          "learning_rate": 0.001,
+          "val_every": 50,
+          "patience": 10000,
+          "min_delta": 0.001,
+          "hidden_dim": 128,
+          "num_threads": 1,
+          "class_weighting": "sqrt"
+        },
+        "policy": {
+          "feature_dim": 512,
+          "hidden_dim": 128
+        }
+      },
+      "g14/cmb/cap_2x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "9afa3ad17e88c9738c4108e3d5636eecbbb56a3851242c007391ab9bec68458e",
+        "checkpoint_a_sha256": "4e845b2a157f0b302f7d2af175763d21db7295a43d1051eaeb2e20216ad1abce",
+        "checkpoint_b_sha256": "2ca04ba06b1395a8853ebb24c88c4de7e7d1ab85a29a88a9e63292feb0023eed",
+        "policy_b_sha256": "494494a017e9632cf82fb16af113798304bed8e074f1929a04905cb157be89bd",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 2,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g14/cmb/cap_8x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "9afa3ad17e88c9738c4108e3d5636eecbbb56a3851242c007391ab9bec68458e",
+        "checkpoint_a_sha256": "4e845b2a157f0b302f7d2af175763d21db7295a43d1051eaeb2e20216ad1abce",
+        "checkpoint_b_sha256": "2ca04ba06b1395a8853ebb24c88c4de7e7d1ab85a29a88a9e63292feb0023eed",
+        "policy_b_sha256": "494494a017e9632cf82fb16af113798304bed8e074f1929a04905cb157be89bd",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g14/cmb/cap_8x32/config.json": {
+        "seed": 42,
+        "handoff_sha256": "9afa3ad17e88c9738c4108e3d5636eecbbb56a3851242c007391ab9bec68458e",
+        "checkpoint_a_sha256": "4e845b2a157f0b302f7d2af175763d21db7295a43d1051eaeb2e20216ad1abce",
+        "checkpoint_b_sha256": "2ca04ba06b1395a8853ebb24c88c4de7e7d1ab85a29a88a9e63292feb0023eed",
+        "policy_b_sha256": "494494a017e9632cf82fb16af113798304bed8e074f1929a04905cb157be89bd",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 32,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g14/cmb/cmb/config.json": {
+        "seed": 42,
+        "handoff_sha256": "9afa3ad17e88c9738c4108e3d5636eecbbb56a3851242c007391ab9bec68458e",
+        "checkpoint_a_sha256": "4e845b2a157f0b302f7d2af175763d21db7295a43d1051eaeb2e20216ad1abce",
+        "checkpoint_b_sha256": "2ca04ba06b1395a8853ebb24c88c4de7e7d1ab85a29a88a9e63292feb0023eed",
+        "policy_b_sha256": "494494a017e9632cf82fb16af113798304bed8e074f1929a04905cb157be89bd",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g14/cmb/loss_state_action/config.json": {
+        "seed": 42,
+        "handoff_sha256": "9afa3ad17e88c9738c4108e3d5636eecbbb56a3851242c007391ab9bec68458e",
+        "checkpoint_a_sha256": "4e845b2a157f0b302f7d2af175763d21db7295a43d1051eaeb2e20216ad1abce",
+        "checkpoint_b_sha256": "2ca04ba06b1395a8853ebb24c88c4de7e7d1ab85a29a88a9e63292feb0023eed",
+        "policy_b_sha256": "494494a017e9632cf82fb16af113798304bed8e074f1929a04905cb157be89bd",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g14/cmb/loss_state_only/config.json": {
+        "seed": 42,
+        "handoff_sha256": "9afa3ad17e88c9738c4108e3d5636eecbbb56a3851242c007391ab9bec68458e",
+        "checkpoint_a_sha256": "4e845b2a157f0b302f7d2af175763d21db7295a43d1051eaeb2e20216ad1abce",
+        "checkpoint_b_sha256": "2ca04ba06b1395a8853ebb24c88c4de7e7d1ab85a29a88a9e63292feb0023eed",
+        "policy_b_sha256": "494494a017e9632cf82fb16af113798304bed8e074f1929a04905cb157be89bd",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 0.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      }
+    },
+    "g15": {
+      "paths": {
+        "a": "runs/step10/g15/rssm_a/cmb_minigrid_rssm_a-ae6e74e65a/best.pt",
+        "b": "runs/step10/g15/rssm_b/cmb_minigrid_rssm_b-1be5dcebb8/best.pt",
+        "policy": "runs/step10/g15/policy_b/best.pt"
+      },
+      "g15/rssm_a/cmb_minigrid_rssm_a-ae6e74e65a/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_a",
+        "seed": 1015,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 128,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g15/rssm_b/cmb_minigrid_rssm_b-1be5dcebb8/config.json": {
+        "experiment_name": "cmb_minigrid_rssm_b",
+        "seed": 2015,
+        "device": "cpu",
+        "deterministic": true,
+        "rssm": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "grad_clip": 100.0,
+          "val_every": 50,
+          "patience": 100000,
+          "min_delta": 0.001,
+          "num_threads": 1
+        },
+        "mode": "formal",
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30"
+      },
+      "g15/policy_b/config.json": {
+        "seed": 2015,
+        "device": "cpu",
+        "mode": "formal",
+        "rssm_checkpoint": "/home/xyh/Desktop/cmb_minigrid/runs/step10/g15/rssm_b/cmb_minigrid_rssm_b-1be5dcebb8/best.pt",
+        "rssm_checkpoint_sha256": "3cdfaeacde5e54d020531dbb2902cffc4b9b50e55ee121e39e0adcafab037541",
+        "rssm_checkpoint_config": {
+          "deter": 256,
+          "stoch_groups": 16,
+          "stoch_classes": 16,
+          "embed_dim": 64,
+          "encoder_type": "cnn",
+          "hidden_dim": 128,
+          "unimix": 0.01,
+          "free_nats": 1.0,
+          "dynamics_scale": 0.5,
+          "representation_scale": 0.1,
+          "reward_scale": 1.0,
+          "continue_scale": 1.0,
+          "recall_scale": 5.0,
+          "recall_t": 12,
+          "visual_recall_scale": 5.0,
+          "visual_recall_times": [
+            0,
+            1
+          ]
+        },
+        "input": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_trajectories.jsonl",
+        "input_sha256": "30f74a4705c5f0308afd1608454f9703c16f4180a993b7578473b2fc55bf625d",
+        "manifest": "/home/xyh/Desktop/cmb_minigrid/data/samples/step3_manifest.json",
+        "manifest_sha256": "2733a857db8c68925f936b57d1598077cf83768c23f4f886217aee72e0b02d30",
+        "training": {
+          "max_steps": 1000,
+          "batch_size": 256,
+          "learning_rate": 0.001,
+          "val_every": 50,
+          "patience": 10000,
+          "min_delta": 0.001,
+          "hidden_dim": 128,
+          "num_threads": 1,
+          "class_weighting": "sqrt"
+        },
+        "policy": {
+          "feature_dim": 512,
+          "hidden_dim": 128
+        }
+      },
+      "g15/cmb/cap_2x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "fed23bf2bf88f8ffdf4f6067640404cb1f8f3d279db64ac4a3fc374e2c0b7237",
+        "checkpoint_a_sha256": "5862aaed318685bde75350faf67b066e11edb852992261b854f6824da0ca0c1f",
+        "checkpoint_b_sha256": "3cdfaeacde5e54d020531dbb2902cffc4b9b50e55ee121e39e0adcafab037541",
+        "policy_b_sha256": "e201d310847187336db324b41401b36b7709b10899809c240172c779e460371a",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 2,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g15/cmb/cap_8x16/config.json": {
+        "seed": 42,
+        "handoff_sha256": "fed23bf2bf88f8ffdf4f6067640404cb1f8f3d279db64ac4a3fc374e2c0b7237",
+        "checkpoint_a_sha256": "5862aaed318685bde75350faf67b066e11edb852992261b854f6824da0ca0c1f",
+        "checkpoint_b_sha256": "3cdfaeacde5e54d020531dbb2902cffc4b9b50e55ee121e39e0adcafab037541",
+        "policy_b_sha256": "e201d310847187336db324b41401b36b7709b10899809c240172c779e460371a",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g15/cmb/cap_8x32/config.json": {
+        "seed": 42,
+        "handoff_sha256": "fed23bf2bf88f8ffdf4f6067640404cb1f8f3d279db64ac4a3fc374e2c0b7237",
+        "checkpoint_a_sha256": "5862aaed318685bde75350faf67b066e11edb852992261b854f6824da0ca0c1f",
+        "checkpoint_b_sha256": "3cdfaeacde5e54d020531dbb2902cffc4b9b50e55ee121e39e0adcafab037541",
+        "policy_b_sha256": "e201d310847187336db324b41401b36b7709b10899809c240172c779e460371a",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 8,
+          "token_classes": 32,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g15/cmb/cmb/config.json": {
+        "seed": 42,
+        "handoff_sha256": "fed23bf2bf88f8ffdf4f6067640404cb1f8f3d279db64ac4a3fc374e2c0b7237",
+        "checkpoint_a_sha256": "5862aaed318685bde75350faf67b066e11edb852992261b854f6824da0ca0c1f",
+        "checkpoint_b_sha256": "3cdfaeacde5e54d020531dbb2902cffc4b9b50e55ee121e39e0adcafab037541",
+        "policy_b_sha256": "e201d310847187336db324b41401b36b7709b10899809c240172c779e460371a",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 300,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g15/cmb/loss_state_action/config.json": {
+        "seed": 42,
+        "handoff_sha256": "fed23bf2bf88f8ffdf4f6067640404cb1f8f3d279db64ac4a3fc374e2c0b7237",
+        "checkpoint_a_sha256": "5862aaed318685bde75350faf67b066e11edb852992261b854f6824da0ca0c1f",
+        "checkpoint_b_sha256": "3cdfaeacde5e54d020531dbb2902cffc4b9b50e55ee121e39e0adcafab037541",
+        "policy_b_sha256": "e201d310847187336db324b41401b36b7709b10899809c240172c779e460371a",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 1.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      },
+      "g15/cmb/loss_state_only/config.json": {
+        "seed": 42,
+        "handoff_sha256": "fed23bf2bf88f8ffdf4f6067640404cb1f8f3d279db64ac4a3fc374e2c0b7237",
+        "checkpoint_a_sha256": "5862aaed318685bde75350faf67b066e11edb852992261b854f6824da0ca0c1f",
+        "checkpoint_b_sha256": "3cdfaeacde5e54d020531dbb2902cffc4b9b50e55ee121e39e0adcafab037541",
+        "policy_b_sha256": "e201d310847187336db324b41401b36b7709b10899809c240172c779e460371a",
+        "horizons": [
+          5,
+          10
+        ],
+        "lr": 0.001,
+        "batch_size": 32,
+        "state_weight": 1.0,
+        "action_weight": 0.0,
+        "multistep_weight": 1.0,
+        "stage1_steps": 300,
+        "stage2_steps": 0,
+        "cmb": {
+          "a_feature_dim": 384,
+          "b_deter": 256,
+          "b_groups": 16,
+          "b_classes": 16,
+          "tokens": 4,
+          "token_classes": 16,
+          "encoder_dim": 64,
+          "sender_hidden": 128,
+          "receiver_hidden": 128
+        }
+      }
+    }
+  }
+}
