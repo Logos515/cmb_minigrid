@@ -1,0 +1,306 @@
+{
+  "checkpoint": "runs/step5/formal/cmb_minigrid_rssm_a-14bec33435/best.pt",
+  "checkpoint_seed": 42,
+  "device": "cpu",
+  "seed": 42,
+  "split": "val",
+  "input": "data/samples/step3_trajectories.jsonl",
+  "manifest": "data/samples/step3_manifest.json",
+  "selected_step": 150,
+  "pair_id": "pair-hidden_history_nav_v2-0052",
+  "hidden_labels": [
+    "left_blocked",
+    "right_blocked"
+  ],
+  "results": {
+    "t=0": {
+      "observation_difference": {
+        "changed_entries_per_channel": [
+          0,
+          1,
+          0
+        ],
+        "direction_equal": true,
+        "task_id_equal": true,
+        "previous_action": null
+      },
+      "encoder_difference": {
+        "mean_abs": 0.0033911254722625017,
+        "max_abs": 0.008935332298278809,
+        "l2": 0.032048746943473816
+      },
+      "posterior_logits_difference": {
+        "mean_abs": 0.0011183549650013447,
+        "max_abs": 0.0036575794219970703,
+        "l2": 0.02182368002831936
+      },
+      "posterior_probabilities_difference": {
+        "mean_abs": 7.35486755729653e-05,
+        "max_abs": 0.0004040822386741638,
+        "l2": 0.0016173467738553882
+      },
+      "categorical_argmax": {
+        "changed_group_count": 0,
+        "total_group_count": 16,
+        "world_0": [
+          2,
+          9,
+          2,
+          5,
+          4,
+          6,
+          6,
+          12,
+          12,
+          8,
+          6,
+          4,
+          15,
+          7,
+          14,
+          10
+        ],
+        "world_1": [
+          2,
+          9,
+          2,
+          5,
+          4,
+          6,
+          6,
+          12,
+          12,
+          8,
+          6,
+          4,
+          15,
+          7,
+          14,
+          10
+        ]
+      },
+      "stochastic_state_difference": {
+        "mean_abs": 0.0,
+        "max_abs": 0.0,
+        "l2": 0.0
+      },
+      "deterministic_state_difference": {
+        "mean_abs": 0.0,
+        "max_abs": 0.0,
+        "l2": 0.0
+      },
+      "raw_posterior_difference": {
+        "mean_abs": 0.0011102053103968501,
+        "max_abs": 0.004384040832519531,
+        "l2": 0.02193528600037098
+      },
+      "probability_margins": {
+        "world_0_top1_minus_top2": [
+          0.09411104023456573,
+          0.024123884737491608,
+          0.007875770330429077,
+          0.05332597345113754,
+          0.01911863684654236,
+          0.06750933080911636,
+          0.010806165635585785,
+          0.007719129323959351,
+          0.026698052883148193,
+          0.005738690495491028,
+          0.07734212279319763,
+          0.02925547957420349,
+          0.010980181396007538,
+          0.02419999986886978,
+          0.0011292174458503723,
+          0.08568556606769562
+        ],
+        "world_1_top1_minus_top2": [
+          0.09456140547990799,
+          0.024354025721549988,
+          0.007774710655212402,
+          0.05319284647703171,
+          0.019129425287246704,
+          0.0680709108710289,
+          0.010398879647254944,
+          0.007847897708415985,
+          0.02672716975212097,
+          0.005496032536029816,
+          0.07751581072807312,
+          0.02949494868516922,
+          0.010545238852500916,
+          0.023946158587932587,
+          0.0009792745113372803,
+          0.08571480214595795
+        ],
+        "max_probability_perturbation_per_group": [
+          0.0003012120723724365,
+          0.00027664750814437866,
+          0.00020404160022735596,
+          0.0002737492322921753,
+          0.00014475733041763306,
+          0.00032798945903778076,
+          0.00032270699739456177,
+          0.00029569119215011597,
+          0.00024078041315078735,
+          0.0004040822386741638,
+          0.00026917457580566406,
+          0.00023151934146881104,
+          0.00027260929346084595,
+          0.0001682192087173462,
+          0.0001880750060081482,
+          0.0002063661813735962
+        ],
+        "groups_with_world_0_margin_gt_twice_perturbation": 16
+      },
+      "observe_step_exact_match": true
+    },
+    "t=1": {
+      "observation_difference": {
+        "changed_entries_per_channel": [
+          0,
+          1,
+          0
+        ],
+        "direction_equal": true,
+        "task_id_equal": true,
+        "previous_action": [
+          2,
+          2
+        ]
+      },
+      "encoder_difference": {
+        "mean_abs": 0.012520072981715202,
+        "max_abs": 0.03338980674743652,
+        "l2": 0.11988111585378647
+      },
+      "posterior_logits_difference": {
+        "mean_abs": 0.004894750192761421,
+        "max_abs": 0.017187118530273438,
+        "l2": 0.09673229604959488
+      },
+      "posterior_probabilities_difference": {
+        "mean_abs": 0.0003210687718819827,
+        "max_abs": 0.0018818825483322144,
+        "l2": 0.007295697927474976
+      },
+      "categorical_argmax": {
+        "changed_group_count": 0,
+        "total_group_count": 16,
+        "world_0": [
+          2,
+          9,
+          9,
+          5,
+          4,
+          6,
+          12,
+          12,
+          12,
+          8,
+          6,
+          4,
+          10,
+          7,
+          1,
+          10
+        ],
+        "world_1": [
+          2,
+          9,
+          9,
+          5,
+          4,
+          6,
+          12,
+          12,
+          12,
+          8,
+          6,
+          4,
+          10,
+          7,
+          1,
+          10
+        ]
+      },
+      "stochastic_state_difference": {
+        "mean_abs": 0.0,
+        "max_abs": 0.0,
+        "l2": 0.0
+      },
+      "deterministic_state_difference": {
+        "mean_abs": 0.0,
+        "max_abs": 0.0,
+        "l2": 0.0
+      },
+      "raw_posterior_difference": {
+        "mean_abs": 0.004879712592810392,
+        "max_abs": 0.01899021863937378,
+        "l2": 0.09688203781843185
+      },
+      "probability_margins": {
+        "world_0_top1_minus_top2": [
+          0.08840186893939972,
+          0.038546353578567505,
+          0.004192784428596497,
+          0.043560564517974854,
+          0.013607867062091827,
+          0.08193594962358475,
+          0.012532562017440796,
+          0.011058896780014038,
+          0.0253334641456604,
+          0.008231967687606812,
+          0.08043825626373291,
+          0.048863038420677185,
+          0.0028406381607055664,
+          0.011012405157089233,
+          0.002307713031768799,
+          0.08381098508834839
+        ],
+        "world_1_top1_minus_top2": [
+          0.08818211406469345,
+          0.03979185223579407,
+          0.004781283438205719,
+          0.04280439019203186,
+          0.013608738780021667,
+          0.08434242755174637,
+          0.014668717980384827,
+          0.011740550398826599,
+          0.025506123900413513,
+          0.006980881094932556,
+          0.08109205216169357,
+          0.05004478991031647,
+          0.004688680171966553,
+          0.009941622614860535,
+          0.0032089129090309143,
+          0.08340930938720703
+        ],
+        "max_probability_perturbation_per_group": [
+          0.0014502480626106262,
+          0.0013011842966079712,
+          0.0008518993854522705,
+          0.0011589229106903076,
+          0.0007584318518638611,
+          0.001369476318359375,
+          0.001648738980293274,
+          0.0013425052165985107,
+          0.0013689324259757996,
+          0.0018818825483322144,
+          0.0011073946952819824,
+          0.000995829701423645,
+          0.0012445822358131409,
+          0.0010354071855545044,
+          0.0010233372449874878,
+          0.0009767413139343262
+        ],
+        "groups_with_world_0_margin_gt_twice_perturbation": 16
+      },
+      "observe_step_exact_match": true
+    }
+  },
+  "interpretation": {
+    "encoder_and_posterior_respond_at_t0": true,
+    "nonzero_response_discarded_by_argmax_at_t0": true,
+    "deterministic_states_equal_at_t1": true,
+    "scope": "This pair/checkpoint with sample=False only; stored posterior log probabilities may differ even when deter+hard-stoch features coincide. t=0 deter is computed before seeing obs[0]. No claim about sampled filtering, all pairs, or the cause of weak cue learning."
+  }
+}

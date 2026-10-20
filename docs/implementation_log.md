@@ -593,3 +593,109 @@ clean; after the weighting ablation only the focused weighting tests were run
 GPU/mixed-precision training, Actor resume, multi-seed policy sweeps and
 validation/test evaluation of the current `models/policy_a.pt` and
 `models/policy_b.pt` remain unrun.
+
+## Step 7 — Handoff dataset and baseline initializers (2026-10-20)
+
+### Files
+
+New: `cmb_minigrid/handoff/{__init__,dataset,initializers}.py`,
+`cmb_minigrid/scripts/build_handoff.py`, `tests/test_handoff.py`. No existing
+file was modified; the Step 3 data, split, Step 5 RSSMs, Step 6 Actors and the
+observation contract are unchanged. Environment: conda `cmb_minigrid`
+(Python 3.11.17, torch 2.14.1, minigrid 3.2.0), run with
+`env -u PYTHONPATH` because the shell exports a ROS `PYTHONPATH`.
+
+### Implementation and interfaces
+
+- `HandoffSample` (one per record with `env_snapshot`, all roles/splits):
+  `history` (`HandoffHistory`: `obs[0:t+1]`, `action[0:t]`, `.obs_t`),
+  `future` (`HandoffFuture`: `obs[t+1:]`, `action[t:]`, expert actions,
+  rewards, flags), `env_snapshot`, `pair_id`, `split`, privileged
+  `hidden_label` (evaluation only), `state_a`, `state_b_star` (batch-1
+  `RSSMState`, both already fused with `obs[t]`). `obs_t` is also stored
+  separately and checked against the history tail on load.
+- `filter_history(model, history, sample=False, seed=None)` is the single
+  filtering path: `initial(1)`, first frame with no previous action, then one
+  `observe_step` per frame. Both A and B are filtered from the public prefix
+  only (B never reads the simulator map or hidden label). Each record's
+  snapshot is checked with `replay_from_handoff` at build time.
+- Initializers take only `HandoffInput(history, state_a[, oracle_state_b])`;
+  the future is never passed. `ReplayInit(B, N)` filters the last `N` frames
+  (clipped at `obs[0]`) from `initial(1)`; the action before the window is not
+  read. `ResetInit` is `N=1`. `OracleInit` returns the stored `state_b_star`
+  (the only method given it). `MapInit` wraps `StateMap('linear'|'mlp')`:
+  `features(state_A)` -> tanh deter + raw logits -> B's own `_logits`
+  (unimix + log-softmax) -> hard one-hot via `RSSM.sample`, so the discrete
+  state is always a legal one-hot with normalized logits.
+  `validate_b_state` enforces shape, finiteness, deter in [-1,1], exact
+  one-hot and normalized logits.
+- `initialize_all(methods, sample)` runs every method from the same sample and
+  returns `HandoffInit(method, state_b, t, env_snapshot, b_fused_frames)`.
+  `continue_from_handoff` does `observe_step(state[t], action[t], obs[t+1])`;
+  `restore_env(sample)` rebuilds the simulator from the snapshot and checks it
+  reproduces `obs_t`.
+- Linear/MLP are fitted on train-split states only: every step `t'` of every
+  train episode gives an aligned `(features(state_A[t']), state_B*[t'])` pair
+  (`collect_aligned_states`); loss = MSE(deter) + KL(B* posterior || mapped
+  categorical); full-batch Adam, seeded. The MLP optionally has a bottleneck
+  (default 64 = 4x16 payload) and `--mlp-target-params` picks the hidden width
+  (`matched_hidden_dim`).
+- CLI: `python -m cmb_minigrid.scripts.build_handoff --checkpoint-a
+  models/best_a.pt --checkpoint-b models/best_b.pt --output-dir <dir>`; writes
+  `handoff_dataset.pt`, `linear_map.pt`, `mlp_map.pt`, `handoff_report.json`.
+
+### Verified
+
+- `pytest tests/test_handoff.py`: 13 passed (exit 0). Covers: required fields
+  and dataset round-trip; Replay-1/4/8/16 call `observe_step` exactly on the
+  last N frames with the expected first-frame/no-previous-action and
+  `action[i-1]` usage (spied); poisoning the stored future leaves every
+  method's state bit-identical; mutating post-handoff observations in the
+  source record leaves `state_A/state_B*` unchanged; full Replay and Replay-16
+  equal the stored Oracle-B (deterministic) and seeded sampling is reproducible
+  without touching the global RNG; `obs_t` is fused once (last frame) and
+  `continue_from_handoff` equals filtering `obs[0:t+2]`, while re-fusing
+  `obs_t` visibly changes the state (guard is sensitive); all methods keep the
+  same snapshot/`t`, repeat exactly, and the restored env reproduces the true
+  future observations; A->B maps emit legal one-hot/logits even with
+  x50-scaled weights, and a raw-float state is rejected; map fitting lowers
+  loss; MLP width matching.
+- CLI on the real checkpoints (`runs/step7/handoff_20261020`, seed 42, exit
+  0): 200 samples (train 120 / val 40 / test 40, all `handoff_t=12`, none
+  skipped, all snapshots rebuilt). All methods repeatable and same-snapshot;
+  max |deter| difference between replay_full and stored Oracle-B is 0.0; 50
+  expert pairs have identical `obs_t` but differing states (min A-state
+  distance 12.1, min B*-state distance 16.4).
+  Mean deter L2 to Oracle-B (val / test): reset 11.08/11.08, replay-4
+  9.56/9.58, replay-8 9.26/9.09, replay-16 0/0, linear 0.89/0.43, MLP
+  1.15/0.75. Categorical-mode exact match with Oracle (val/test): linear
+  0.5/1.0, MLP 0.0/1.0. These are state-distance diagnostics only; no action or
+  closed-loop result is claimed. `--mlp-target-params 100000` smoke run: hidden
+  97, 100,098 parameters, exit 0.
+- Full suite: 102 passed, 3 failed. Ruff clean on the new files; `git diff
+  --check` clean.
+
+### Unresolved / not run
+
+- The 3 failures predate this step (`test_categorical_response` x2 expect
+  exactly 0 deterministic difference, got 2.98e-8; `test_training` frozen-probe
+  test requires `atol=0` equality across batch rows). They look like batch-size
+  float noise under torch 2.14.1 and were not changed. This also means
+  Oracle/Replay equality is only claimed for the same batch-1 code path.
+- `handoff_t` is 12 everywhere, so Replay-16 sees the whole prefix and is
+  identical to Oracle by construction; Replay-4/8 are the informative windows.
+- "Capacity-matched" is undefined until the CMB exists (Step 8): the MLP
+  default (hidden 128, bottleneck 64, 131,904 params) vs Linear (197,120) are
+  not matched to anything yet; use `--mlp-target-params` once the CMB size is
+  fixed. Linear/MLP see only `state_A` (no B-side `obs_t` encoding).
+- Linear/MLP test numbers use 40 samples from one test family and a single
+  seed; no CIs. Not run: GPU, multi-seed, stochastic-mode dataset build, Actor-B
+  action evaluation from these states (Step 9).
+- Untracked `~`, `probe_report.json`, `categorical_response_*.json` in the repo
+  root predate this step and were left alone.
+
+### Next-step dependencies
+
+Step 8 needs `handoff_dataset.pt` (`state_a`, `state_b_star`, `obs_t`,
+`future`) and `initialize_all` baselines; Step 9 needs `restore_env`,
+`continue_from_handoff` and the same-snapshot contract.

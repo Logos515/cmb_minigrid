@@ -1,0 +1,283 @@
+{
+  "seed": 42,
+  "device": "cpu",
+  "probe_iterations": 100,
+  "probe_l2": 0.01,
+  "recent_k": 8,
+  "fit_split": "train",
+  "eval_split": "val",
+  "models": {
+    "A": {
+      "checkpoint": "runs/step5/formal/cmb_minigrid_rssm_a-14bec33435/best.pt",
+      "checkpoint_sha256": "7f53e1409ef17322f2eb9d1152b65ba40009ec91178e7cf662d40d8da2a2cbc9",
+      "seed": 42,
+      "train_pairs": [
+        "pair-hidden_history_nav_v3-0062",
+        "pair-hidden_history_nav_v3-0063",
+        "pair-hidden_history_nav_v3-0064",
+        "pair-hidden_history_nav_v3-0065",
+        "pair-hidden_history_nav_v3-0066",
+        "pair-hidden_history_nav_v3-0067",
+        "pair-hidden_history_nav_v3-0068",
+        "pair-hidden_history_nav_v3-0069",
+        "pair-hidden_history_nav_v3-0070",
+        "pair-hidden_history_nav_v3-0071",
+        "pair-hidden_history_nav_v4-0072",
+        "pair-hidden_history_nav_v4-0073",
+        "pair-hidden_history_nav_v4-0074",
+        "pair-hidden_history_nav_v4-0075",
+        "pair-hidden_history_nav_v4-0076",
+        "pair-hidden_history_nav_v4-0077",
+        "pair-hidden_history_nav_v4-0078",
+        "pair-hidden_history_nav_v4-0079",
+        "pair-hidden_history_nav_v4-0080",
+        "pair-hidden_history_nav_v4-0081",
+        "pair-hidden_history_nav_v5-0082",
+        "pair-hidden_history_nav_v5-0083",
+        "pair-hidden_history_nav_v5-0084",
+        "pair-hidden_history_nav_v5-0085",
+        "pair-hidden_history_nav_v5-0086",
+        "pair-hidden_history_nav_v5-0087",
+        "pair-hidden_history_nav_v5-0088",
+        "pair-hidden_history_nav_v5-0089",
+        "pair-hidden_history_nav_v5-0090",
+        "pair-hidden_history_nav_v5-0091"
+      ],
+      "val_pairs": [
+        "pair-hidden_history_nav_v2-0052",
+        "pair-hidden_history_nav_v2-0053",
+        "pair-hidden_history_nav_v2-0054",
+        "pair-hidden_history_nav_v2-0055",
+        "pair-hidden_history_nav_v2-0056",
+        "pair-hidden_history_nav_v2-0057",
+        "pair-hidden_history_nav_v2-0058",
+        "pair-hidden_history_nav_v2-0059",
+        "pair-hidden_history_nav_v2-0060",
+        "pair-hidden_history_nav_v2-0061"
+      ],
+      "probes": {
+        "full_history": {
+          "train": {
+            "accuracy": 0.5,
+            "n": 60,
+            "both_endpoints_correct": 0.0,
+            "mean_pair_feature_distance": 0.0
+          },
+          "val": {
+            "accuracy": 0.5,
+            "n": 20,
+            "both_endpoints_correct": 0.0,
+            "mean_pair_feature_distance": 0.0
+          }
+        },
+        "current_state": {
+          "train": {
+            "accuracy": 0.5,
+            "n": 60,
+            "both_endpoints_correct": 0.0,
+            "mean_pair_feature_distance": 0.0
+          },
+          "val": {
+            "accuracy": 0.5,
+            "n": 20,
+            "both_endpoints_correct": 0.0,
+            "mean_pair_feature_distance": 0.0
+          }
+        },
+        "recent_state": {
+          "train": {
+            "accuracy": 0.5,
+            "n": 60,
+            "both_endpoints_correct": 0.0,
+            "mean_pair_feature_distance": 0.0
+          },
+          "val": {
+            "accuracy": 0.5,
+            "n": 20,
+            "both_endpoints_correct": 0.0,
+            "mean_pair_feature_distance": 0.0
+          }
+        },
+        "early_state": {
+          "train": {
+            "accuracy": 0.5,
+            "n": 60,
+            "both_endpoints_correct": 0.0,
+            "mean_pair_feature_distance": 0.0
+          },
+          "val": {
+            "accuracy": 0.5,
+            "n": 20,
+            "both_endpoints_correct": 0.0,
+            "mean_pair_feature_distance": 0.0
+          }
+        },
+        "current_observation": {
+          "train": {
+            "accuracy": 0.5,
+            "n": 60,
+            "both_endpoints_correct": 0.0,
+            "mean_pair_feature_distance": 0.0
+          },
+          "val": {
+            "accuracy": 0.5,
+            "n": 20,
+            "both_endpoints_correct": 0.0,
+            "mean_pair_feature_distance": 0.0
+          }
+        },
+        "early_observation": {
+          "train": {
+            "accuracy": 1.0,
+            "n": 60,
+            "both_endpoints_correct": 1.0,
+            "mean_pair_feature_distance": 1.4142136573791504
+          },
+          "val": {
+            "accuracy": 1.0,
+            "n": 20,
+            "both_endpoints_correct": 1.0,
+            "mean_pair_feature_distance": 1.4142134189605713
+          }
+        }
+      }
+    },
+    "B": {
+      "checkpoint": "runs/step5/formal/cmb_minigrid_rssm_b-9f7a571497/best.pt",
+      "checkpoint_sha256": "8cbbdb473193a922e0f0630af211e085aba30de8f855557e21d2dbaec80198de",
+      "seed": 43,
+      "train_pairs": [
+        "pair-hidden_history_nav_v3-0062",
+        "pair-hidden_history_nav_v3-0063",
+        "pair-hidden_history_nav_v3-0064",
+        "pair-hidden_history_nav_v3-0065",
+        "pair-hidden_history_nav_v3-0066",
+        "pair-hidden_history_nav_v3-0067",
+        "pair-hidden_history_nav_v3-0068",
+        "pair-hidden_history_nav_v3-0069",
+        "pair-hidden_history_nav_v3-0070",
+        "pair-hidden_history_nav_v3-0071",
+        "pair-hidden_history_nav_v4-0072",
+        "pair-hidden_history_nav_v4-0073",
+        "pair-hidden_history_nav_v4-0074",
+        "pair-hidden_history_nav_v4-0075",
+        "pair-hidden_history_nav_v4-0076",
+        "pair-hidden_history_nav_v4-0077",
+        "pair-hidden_history_nav_v4-0078",
+        "pair-hidden_history_nav_v4-0079",
+        "pair-hidden_history_nav_v4-0080",
+        "pair-hidden_history_nav_v4-0081",
+        "pair-hidden_history_nav_v5-0082",
+        "pair-hidden_history_nav_v5-0083",
+        "pair-hidden_history_nav_v5-0084",
+        "pair-hidden_history_nav_v5-0085",
+        "pair-hidden_history_nav_v5-0086",
+        "pair-hidden_history_nav_v5-0087",
+        "pair-hidden_history_nav_v5-0088",
+        "pair-hidden_history_nav_v5-0089",
+        "pair-hidden_history_nav_v5-0090",
+        "pair-hidden_history_nav_v5-0091"
+      ],
+      "val_pairs": [
+        "pair-hidden_history_nav_v2-0052",
+        "pair-hidden_history_nav_v2-0053",
+        "pair-hidden_history_nav_v2-0054",
+        "pair-hidden_history_nav_v2-0055",
+        "pair-hidden_history_nav_v2-0056",
+        "pair-hidden_history_nav_v2-0057",
+        "pair-hidden_history_nav_v2-0058",
+        "pair-hidden_history_nav_v2-0059",
+        "pair-hidden_history_nav_v2-0060",
+        "pair-hidden_history_nav_v2-0061"
+      ],
+      "probes": {
+        "full_history": {
+          "train": {
+            "accuracy": 0.5,
+            "n": 60,
+            "both_endpoints_correct": 0.0,
+            "mean_pair_feature_distance": 0.0
+          },
+          "val": {
+            "accuracy": 0.5,
+            "n": 20,
+            "both_endpoints_correct": 0.0,
+            "mean_pair_feature_distance": 0.0
+          }
+        },
+        "current_state": {
+          "train": {
+            "accuracy": 0.5,
+            "n": 60,
+            "both_endpoints_correct": 0.0,
+            "mean_pair_feature_distance": 0.0
+          },
+          "val": {
+            "accuracy": 0.5,
+            "n": 20,
+            "both_endpoints_correct": 0.0,
+            "mean_pair_feature_distance": 0.0
+          }
+        },
+        "recent_state": {
+          "train": {
+            "accuracy": 0.5,
+            "n": 60,
+            "both_endpoints_correct": 0.0,
+            "mean_pair_feature_distance": 0.0
+          },
+          "val": {
+            "accuracy": 0.5,
+            "n": 20,
+            "both_endpoints_correct": 0.0,
+            "mean_pair_feature_distance": 0.0
+          }
+        },
+        "early_state": {
+          "train": {
+            "accuracy": 0.5,
+            "n": 60,
+            "both_endpoints_correct": 0.0,
+            "mean_pair_feature_distance": 0.0
+          },
+          "val": {
+            "accuracy": 0.5,
+            "n": 20,
+            "both_endpoints_correct": 0.0,
+            "mean_pair_feature_distance": 0.0
+          }
+        },
+        "current_observation": {
+          "train": {
+            "accuracy": 0.5,
+            "n": 60,
+            "both_endpoints_correct": 0.0,
+            "mean_pair_feature_distance": 0.0
+          },
+          "val": {
+            "accuracy": 0.5,
+            "n": 20,
+            "both_endpoints_correct": 0.0,
+            "mean_pair_feature_distance": 0.0
+          }
+        },
+        "early_observation": {
+          "train": {
+            "accuracy": 1.0,
+            "n": 60,
+            "both_endpoints_correct": 1.0,
+            "mean_pair_feature_distance": 1.4142136573791504
+          },
+          "val": {
+            "accuracy": 1.0,
+            "n": 20,
+            "both_endpoints_correct": 1.0,
+            "mean_pair_feature_distance": 1.4142134189605713
+          }
+        }
+      }
+    }
+  },
+  "test_split_used": false,
+  "evidence_boundary": "Cue decoding is diagnostic only; it does not establish sufficient memory, future prediction or closed-loop control."
+}
